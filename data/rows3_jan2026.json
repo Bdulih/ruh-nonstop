@@ -1,0 +1,2586 @@
+[
+ {
+  "airline": "Aegean Airlines",
+  "dests": [
+   {
+    "article": "Athens International Airport",
+    "label": "Athens",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Air Arabia",
+  "dests": [
+   {
+    "article": "Borg El Arab Airport",
+    "label": "Alexandria",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Assiut Airport",
+    "label": "Assiut",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Cairo International Airport",
+    "label": "Cairo",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sharjah International Airport",
+    "label": "Sharjah",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Air Cairo",
+  "dests": [
+   {
+    "article": "Assiut Airport",
+    "label": "Assiut",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Cairo International Airport",
+    "label": "Cairo",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sphinx International Airport",
+    "label": "Giza",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sohag International Airport",
+    "label": "Sohag",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sharm El Sheikh International Airport",
+    "label": "Sharm El Sheikh",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Air China",
+  "dests": [
+   {
+    "article": "Beijing Capital International Airport",
+    "label": "Beijing–Capital",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Air France",
+  "dests": [
+   {
+    "article": "Charles de Gaulle Airport",
+    "label": "Paris–Charles de Gaulle",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Air India",
+  "dests": [
+   {
+    "article": "Indira Gandhi International Airport",
+    "label": "Delhi",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Chhatrapati Shivaji International Airport",
+    "label": "Mumbai–Shivaji",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Air India Express",
+  "dests": [
+   {
+    "article": "Kempegowda International Airport",
+    "label": "Bengaluru",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Rajiv Gandhi International Airport",
+    "label": "Hyderabad",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Kannur International Airport",
+    "label": "Kannur",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Cochin International Airport",
+    "label": "Kochi",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Kozhikode International Airport",
+    "label": "Kozhikode",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Chaudhary Charan Singh International Airport",
+    "label": "Lucknow",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Thiruvananthapuram International Airport",
+    "label": "Thiruvananthapuram",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Airblue",
+  "dests": [
+   {
+    "article": "Islamabad International Airport",
+    "label": "Islamabad",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Allama Iqbal International Airport",
+    "label": "Lahore",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "AirSial",
+  "dests": [
+   {
+    "article": "Islamabad International Airport",
+    "label": "Islamabad",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Allama Iqbal International Airport",
+    "label": "Lahore",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "AJet",
+  "dests": [
+   {
+    "article": "Istanbul Sabiha Gökçen International Airport",
+    "label": "Istanbul–Sabiha Gökçen",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Akasa Air",
+  "dests": [
+   {
+    "article": "Chhatrapati Shivaji International Airport",
+    "label": "Mumbai–Shivaji",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Ariana Afghan Airlines",
+  "dests": [
+   {
+    "article": "Kabul International Airport",
+    "label": "Kabul",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Azerbaijan Airlines",
+  "dests": [
+   {
+    "article": "Heydar Aliyev International Airport",
+    "label": "Baku",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "azimuth",
+  "dests": [
+   {
+    "article": "Sochi International Airport",
+    "label": "Sochi",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": "begins 2026-3-28"
+   }
+  ]
+ },
+ {
+  "airline": "Badr Airlines",
+  "dests": [
+   {
+    "article": "Port Sudan New International Airport",
+    "label": "Port Sudan",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "BeOnd",
+  "dests": [
+   {
+    "article": "Velana International Airport",
+    "label": "Malé",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Biman Bangladesh Airlines",
+  "dests": [
+   {
+    "article": "Shahjalal International Airport",
+    "label": "Dhaka",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "British Airways",
+  "dests": [
+   {
+    "article": "Heathrow Airport",
+    "label": "London–Heathrow",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Cathay Pacific",
+  "dests": [
+   {
+    "article": "Hong Kong International Airport",
+    "label": "Hong Kong",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Cebu Pacific",
+  "dests": [
+   {
+    "article": "Ninoy Aquino International Airport",
+    "label": "Manila",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": "resumes 1 March 2026"
+   }
+  ]
+ },
+ {
+  "airline": "China Eastern Airlines",
+  "dests": [
+   {
+    "article": "Shanghai Pudong International Airport",
+    "label": "Shanghai–Pudong",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "China Southern Airlines",
+  "dests": [
+   {
+    "article": "Beijing Daxing International Airport",
+    "label": "Beijing–Daxing",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Guangzhou Baiyun International Airport",
+    "label": "Guangzhou",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Shenzhen Bao'an International Airport",
+    "label": "Shenzhen",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Delta Air Lines",
+  "dests": [
+   {
+    "article": "Hartsfield–Jackson Atlanta International Airport",
+    "label": "Atlanta",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": "begins 23 October 2026"
+   }
+  ]
+ },
+ {
+  "airline": "Egyptair",
+  "dests": [
+   {
+    "article": "Borg El Arab International Airport",
+    "label": "Alexandria",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Cairo International Airport",
+    "label": "Cairo",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Emirates",
+  "dests": [
+   {
+    "article": "Dubai International Airport",
+    "label": "Dubai–International",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Ethiopian Airlines",
+  "dests": [
+   {
+    "article": "Bole International Airport",
+    "label": "Addis Ababa",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Etihad Airways",
+  "dests": [
+   {
+    "article": "Abu Dhabi International Airport",
+    "label": "Abu Dhabi",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Fly Jinnah",
+  "dests": [
+   {
+    "article": "Islamabad International Airport",
+    "label": "Islamabad",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Allama Iqbal Airport",
+    "label": "Lahore",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Flyadeal",
+  "dests": [
+   {
+    "article": "Abha Regional Airport",
+    "label": "Abha",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Queen Alia International Airport",
+    "label": "Amman–Queen Alia",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Arar Domestic Airport",
+    "label": "Arar",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Bahrain International Airport",
+    "label": "Bahrain",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Heydar Aliev International Airport",
+    "label": "Baku",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Batumi International Airport",
+    "label": "Batumi",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Cairo International Airport",
+    "label": "Cairo",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Damascus International Airport",
+    "label": "Damascus",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "King Fahd International Airport",
+    "label": "Dammam",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Al Maktoum International Airport",
+    "label": "Dubai–Al Maktoum",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Dubai International Airport",
+    "label": "Dubai–International",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Gurayat Domestic Airport",
+    "label": "Gurayat",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Ha'il Regional Airport",
+    "label": "Ha'il",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Islamabad International Airport",
+    "label": "Islamabad",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Istanbul Airport",
+    "label": "Istanbul",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "King Abdulaziz International Airport",
+    "label": "Jeddah",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Jizan Regional Airport",
+    "label": "Jizan",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Jinnah International Airport",
+    "label": "Karachi",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Kuwait International Airport",
+    "label": "Kuwait City",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Allama Iqbal International Airport",
+    "label": "Lahore",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Prince Mohammad Bin Abdulaziz Airport",
+    "label": "Medina",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Muscat International Airport",
+    "label": "Muscat",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Najran Domestic Airport",
+    "label": "Najran",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Bacha Khan International Airport",
+    "label": "Peshawar",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sharm El Sheikh International Airport",
+    "label": "Sharm El Sheikh",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sialkot International Airport",
+    "label": "Sialkot",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Tabuk Regional Airport",
+    "label": "Tabuk",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Ta’if Regional Airport",
+    "label": "Ta'if",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Tbilisi International Airport",
+    "label": "Tbilisi",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Antalya Airport",
+    "label": "Antalya",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Milas–Bodrum Airport",
+    "label": "Bodrum",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Larnaca International Airport",
+    "label": "Larnaca",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sarajevo International Airport",
+    "label": "Sarajevo",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Trabzon Airport",
+    "label": "Trabzon",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Flydubai",
+  "dests": [
+   {
+    "article": "Dubai International Airport",
+    "label": "Dubai–International",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Flynas",
+  "dests": [
+   {
+    "article": "Abha Regional Airport",
+    "label": "Abha",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Bole International Airport",
+    "label": "Addis Ababa",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Al-Baha Domestic Airport",
+    "label": "Al Baha",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Borg El Arab International Airport",
+    "label": "Alexandria",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Al-Jawf Domestic Airport",
+    "label": "Al Jawf",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Prince Abdul Majeed bin Abdul Aziz Domestic Airport",
+    "label": "Al Ula",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Queen Alia International Airport",
+    "label": "Amman–Queen Alia",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Arar Domestic Airport",
+    "label": "Arar",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Assiut Airport",
+    "label": "Assiut",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Baghdad International Airport",
+    "label": "Baghdad",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Bahrain International Airport",
+    "label": "Bahrain",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Heydar Aliyev International Airport",
+    "label": "Baku",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Beirut Rafic Hariri International Airport",
+    "label": "Beirut",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Bisha Domestic Airport",
+    "label": "Bisha",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Milas-Bodrum Airport",
+    "label": "Bodrum",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Cairo International Airport",
+    "label": "Cairo",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Damascus International Airport",
+    "label": "Damascus",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "King Fahd International Airport",
+    "label": "Dammam",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Indira Gandhi International Airport",
+    "label": "Delhi",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Hamad International Airport",
+    "label": "Doha",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Al Maktoum International Airport",
+    "label": "Dubai–Al Maktoum",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Dubai International Airport",
+    "label": "Dubai–International",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Entebbe International Airport",
+    "label": "Entebbe",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Prince Nayef Regional Airport",
+    "label": "Gassim",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sphinx International Airport",
+    "label": "Giza",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Gurayat Domestic Airport",
+    "label": "Gurayat",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Ha'il Regional Airport",
+    "label": "Ha'il",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Hatay Airport",
+    "label": "Hatay",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": "resumes 18 March 2026"
+   },
+   {
+    "article": "Rajiv Gandhi International Airport",
+    "label": "Hyderabad",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Islamabad International Airport",
+    "label": "Islamabad",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Istanbul Sabiha Gökçen International Airport",
+    "label": "Istanbul–Sabiha Gökçen",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "King Abdul Aziz International Airport",
+    "label": "Jeddah",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Jizan Regional Airport",
+    "label": "Jizan",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Jinnah International Airport",
+    "label": "Karachi",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Calicut International Airport",
+    "label": "Kozhikode",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Kuwait International Airport",
+    "label": "Kuwait City",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Allama Iqbal International Airport",
+    "label": "Lahore",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Chaudhary Charan Singh Airport",
+    "label": "Lucknow",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Prince Mohammad Bin Abdulaziz Airport",
+    "label": "Medina",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Vnukovo International Airport",
+    "label": "Moscow–Vnukovo",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Chhatrapati Shivaji International Airport",
+    "label": "Mumbai–Shivaji",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Muscat International Airport",
+    "label": "Muscat",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Najran Domestic Airport",
+    "label": "Najran",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sharm El Sheikh International Airport",
+    "label": "Sharm El Sheikh",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sohag International Airport",
+    "label": "Sohag",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Tabuk Regional Airport",
+    "label": "Tabuk",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Ta’if Regional Airport",
+    "label": "Ta'if",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Tashkent International Airport",
+    "label": "Tashkent",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Tbilisi International Airport",
+    "label": "Tbilisi",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Tirana International Airport Nënë Tereza",
+    "label": "Tirana",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Trabzon Airport",
+    "label": "Trabzon",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Zayed International Airport",
+    "label": "Abu Dhabi",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Antalya Airport",
+    "label": "Antalya",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "El Alamein International Airport",
+    "label": "El Alamein",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Geneva Airport",
+    "label": "Geneva",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Hurghada International Airport",
+    "label": "Hurghada",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Istanbul Airport",
+    "label": "Istanbul",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Kraków John Paul II International Airport",
+    "label": "Kraków",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Milan Malpensa Airport",
+    "label": "Milan–Malpensa",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Mykonos Airport",
+    "label": "Mykonos",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "Jomo Kenyatta International Airport",
+    "label": "Nairobi–Jomo Kenyatta",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Václav Havel Airport Prague",
+    "label": "Prague",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Rize–Artvin Airport",
+    "label": "Rize–Artvin",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Salalah International Airport",
+    "label": "Salalah",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Salzburg Airport",
+    "label": "Salzburg",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "Santorini (Thira) International Airport",
+    "label": "Santorini",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "Sarajevo International Airport",
+    "label": "Sarajevo",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "Tivat Airport",
+    "label": "Tivat",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "Vienna International Airport",
+    "label": "Vienna",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "Zvartnots International Airport",
+    "label": "Yerevan",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Gulf Air",
+  "dests": [
+   {
+    "article": "Bahrain International Airport",
+    "label": "Bahrain",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Himalaya Airlines",
+  "dests": [
+   {
+    "article": "Tribhuvan International Airport",
+    "label": "Kathmandu",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "IndiGo",
+  "dests": [
+   {
+    "article": "Kempegowda International Airport",
+    "label": "Bengaluru",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Indira Gandhi International Airport",
+    "label": "Delhi",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Rajiv Gandhi International Airport",
+    "label": "Hyderabad",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Chhatrapati Shivaji Maharaj International Airport",
+    "label": "Mumbai–Shivaji",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Iraqi Airways",
+  "dests": [
+   {
+    "article": "Baghdad International Airport",
+    "label": "Baghdad",
+    "seasonal": false,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "ITA Airways",
+  "dests": [
+   {
+    "article": "Leonardo da Vinci–Fiumicino Airport",
+    "label": "Rome–Fiumicino",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Jazeera Airways",
+  "dests": [
+   {
+    "article": "Kuwait International Airport",
+    "label": "Kuwait City",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Kam Air",
+  "dests": [
+   {
+    "article": "Kabul International Airport",
+    "label": "Kabul",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "KLM",
+  "dests": [
+   {
+    "article": "Amsterdam Airport Schiphol",
+    "label": "Amsterdam",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "King Fahd International Airport",
+    "label": "Dammam",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Kuwait Airways",
+  "dests": [
+   {
+    "article": "Kuwait International Airport",
+    "label": "Kuwait City",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "LOT Polish Airlines",
+  "dests": [
+   {
+    "article": "Warsaw Chopin Airport",
+    "label": "Warsaw–Chopin",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Lufthansa",
+  "dests": [
+   {
+    "article": "King Fahd International Airport",
+    "label": "Dammam",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Frankfurt Airport",
+    "label": "Frankfurt",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Munich Airport",
+    "label": "Munich",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Middle East Airlines",
+  "dests": [
+   {
+    "article": "Beirut–Rafic Hariri International Airport",
+    "label": "Beirut",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Nepal Airlines",
+  "dests": [
+   {
+    "article": "Tribhuvan International Airport",
+    "label": "Kathmandu",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Nesma Airlines",
+  "dests": [
+   {
+    "article": "Cairo International Airport",
+    "label": "Cairo",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sohag International Airport",
+    "label": "Sohag",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Nile Air",
+  "dests": [
+   {
+    "article": "Cairo International Airport",
+    "label": "Cairo",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Oman Air",
+  "dests": [
+   {
+    "article": "Muscat International Airport",
+    "label": "Muscat",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Pakistan International Airlines",
+  "dests": [
+   {
+    "article": "Islamabad International Airport",
+    "label": "Islamabad",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Allama Iqbal International Airport",
+    "label": "Lahore",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Multan International Airport",
+    "label": "Multan",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Bacha Khan International Airport",
+    "label": "Peshawar",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sialkot International Airport",
+    "label": "Sialkot",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Pegasus Airlines",
+  "dests": [
+   {
+    "article": "Istanbul Sabiha Gökçen International Airport",
+    "label": "Istanbul–Sabiha Gökçen",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Trabzon Airport",
+    "label": "Trabzon",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Philippine Airlines",
+  "dests": [
+   {
+    "article": "Ninoy Aquino International Airport",
+    "label": "Manila",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Qatar Airways",
+  "dests": [
+   {
+    "article": "Hamad International Airport",
+    "label": "Doha",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Riyadh Air",
+  "dests": [
+   {
+    "article": "Heathrow Airport",
+    "label": "London–Heathrow",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Royal Air Maroc",
+  "dests": [
+   {
+    "article": "Mohammed V International Airport",
+    "label": "Casablanca",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Royal Jordanian",
+  "dests": [
+   {
+    "article": "Queen Alia International Airport",
+    "label": "Amman–Queen Alia",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "SalamAir",
+  "dests": [
+   {
+    "article": "Muscat International Airport",
+    "label": "Muscat",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Saudia",
+  "dests": [
+   {
+    "article": "Abha Regional Airport",
+    "label": "Abha",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Abu Dhabi International Airport",
+    "label": "Abu Dhabi",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Bole International Airport",
+    "label": "Addis Ababa",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Al-Baha Domestic Airport",
+    "label": "Al Baha",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Borg El Arab Airport",
+    "label": "Alexandria",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Al-Jawf Domestic Airport",
+    "label": "Al Jawf",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Prince Abdul Majeed bin Abdul Aziz Domestic Airport",
+    "label": "Al Ula",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Al Wajh Domestic Airport",
+    "label": "Al Wajh",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Queen Alia International Airport",
+    "label": "Amman–Queen Alia",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Arar Domestic Airport",
+    "label": "Arar",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Athens International Airport",
+    "label": "Athens",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Bahrain International Airport",
+    "label": "Bahrain",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Suvarnabhumi Airport",
+    "label": "Bangkok–Suvarnabhumi",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Beijing Daxing International Airport",
+    "label": "Beijing–Daxing",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Beirut Rafic Hariri International Airport",
+    "label": "Beirut",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Bisha Domestic Airport",
+    "label": "Bisha",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Cairo International Airport",
+    "label": "Cairo",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Mohammed V International Airport",
+    "label": "Casablanca",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "King Fahd International Airport",
+    "label": "Dammam",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Dawadmi Domestic Airport",
+    "label": "Dawadmi",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Indira Gandhi International Airport",
+    "label": "Delhi",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Hazrat Shahjalal International Airport",
+    "label": "Dhaka",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Hamad International Airport",
+    "label": "Doha",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Dubai International Airport",
+    "label": "Dubai–International",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Frankfurt Airport",
+    "label": "Frankfurt",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Prince Nayef bin Abdulaziz Regional Airport",
+    "label": "Gassim",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Geneva Airport",
+    "label": "Geneva",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Guangzhou Baiyun International Airport",
+    "label": "Guangzhou",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Gurayat Domestic Airport",
+    "label": "Gurayat",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Ha'il Regional Airport",
+    "label": "Ha'il",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Islamabad International Airport",
+    "label": "Islamabad",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Istanbul Airport",
+    "label": "Istanbul",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "King Abdulaziz International Airport",
+    "label": "Jeddah",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Jizan Regional Airport",
+    "label": "Jizan",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Jinnah International Airport",
+    "label": "Karachi",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Cochin International Airport",
+    "label": "Kochi",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Calicut International Airport",
+    "label": "Kozhikode",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Kuwait International Airport",
+    "label": "Kuwait City",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Allama Iqbal International Airport",
+    "label": "Lahore",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Heathrow Airport",
+    "label": "London–Heathrow",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Chaudhary Charan Singh International Airport",
+    "label": "Lucknow",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Adolfo Suárez Madrid-Barajas Airport",
+    "label": "Madrid",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Ibrahim Nasir International Airport",
+    "label": "Male",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Ninoy Aquino International Airport",
+    "label": "Manila",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sir Seewoosagur Ramgoolam International Airport",
+    "label": "Mauritius",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Prince Mohammad Bin Abdulaziz Airport",
+    "label": "Medina",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sheremetyevo International Airport",
+    "label": "Moscow–Sheremetyevo",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Chhatrapati Shivaji Maharaj International Airport",
+    "label": "Mumbai–Shivaji",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Munich Airport",
+    "label": "Munich",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Muscat International Airport",
+    "label": "Muscat",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Najran Domestic Airport",
+    "label": "Najran",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Neom Airport",
+    "label": "Neom Bay",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "John F. Kennedy International Airport",
+    "label": "New York–JFK",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Charles de Gaulle Airport",
+    "label": "Paris–Charles de Gaulle",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Bacha Khan International Airport",
+    "label": "Peshawar",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Phuket International Airport",
+    "label": "Phuket",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Al Qaisumah/Hafr Al Batin Airport",
+    "label": "Qaisumah",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Rafha Domestic Airport",
+    "label": "Rafha",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Red Sea International Airport",
+    "label": "Red Sea",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Leonardo da Vinci-Fiumicino Airport",
+    "label": "Rome–Fiumicino",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sharm El Sheikh International Airport",
+    "label": "Sharm El Sheikh",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sharurah Domestic Airport",
+    "label": "Sharurah",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Tabuk Regional Airport",
+    "label": "Tabuk",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Ta’if Regional Airport",
+    "label": "Ta'if",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Turaif Domestic Airport",
+    "label": "Turaif",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Wadi al-Dawasir Domestic Airport",
+    "label": "Wadi al-Dawasir",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Dulles International Airport",
+    "label": "Washington–Dulles",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Yanbu Airport",
+    "label": "Yanbu",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Zurich Airport",
+    "label": "Zürich",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Amsterdam Airport Schiphol",
+    "label": "Amsterdam",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "Antalya Airport",
+    "label": "Antalya",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Josep Tarradellas Barcelona–El Prat Airport",
+    "label": "Barcelona",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Batumi International Airport",
+    "label": "Batumi",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "El Alamein International Airport",
+    "label": "El Alamein",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Adnan Menderes Airport",
+    "label": "Izmir",
+    "seasonal": true,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Soekarno–Hatta International Airport",
+    "label": "Jakarta–Soekarno-Hatta",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Larnaca International Airport",
+    "label": "Larnaca",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Sultan Hasanuddin International Airport",
+    "label": "Makassar",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "Málaga Airport",
+    "label": "Málaga",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Milan Malpensa Airport",
+    "label": "Milan–Malpensa",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Mykonos Airport",
+    "label": "Mykonos",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Nice Côte d'Azur Airport",
+    "label": "Nice",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Salalah International Airport",
+    "label": "Salalah",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "Juanda International Airport",
+    "label": "Surabaya",
+    "seasonal": true,
+    "sourced": false,
+    "cn": true,
+    "note": ""
+   },
+   {
+    "article": "Venice Marco Polo Airport",
+    "label": "Venice",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   },
+   {
+    "article": "Vienna International Airport",
+    "label": "Vienna",
+    "seasonal": true,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Serene Air",
+  "dests": [
+   {
+    "article": "Bacha Khan International Airport",
+    "label": "Peshawar",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "SriLankan Airlines",
+  "dests": [
+   {
+    "article": "Bandaranaike International Airport",
+    "label": "Colombo–Bandaranaike",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Tarco Aviation",
+  "dests": [
+   {
+    "article": "Port Sudan New International Airport",
+    "label": "Port Sudan",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Thai AirAsia X",
+  "dests": [
+   {
+    "article": "Don Mueang International Airport",
+    "label": "Bangkok–Don Mueang",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Turkish Airlines",
+  "dests": [
+   {
+    "article": "Istanbul Airport",
+    "label": "Istanbul",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "US-Bangla Airlines",
+  "dests": [
+   {
+    "article": "Hazrat Shahjalal International Airport",
+    "label": "Dhaka",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Virgin Atlantic",
+  "dests": [
+   {
+    "article": "Heathrow Airport",
+    "label": "London–Heathrow",
+    "seasonal": false,
+    "sourced": true,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ },
+ {
+  "airline": "Yemenia",
+  "dests": [
+   {
+    "article": "Aden International Airport",
+    "label": "Aden",
+    "seasonal": false,
+    "sourced": false,
+    "cn": false,
+    "note": ""
+   }
+  ]
+ }
+]

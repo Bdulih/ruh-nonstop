@@ -1,0 +1,1672 @@
+{
+ "Abha Regional Airport": {
+  "canon": "Abha International Airport",
+  "qid": "Q2743319",
+  "iata": "AHB",
+  "label": "Abha Regional Airport",
+  "coord": [
+   18.240366666667,
+   42.656625
+  ]
+ },
+ "Abu Dhabi International Airport": {
+  "canon": "Zayed International Airport",
+  "qid": "Q643562",
+  "iata": "AUH",
+  "label": "Zayed International Airport",
+  "coord": [
+   24.433055555556,
+   54.651111111111
+  ]
+ },
+ "Aden International Airport": {
+  "canon": "Aden International Airport",
+  "qid": "Q1398872",
+  "iata": "ADE",
+  "label": "Aden International Airport",
+  "coord": [
+   12.829541666667,
+   45.028791666667
+  ]
+ },
+ "Adnan Menderes Airport": {
+  "canon": "İzmir Adnan Menderes Airport",
+  "qid": "Q504382",
+  "iata": "ADB",
+  "label": "İzmir Adnan Menderes Airport",
+  "coord": [
+   38.289166666667,
+   27.155
+  ]
+ },
+ "Adolfo Suárez Madrid-Barajas Airport": {
+  "canon": "Madrid–Barajas Airport",
+  "qid": "Q166276",
+  "iata": "MAD",
+  "label": "Madrid-Barajas Airport",
+  "coord": [
+   40.472222222222,
+   -3.5608333333333
+  ]
+ },
+ "Al Maktoum International Airport": {
+  "canon": "Al Maktoum International Airport",
+  "qid": "Q1065223",
+  "iata": "DWC",
+  "label": "Dubai World Central – DWC",
+  "coord": [
+   24.886111111111,
+   55.172222222222
+  ]
+ },
+ "Al Qaisumah/Hafr Al Batin Airport": {
+  "canon": "Qaisumah–Hafar Al-Batin International Airport",
+  "qid": "Q2672944",
+  "iata": "AQI",
+  "label": "Qaisumah Domestic Airport",
+  "coord": [
+   28.335,
+   46.125
+  ]
+ },
+ "Al Wajh Domestic Airport": {
+  "canon": "Al-Wajh Domestic Airport",
+  "qid": "Q2672939",
+  "iata": "EJH",
+  "label": "Al Wajh International Airport",
+  "coord": [
+   26.198611111111,
+   36.476388888889
+  ]
+ },
+ "Al-Baha Domestic Airport": {
+  "canon": "King Saud Domestic Airport",
+  "qid": "Q2875749",
+  "iata": "ABT",
+  "label": "Al-Baha Domestic Airport",
+  "coord": [
+   20.296055555556,
+   41.634277777778
+  ]
+ },
+ "Al-Jawf Domestic Airport": {
+  "canon": "Al-Jouf International Airport",
+  "qid": "Q2875755",
+  "iata": "AJF",
+  "label": "Al-Jawf Domestic Airport",
+  "coord": [
+   29.785277777778,
+   40.099722222222
+  ]
+ },
+ "Allama Iqbal Airport": {
+  "canon": "Allama Iqbal International Airport",
+  "qid": "Q60879",
+  "iata": "LHE",
+  "label": "Allama Iqbal International Airport",
+  "coord": [
+   31.521388888889,
+   74.4025
+  ]
+ },
+ "Allama Iqbal International Airport": {
+  "canon": "Allama Iqbal International Airport",
+  "qid": "Q60879",
+  "iata": "LHE",
+  "label": "Allama Iqbal International Airport",
+  "coord": [
+   31.521388888889,
+   74.4025
+  ]
+ },
+ "Amsterdam Airport Schiphol": {
+  "canon": "Amsterdam Airport Schiphol",
+  "qid": "Q9694",
+  "iata": "AMS",
+  "label": "Amsterdam Schiphol Airport",
+  "coord": [
+   52.3081,
+   4.7641694444444
+  ]
+ },
+ "Antalya Airport": {
+  "canon": "Antalya Airport",
+  "qid": "Q827480",
+  "iata": "AYT",
+  "label": "Antalya Airport",
+  "coord": [
+   36.900277777778,
+   30.792777777778
+  ]
+ },
+ "Arar Domestic Airport": {
+  "canon": "Arar Domestic Airport",
+  "qid": "Q2875769",
+  "iata": "RAE",
+  "label": "Arar Domestic Airport",
+  "coord": [
+   30.906588888889,
+   41.138216666667
+  ]
+ },
+ "Assiut Airport": {
+  "canon": "Assiut Airport",
+  "qid": "Q2107478",
+  "iata": "ATZ",
+  "label": "Assiut Airport",
+  "coord": [
+   27.046389,
+   31.011944
+  ]
+ },
+ "Athens International Airport": {
+  "canon": "Athens International Airport",
+  "qid": "Q211734",
+  "iata": "ATH",
+  "label": "Athens International Airport \"Eleftherios Venizelos\"",
+  "coord": [
+   37.936388888889,
+   23.944444444444
+  ]
+ },
+ "Bacha Khan International Airport": {
+  "canon": "Bacha Khan International Airport",
+  "qid": "Q1516769",
+  "iata": "PEW",
+  "label": "Bacha Khan International Airport",
+  "coord": [
+   33.993888888889,
+   71.514722222222
+  ]
+ },
+ "Baghdad International Airport": {
+  "canon": "Baghdad International Airport",
+  "qid": "Q304438",
+  "iata": "BGW",
+  "label": "Baghdad International Airport",
+  "coord": [
+   33.2625,
+   44.234444444444
+  ]
+ },
+ "Bahrain International Airport": {
+  "canon": "Bahrain International Airport",
+  "qid": "Q637639",
+  "iata": "BAH",
+  "label": "Bahrain International Airport",
+  "coord": [
+   26.270833333333,
+   50.633611111111
+  ]
+ },
+ "Bandaranaike International Airport": {
+  "canon": "Bandaranaike International Airport",
+  "qid": "Q60900",
+  "iata": "CMB",
+  "label": "Bandaranaike International Airport",
+  "coord": [
+   7.1811111111111,
+   79.883611111111
+  ]
+ },
+ "Bangkok–Don Mueang": {
+  "canon": "Don Mueang International Airport",
+  "qid": "Q1046755",
+  "iata": "DMK",
+  "label": "Don Mueang International Airport",
+  "coord": [
+   13.9125,
+   100.60666666667
+  ]
+ },
+ "Bangkok–Suvarnabhumi": {
+  "canon": "Suvarnabhumi Airport",
+  "qid": "Q194316",
+  "iata": "BKK",
+  "label": "Suvarnabhumi Airport",
+  "coord": [
+   13.681111,
+   100.747222
+  ]
+ },
+ "Batumi International Airport": {
+  "canon": "Batumi International Airport",
+  "qid": "Q1200570",
+  "iata": "BUS",
+  "label": "Batumi International Airport",
+  "coord": [
+   41.610277777778,
+   41.599444444444
+  ]
+ },
+ "Beijing Capital International Airport": {
+  "canon": "Beijing Capital International Airport",
+  "qid": "Q32190",
+  "iata": "PEK",
+  "label": "Beijing Capital International Airport",
+  "coord": [
+   40.08,
+   116.58444444444
+  ]
+ },
+ "Beijing Daxing International Airport": {
+  "canon": "Beijing Daxing International Airport",
+  "qid": "Q1139574",
+  "iata": "PKX",
+  "label": "Beijing Daxing International Airport",
+  "coord": [
+   39.511944,
+   116.410556
+  ]
+ },
+ "Beijing–Capital": {
+  "canon": "Beijing Capital International Airport",
+  "qid": "Q32190",
+  "iata": "PEK",
+  "label": "Beijing Capital International Airport",
+  "coord": [
+   40.08,
+   116.58444444444
+  ]
+ },
+ "Beirut Rafic Hariri International Airport": {
+  "canon": "Beirut–Rafic Hariri International Airport",
+  "qid": "Q668329",
+  "iata": "BEY",
+  "label": "Beirut–Rafic Hariri International Airport",
+  "coord": [
+   33.821111111111,
+   35.488333333333
+  ]
+ },
+ "Beirut–Rafic Hariri International Airport": {
+  "canon": "Beirut–Rafic Hariri International Airport",
+  "qid": "Q668329",
+  "iata": "BEY",
+  "label": "Beirut–Rafic Hariri International Airport",
+  "coord": [
+   33.821111111111,
+   35.488333333333
+  ]
+ },
+ "Bisha Domestic Airport": {
+  "canon": "Bisha Domestic Airport",
+  "qid": "Q598699",
+  "iata": "BHH",
+  "label": "Bisha Domestic Airport",
+  "coord": [
+   19.984444444444,
+   42.620833333333
+  ]
+ },
+ "Bole International Airport": {
+  "canon": "Addis Ababa Bole International Airport",
+  "qid": "Q44923",
+  "iata": "ADD",
+  "label": "Addis Ababa Bole International Airport",
+  "coord": [
+   8.9777777777778,
+   38.799444444444
+  ]
+ },
+ "Borg El Arab Airport": {
+  "canon": "Alexandria International Airport (Egypt)",
+  "qid": "Q1194015",
+  "iata": "HBE",
+  "label": "Alexandria International Airport",
+  "coord": [
+   30.930055555555555,
+   29.699194444444444
+  ]
+ },
+ "Borg El Arab International Airport": {
+  "canon": "Alexandria International Airport (Egypt)",
+  "qid": "Q1194015",
+  "iata": "HBE",
+  "label": "Alexandria International Airport",
+  "coord": [
+   30.930055555555555,
+   29.699194444444444
+  ]
+ },
+ "Cairo International Airport": {
+  "canon": "Cairo International Airport",
+  "qid": "Q461793",
+  "iata": "CAI",
+  "label": "Cairo International Airport",
+  "coord": [
+   30.121944444444,
+   31.405555555556
+  ]
+ },
+ "Calicut International Airport": {
+  "canon": "Calicut International Airport",
+  "qid": "Q573547",
+  "iata": "CCJ",
+  "label": "Calicut International Airport",
+  "coord": [
+   11.136111111111111,
+   75.955
+  ]
+ },
+ "Changi Airport": {
+  "canon": "Changi Airport",
+  "qid": "Q32159",
+  "iata": "SIN",
+  "label": "Singapore Changi Airport",
+  "coord": [
+   1.359167,
+   103.989444
+  ]
+ },
+ "Charles de Gaulle Airport": {
+  "canon": "Charles de Gaulle Airport",
+  "qid": "Q46280",
+  "iata": "CDG",
+  "label": "Paris-Charles de Gaulle Airport",
+  "coord": [
+   49.009722222222,
+   2.5477777777778
+  ]
+ },
+ "Chaudhary Charan Singh Airport": {
+  "canon": "Chaudhary Charan Singh International Airport",
+  "qid": "Q2672666",
+  "iata": "LKO",
+  "label": "Chaudhary Charan Singh Airport",
+  "coord": [
+   26.76194444,
+   80.88333333
+  ]
+ },
+ "Chaudhary Charan Singh International Airport": {
+  "canon": "Chaudhary Charan Singh International Airport",
+  "qid": "Q2672666",
+  "iata": "LKO",
+  "label": "Chaudhary Charan Singh Airport",
+  "coord": [
+   26.76194444,
+   80.88333333
+  ]
+ },
+ "Chhatrapati Shivaji International Airport": {
+  "canon": "Chhatrapati Shivaji Maharaj International Airport",
+  "qid": "Q504368",
+  "iata": "BOM",
+  "label": "Chhatrapati Shivaji Maharaj International Airport",
+  "coord": [
+   19.088611111111,
+   72.868055555556
+  ]
+ },
+ "Chhatrapati Shivaji Maharaj International Airport": {
+  "canon": "Chhatrapati Shivaji Maharaj International Airport",
+  "qid": "Q504368",
+  "iata": "BOM",
+  "label": "Chhatrapati Shivaji Maharaj International Airport",
+  "coord": [
+   19.088611111111,
+   72.868055555556
+  ]
+ },
+ "Cochin International Airport": {
+  "canon": "Cochin International Airport",
+  "qid": "Q592172",
+  "iata": "COK",
+  "label": "Cochin International Airport",
+  "coord": [
+   10.15194444,
+   76.40194444
+  ]
+ },
+ "Damascus International Airport": {
+  "canon": "Damascus International Airport",
+  "qid": "Q570873",
+  "iata": "DAM",
+  "label": "Damascus International Airport",
+  "coord": [
+   33.411522222222,
+   36.515558333333
+  ]
+ },
+ "Dawadmi Domestic Airport": {
+  "canon": "Dawadmi Domestic Airport",
+  "qid": "Q961475",
+  "iata": "DWD",
+  "label": "Dawadmi Domestic Airport",
+  "coord": [
+   24.449722222222,
+   44.121111111111
+  ]
+ },
+ "Don Mueang International Airport": {
+  "canon": "Don Mueang International Airport",
+  "qid": "Q1046755",
+  "iata": "DMK",
+  "label": "Don Mueang International Airport",
+  "coord": [
+   13.9125,
+   100.60666666667
+  ]
+ },
+ "Dubai International Airport": {
+  "canon": "Dubai International Airport",
+  "qid": "Q193439",
+  "iata": "DXB",
+  "label": "Dubai International Airport",
+  "coord": [
+   25.252777777778,
+   55.364444444444
+  ]
+ },
+ "Dulles International Airport": {
+  "canon": "Dulles International Airport",
+  "qid": "Q466835",
+  "iata": "IAD",
+  "label": "Washington Dulles International Airport",
+  "coord": [
+   38.944444,
+   -77.455833
+  ]
+ },
+ "El Alamein International Airport": {
+  "canon": "El Alamein International Airport",
+  "qid": "Q11824194",
+  "iata": "DBB",
+  "label": "El Alamein International Airport",
+  "coord": [
+   30.92505,
+   28.46068
+  ]
+ },
+ "Entebbe International Airport": {
+  "canon": "Entebbe International Airport",
+  "qid": "Q586065",
+  "iata": "EBB",
+  "label": "Entebbe International Airport",
+  "coord": [
+   0.044722222222222,
+   32.443055555556
+  ]
+ },
+ "Frankfurt Airport": {
+  "canon": "Frankfurt Airport",
+  "qid": "Q46033",
+  "iata": "FRA",
+  "label": "Frankfurt Airport",
+  "coord": [
+   50.03330555555556,
+   8.570455555555556
+  ]
+ },
+ "Geneva Airport": {
+  "canon": "Geneva Airport",
+  "qid": "Q289972",
+  "iata": "GVA",
+  "label": "Geneva International Airport",
+  "coord": [
+   46.23833333333334,
+   6.109444444444445
+  ]
+ },
+ "Guangzhou Baiyun International Airport": {
+  "canon": "Guangzhou Baiyun International Airport",
+  "qid": "Q44868",
+  "iata": "CAN",
+  "label": "Guangzhou Baiyun International Airport",
+  "coord": [
+   23.392436111111,
+   113.29878611111
+  ]
+ },
+ "Gurayat Domestic Airport": {
+  "canon": "Gurayat Domestic Airport",
+  "qid": "Q2743310",
+  "iata": "URY",
+  "label": "Gurayat Domestic Airport",
+  "coord": [
+   31.411944444444,
+   37.279444444444
+  ]
+ },
+ "Ha'il Regional Airport": {
+  "canon": "Hail International Airport",
+  "qid": "Q2876123",
+  "iata": "HAS",
+  "label": "Ha'il Regional Airport",
+  "coord": [
+   27.439722222222,
+   41.686388888889
+  ]
+ },
+ "Hamad International Airport": {
+  "canon": "Hamad International Airport",
+  "qid": "Q1198791",
+  "iata": "DOH",
+  "label": "Hamad International Airport",
+  "coord": [
+   25.273055555556,
+   51.608055555556
+  ]
+ },
+ "Hartsfield–Jackson Atlanta International Airport": {
+  "canon": "Hartsfield–Jackson Atlanta International Airport",
+  "qid": "Q214861",
+  "iata": "ATL",
+  "label": "Hartsfield–Jackson Atlanta International Airport",
+  "coord": [
+   33.636666666667,
+   -84.428055555556
+  ]
+ },
+ "Hatay Airport": {
+  "canon": "Hatay Airport",
+  "qid": "Q1430806",
+  "iata": "HTY",
+  "label": "Hatay Airport",
+  "coord": [
+   36.362777777778,
+   36.282222222222
+  ]
+ },
+ "Hazrat Shahjalal International Airport": {
+  "canon": "Hazrat Shahjalal International Airport",
+  "qid": "Q30603",
+  "iata": "DAC",
+  "label": "Hazrat Shahjalal International Airport",
+  "coord": [
+   23.845,
+   90.4005
+  ]
+ },
+ "Heathrow Airport": {
+  "canon": "Heathrow Airport",
+  "qid": "Q8691",
+  "iata": "LHR",
+  "label": "London Heathrow Airport",
+  "coord": [
+   51.4775,
+   -0.461389
+  ]
+ },
+ "Heydar Aliev International Airport": {
+  "canon": "Heydar Aliyev International Airport",
+  "qid": "Q386864",
+  "iata": "GYD",
+  "label": "Heydar Aliyev International Airport",
+  "coord": [
+   40.4675,
+   50.046666666667
+  ]
+ },
+ "Heydar Aliyev International Airport": {
+  "canon": "Heydar Aliyev International Airport",
+  "qid": "Q386864",
+  "iata": "GYD",
+  "label": "Heydar Aliyev International Airport",
+  "coord": [
+   40.4675,
+   50.046666666667
+  ]
+ },
+ "Hong Kong International Airport": {
+  "canon": "Hong Kong International Airport",
+  "qid": "Q17704",
+  "iata": "HKG",
+  "label": "Hong Kong International Airport",
+  "coord": [
+   22.308889,
+   113.914444
+  ]
+ },
+ "Hurghada International Airport": {
+  "canon": "Hurghada International Airport",
+  "qid": "Q385191",
+  "iata": "HRG",
+  "label": "Hurghada International Airport",
+  "coord": [
+   27.178056,
+   33.799167
+  ]
+ },
+ "Ibrahim Nasir International Airport": {
+  "canon": "Velana International Airport",
+  "qid": "Q29104",
+  "iata": "MLE",
+  "label": "Velana International Airport",
+  "coord": [
+   4.191833,
+   73.529111
+  ]
+ },
+ "Indira Gandhi International Airport": {
+  "canon": "Indira Gandhi International Airport",
+  "qid": "Q821275",
+  "iata": "DEL",
+  "label": "Indira Gandhi International Airport",
+  "coord": [
+   28.5574,
+   77.0833
+  ]
+ },
+ "Islamabad International Airport": {
+  "canon": "Islamabad International Airport",
+  "qid": "Q1190316",
+  "iata": "ISB",
+  "label": "Islamabad International Airport",
+  "coord": [
+   33.55361111111111,
+   72.83472222222223
+  ]
+ },
+ "Istanbul Airport": {
+  "canon": "Istanbul Airport",
+  "qid": "Q3661908",
+  "iata": "IST",
+  "label": "Istanbul Airport",
+  "coord": [
+   41.260833333333,
+   28.742222222222
+  ]
+ },
+ "Istanbul Sabiha Gökçen International Airport": {
+  "canon": "Sabiha Gökçen International Airport",
+  "qid": "Q723622",
+  "iata": "SAW",
+  "label": "Istanbul Sabiha Gökçen International Airport",
+  "coord": [
+   40.898333333333,
+   29.309166666667
+  ]
+ },
+ "Istanbul–Sabiha Gökçen": {
+  "canon": "Sabiha Gökçen International Airport",
+  "qid": "Q723622",
+  "iata": "SAW",
+  "label": "Istanbul Sabiha Gökçen International Airport",
+  "coord": [
+   40.898333333333,
+   29.309166666667
+  ]
+ },
+ "Jinnah International Airport": {
+  "canon": "Jinnah International Airport",
+  "qid": "Q61052",
+  "iata": "KHI",
+  "label": "Jinnah International Airport",
+  "coord": [
+   24.906666666667,
+   67.160833333333
+  ]
+ },
+ "Jizan Regional Airport": {
+  "canon": "King Abdullah International Airport",
+  "qid": "Q2672950",
+  "iata": "GIZ",
+  "label": "Jizan Regional Airport",
+  "coord": [
+   16.901111111111,
+   42.585833333333
+  ]
+ },
+ "John F. Kennedy International Airport": {
+  "canon": "John F. Kennedy International Airport",
+  "qid": "Q8685",
+  "iata": "JFK",
+  "label": "John F. Kennedy International Airport",
+  "coord": [
+   40.64,
+   -73.78
+  ]
+ },
+ "Jomo Kenyatta International Airport": {
+  "canon": "Jomo Kenyatta International Airport",
+  "qid": "Q206349",
+  "iata": "NBO",
+  "label": "Jomo Kenyatta International Airport",
+  "coord": [
+   -1.319167,
+   36.9275
+  ]
+ },
+ "Josep Tarradellas Barcelona–El Prat Airport": {
+  "canon": "Josep Tarradellas Barcelona–El Prat Airport",
+  "qid": "Q56973",
+  "iata": "BCN",
+  "label": "Josep Tarradellas Airport Barcelona-El Prat",
+  "coord": [
+   41.296944,
+   2.078333
+  ]
+ },
+ "Juanda International Airport": {
+  "canon": "Juanda International Airport",
+  "qid": "Q1431631",
+  "iata": "SUB",
+  "label": "Juanda International Airport",
+  "coord": [
+   -7.38,
+   112.7855
+  ]
+ },
+ "Kabul International Airport": {
+  "canon": "Kabul International Airport",
+  "qid": "Q744802",
+  "iata": "KBL",
+  "label": "Kabul International Airport",
+  "coord": [
+   34.565861111111,
+   69.212305555556
+  ]
+ },
+ "Kannur International Airport": {
+  "canon": "Kannur International Airport",
+  "qid": "Q3595649",
+  "iata": "CNN",
+  "label": "Kannur International Airport",
+  "coord": [
+   11.919885,
+   75.548043
+  ]
+ },
+ "Kempegowda International Airport": {
+  "canon": "Kempegowda International Airport",
+  "qid": "Q503364",
+  "iata": "BLR",
+  "label": "Kempegowda International Airport",
+  "coord": [
+   13.198888888889,
+   77.705555555556
+  ]
+ },
+ "King Abdul Aziz International Airport": {
+  "canon": "King Abdulaziz International Airport",
+  "qid": "Q153592",
+  "iata": "JED",
+  "label": "King Abdulaziz International Airport",
+  "coord": [
+   21.661694444444443,
+   39.173027777777776
+  ]
+ },
+ "King Abdulaziz International Airport": {
+  "canon": "King Abdulaziz International Airport",
+  "qid": "Q153592",
+  "iata": "JED",
+  "label": "King Abdulaziz International Airport",
+  "coord": [
+   21.661694444444443,
+   39.173027777777776
+  ]
+ },
+ "King Fahd International Airport": {
+  "canon": "King Fahd International Airport",
+  "qid": "Q911155",
+  "iata": "DMM",
+  "label": "King Fahd International Airport",
+  "coord": [
+   26.471111111111,
+   49.797777777778
+  ]
+ },
+ "King Hussein International Airport": {
+  "canon": "King Hussein International Airport",
+  "qid": "Q1430839",
+  "iata": "AQJ",
+  "label": "King Hussein International Airport",
+  "coord": [
+   29.611619444444,
+   35.018066666667
+  ]
+ },
+ "Kozhikode International Airport": {
+  "canon": "Calicut International Airport",
+  "qid": "Q573547",
+  "iata": "CCJ",
+  "label": "Calicut International Airport",
+  "coord": [
+   11.136111111111111,
+   75.955
+  ]
+ },
+ "Kraków John Paul II International Airport": {
+  "canon": "Kraków John Paul II International Airport",
+  "qid": "Q581545",
+  "iata": "KRK",
+  "label": "John Paul II International Airport Kraków-Balice",
+  "coord": [
+   50.077777777778,
+   19.784722222222
+  ]
+ },
+ "Kuala Lumpur International Airport": {
+  "canon": "Kuala Lumpur International Airport",
+  "qid": "Q500253",
+  "iata": "KUL",
+  "label": "Kuala Lumpur International Airport",
+  "coord": [
+   2.745556,
+   101.709722
+  ]
+ },
+ "Kuwait International Airport": {
+  "canon": "Kuwait International Airport",
+  "qid": "Q527157",
+  "iata": "KWI",
+  "label": "Kuwait International Airport",
+  "coord": [
+   29.226777777778,
+   47.979972222222
+  ]
+ },
+ "Larnaca International Airport": {
+  "canon": "Larnaca International Airport",
+  "qid": "Q654636",
+  "iata": "LCA",
+  "label": "Larnaca International Airport",
+  "coord": [
+   34.878888888889,
+   33.630277777778
+  ]
+ },
+ "Leonardo da Vinci-Fiumicino Airport": {
+  "canon": "Rome Fiumicino Airport",
+  "qid": "Q19101",
+  "iata": "FCO",
+  "label": "Roma Fiumicino Airport",
+  "coord": [
+   41.7956,
+   12.2499
+  ]
+ },
+ "Leonardo da Vinci–Fiumicino Airport": {
+  "canon": "Rome Fiumicino Airport",
+  "qid": "Q19101",
+  "iata": "FCO",
+  "label": "Roma Fiumicino Airport",
+  "coord": [
+   41.7956,
+   12.2499
+  ]
+ },
+ "London–Heathrow": {
+  "canon": "Heathrow Airport",
+  "qid": "Q8691",
+  "iata": "LHR",
+  "label": "London Heathrow Airport",
+  "coord": [
+   51.4775,
+   -0.461389
+  ]
+ },
+ "Madrid-Barajas Airport": {
+  "canon": "Madrid–Barajas Airport",
+  "qid": "Q166276",
+  "iata": "MAD",
+  "label": "Madrid-Barajas Airport",
+  "coord": [
+   40.472222222222,
+   -3.5608333333333
+  ]
+ },
+ "Manchester Airport": {
+  "canon": "Manchester Airport",
+  "qid": "Q8694",
+  "iata": "MAN",
+  "label": "Manchester Airport",
+  "coord": [
+   53.353889,
+   -2.275
+  ]
+ },
+ "Milan Bergamo Airport": {
+  "canon": "Milan Bergamo Airport",
+  "qid": "Q517873",
+  "iata": "BGY",
+  "label": "Bergamo-Il Caravaggio",
+  "coord": [
+   45.66547,
+   9.69948
+  ]
+ },
+ "Milan Malpensa Airport": {
+  "canon": "Milan Malpensa Airport",
+  "qid": "Q60910",
+  "iata": "MXP",
+  "label": "Milan–Malpensa \"Silvio Berlusconi\" Airport",
+  "coord": [
+   45.63,
+   8.7230555555556
+  ]
+ },
+ "Milan–Malpensa": {
+  "canon": "Milan Malpensa Airport",
+  "qid": "Q60910",
+  "iata": "MXP",
+  "label": "Milan–Malpensa \"Silvio Berlusconi\" Airport",
+  "coord": [
+   45.63,
+   8.7230555555556
+  ]
+ },
+ "Milas-Bodrum Airport": {
+  "canon": "Milas–Bodrum Airport",
+  "qid": "Q766860",
+  "iata": "BJV",
+  "label": "Milas-Bodrum Airport",
+  "coord": [
+   37.250555555556,
+   27.664166666667
+  ]
+ },
+ "Milas–Bodrum Airport": {
+  "canon": "Milas–Bodrum Airport",
+  "qid": "Q766860",
+  "iata": "BJV",
+  "label": "Milas-Bodrum Airport",
+  "coord": [
+   37.250555555556,
+   27.664166666667
+  ]
+ },
+ "Mohammed V International Airport": {
+  "canon": "Mohammed V International Airport",
+  "qid": "Q955433",
+  "iata": "CMN",
+  "label": "Mohammed V International Airport",
+  "coord": [
+   33.364167,
+   -7.581667
+  ]
+ },
+ "Moscow–Sheremetyevo": {
+  "canon": "Sheremetyevo International Airport",
+  "qid": "Q192733",
+  "iata": "SVO",
+  "label": "Sheremetyevo International Airport",
+  "coord": [
+   55.97277777777778,
+   37.414722222222224
+  ]
+ },
+ "Moscow–Vnukovo": {
+  "canon": "Vnukovo International Airport",
+  "qid": "Q273462",
+  "iata": "VKO",
+  "label": "Vnukovo International Airport",
+  "coord": [
+   55.596111111111,
+   37.2675
+  ]
+ },
+ "Multan International Airport": {
+  "canon": "Multan International Airport",
+  "qid": "Q31569",
+  "iata": "MUX",
+  "label": "Multan International Airport",
+  "coord": [
+   30.203333333333,
+   71.419166666667
+  ]
+ },
+ "Munich Airport": {
+  "canon": "Munich Airport",
+  "qid": "Q131402",
+  "iata": "MUC",
+  "label": "Munich Airport",
+  "coord": [
+   48.35378333333333,
+   11.78608611111111
+  ]
+ },
+ "Muscat International Airport": {
+  "canon": "Muscat International Airport",
+  "qid": "Q1133357",
+  "iata": "MCT",
+  "label": "Muscat International Airport",
+  "coord": [
+   23.60096,
+   58.28692
+  ]
+ },
+ "Mykonos Airport": {
+  "canon": "Mykonos Airport",
+  "qid": "Q1432110",
+  "iata": "JMK",
+  "label": "Mykonos National Airport \"Manto Mavrogeni\"",
+  "coord": [
+   37.435111,
+   25.348083
+  ]
+ },
+ "Málaga Airport": {
+  "canon": "Málaga Airport",
+  "qid": "Q690894",
+  "iata": "AGP",
+  "label": "Málaga-Costa del Sol",
+  "coord": [
+   36.675,
+   -4.499167
+  ]
+ },
+ "Najran Domestic Airport": {
+  "canon": "Najran Regional Airport",
+  "qid": "Q1528888",
+  "iata": "EAM",
+  "label": "Najran Domestic Airport",
+  "coord": [
+   17.611388888889,
+   44.419166666667
+  ]
+ },
+ "Narita International Airport": {
+  "canon": "Narita International Airport",
+  "qid": "Q36454",
+  "iata": "NRT",
+  "label": "Narita International Airport",
+  "coord": [
+   35.7649,
+   140.38845
+  ]
+ },
+ "Neom Airport": {
+  "canon": "Neom Bay Airport",
+  "qid": "Q63122768",
+  "iata": "NUM",
+  "label": "Neom Airport",
+  "coord": [
+   27.928611,
+   35.296111
+  ]
+ },
+ "New York–JFK": {
+  "canon": "John F. Kennedy International Airport",
+  "qid": "Q8685",
+  "iata": "JFK",
+  "label": "John F. Kennedy International Airport",
+  "coord": [
+   40.64,
+   -73.78
+  ]
+ },
+ "Nice Côte d'Azur Airport": {
+  "canon": "Nice Côte d'Azur Airport",
+  "qid": "Q821557",
+  "iata": "NCE",
+  "label": "Nice Côte d'Azur Airport",
+  "coord": [
+   43.665277777778,
+   7.215
+  ]
+ },
+ "Ninoy Aquino International Airport": {
+  "canon": "Ninoy Aquino International Airport",
+  "qid": "Q86446",
+  "iata": "MNL",
+  "label": "Ninoy Aquino International Airport",
+  "coord": [
+   14.508611,
+   121.019444
+  ]
+ },
+ "Paris–Charles de Gaulle": {
+  "canon": "Charles de Gaulle Airport",
+  "qid": "Q46280",
+  "iata": "CDG",
+  "label": "Paris-Charles de Gaulle Airport",
+  "coord": [
+   49.009722222222,
+   2.5477777777778
+  ]
+ },
+ "Phuket International Airport": {
+  "canon": "Phuket International Airport",
+  "qid": "Q240694",
+  "iata": "HKT",
+  "label": "Phuket International Airport",
+  "coord": [
+   8.113333,
+   98.316944
+  ]
+ },
+ "Port Sudan New International Airport": {
+  "canon": "Port Sudan New International Airport",
+  "qid": "Q1431022",
+  "iata": "PZU",
+  "label": "Port Sudan New International Airport",
+  "coord": [
+   19.433638888889,
+   37.234075
+  ]
+ },
+ "Prince Abdul Majeed bin Abdul Aziz Domestic Airport": {
+  "canon": "Al-Ula International Airport",
+  "qid": "Q4120431",
+  "iata": "ULH",
+  "label": "Al Ula International Airport",
+  "coord": [
+   26.48333333,
+   38.11694444
+  ]
+ },
+ "Prince Mohammad Bin Abdulaziz Airport": {
+  "canon": "Prince Mohammad bin Abdulaziz International Airport",
+  "qid": "Q1205940",
+  "iata": "MED",
+  "label": "Prince Mohammad Bin Abdulaziz International Airport",
+  "coord": [
+   24.55175,
+   39.71425
+  ]
+ },
+ "Prince Mohammad Bin Abdulaziz International Airport": {
+  "canon": "Prince Mohammad bin Abdulaziz International Airport",
+  "qid": "Q1205940",
+  "iata": "MED",
+  "label": "Prince Mohammad Bin Abdulaziz International Airport",
+  "coord": [
+   24.55175,
+   39.71425
+  ]
+ },
+ "Prince Nayef Regional Airport": {
+  "canon": "Prince Naif bin Abdulaziz International Airport",
+  "qid": "Q2672934",
+  "iata": "ELQ",
+  "label": "Prince Naif bin Abdulaziz International Airport",
+  "coord": [
+   26.302777777778,
+   43.774166666667
+  ]
+ },
+ "Prince Nayef bin Abdulaziz Regional Airport": {
+  "canon": "Prince Naif bin Abdulaziz International Airport",
+  "qid": "Q2672934",
+  "iata": "ELQ",
+  "label": "Prince Naif bin Abdulaziz International Airport",
+  "coord": [
+   26.302777777778,
+   43.774166666667
+  ]
+ },
+ "Queen Alia International Airport": {
+  "canon": "Queen Alia International Airport",
+  "qid": "Q721494",
+  "iata": "AMM",
+  "label": "Queen Alia International Airport",
+  "coord": [
+   31.7225,
+   35.993333333333
+  ]
+ },
+ "Rafha Domestic Airport": {
+  "canon": "Rafha Domestic Airport",
+  "qid": "Q2743307",
+  "iata": "RAH",
+  "label": "Rafha Domestic Airport",
+  "coord": [
+   29.626388888889,
+   43.490555555556
+  ]
+ },
+ "Rajiv Gandhi International Airport": {
+  "canon": "Rajiv Gandhi International Airport",
+  "qid": "Q278667",
+  "iata": "HYD",
+  "label": "Rajiv Gandhi International Airport",
+  "coord": [
+   17.2386,
+   78.4294
+  ]
+ },
+ "Red Sea International Airport": {
+  "canon": "Red Sea International Airport",
+  "qid": "Q96675015",
+  "iata": "RSI",
+  "label": "Red Sea International Airport",
+  "coord": [
+   25.630277777777778,
+   37.07833333333333
+  ]
+ },
+ "Rize–Artvin Airport": {
+  "canon": "Rize–Artvin Airport",
+  "qid": "Q25477794",
+  "iata": "RZV",
+  "label": "Rize–Artvin Airport",
+  "coord": [
+   41.175555555555555,
+   40.845
+  ]
+ },
+ "Rome–Fiumicino": {
+  "canon": "Rome Fiumicino Airport",
+  "qid": "Q19101",
+  "iata": "FCO",
+  "label": "Roma Fiumicino Airport",
+  "coord": [
+   41.7956,
+   12.2499
+  ]
+ },
+ "Salalah International Airport": {
+  "canon": "Salalah International Airport",
+  "qid": "Q1432681",
+  "iata": "SLL",
+  "label": "Salalah Airport",
+  "coord": [
+   17.038888888889,
+   54.092222222222
+  ]
+ },
+ "Salzburg Airport": {
+  "canon": "Salzburg Airport",
+  "qid": "Q251538",
+  "iata": "SZG",
+  "label": "Salzburg Airport",
+  "coord": [
+   47.794444444444,
+   13.003333333333
+  ]
+ },
+ "Santorini (Thira) International Airport": {
+  "canon": "Santorini International Airport",
+  "qid": "Q1432775",
+  "iata": "JTR",
+  "label": "Santorini (Thira) National Airport",
+  "coord": [
+   36.399169444444,
+   25.479333333333
+  ]
+ },
+ "Sarajevo International Airport": {
+  "canon": "Sarajevo International Airport",
+  "qid": "Q740392",
+  "iata": "SJJ",
+  "label": "Sarajevo International Airport (SJJ)",
+  "coord": [
+   43.824722222222,
+   18.331388888889
+  ]
+ },
+ "Shahjalal International Airport": {
+  "canon": "Hazrat Shahjalal International Airport",
+  "qid": "Q30603",
+  "iata": "DAC",
+  "label": "Hazrat Shahjalal International Airport",
+  "coord": [
+   23.845,
+   90.4005
+  ]
+ },
+ "Shanghai Pudong International Airport": {
+  "canon": "Shanghai Pudong International Airport",
+  "qid": "Q36420",
+  "iata": "PVG",
+  "label": "Shanghai Pudong International Airport",
+  "coord": [
+   31.143333,
+   121.805278
+  ]
+ },
+ "Sharjah International Airport": {
+  "canon": "Sharjah International Airport",
+  "qid": "Q635826",
+  "iata": "SHJ",
+  "label": "Sharjah International Airport",
+  "coord": [
+   25.328611111111,
+   55.517222222222
+  ]
+ },
+ "Sharm El Sheikh International Airport": {
+  "canon": "Sharm El Sheikh International Airport",
+  "qid": "Q326268",
+  "iata": "SSH",
+  "label": "Sharm el-Sheikh International Airport",
+  "coord": [
+   27.977222,
+   34.394722
+  ]
+ },
+ "Sharurah Domestic Airport": {
+  "canon": "Sharurah Domestic Airport",
+  "qid": "Q2876026",
+  "iata": "SHW",
+  "label": "Sharurah Domestic Airport",
+  "coord": [
+   17.466944444444,
+   47.121111111111
+  ]
+ },
+ "Shenzhen Bao'an International Airport": {
+  "canon": "Shenzhen Bao'an International Airport",
+  "qid": "Q842297",
+  "iata": "SZX",
+  "label": "Shenzhen Bao'an International Airport",
+  "coord": [
+   22.639444444444,
+   113.81083333333
+  ]
+ },
+ "Sheremetyevo International Airport": {
+  "canon": "Sheremetyevo International Airport",
+  "qid": "Q192733",
+  "iata": "SVO",
+  "label": "Sheremetyevo International Airport",
+  "coord": [
+   55.97277777777778,
+   37.414722222222224
+  ]
+ },
+ "Sialkot International Airport": {
+  "canon": "Sialkot International Airport",
+  "qid": "Q28461",
+  "iata": "SKT",
+  "label": "Sialkot International Airport",
+  "coord": [
+   32.535555555556,
+   74.363888888889
+  ]
+ },
+ "Sir Seewoosagur Ramgoolam International Airport": {
+  "canon": "Sir Seewoosagur Ramgoolam International Airport",
+  "qid": "Q36460",
+  "iata": "MRU",
+  "label": "Sir Seewoosagur Ramgoolam International Airport",
+  "coord": [
+   -20.430027777778,
+   57.683022222222
+  ]
+ },
+ "Sochi International Airport": {
+  "canon": "Sochi International Airport",
+  "qid": "Q1138408",
+  "iata": "AER",
+  "label": "Sochi International Airport",
+  "coord": [
+   43.45,
+   39.956666666667
+  ]
+ },
+ "Soekarno–Hatta International Airport": {
+  "canon": "Soekarno–Hatta International Airport",
+  "qid": "Q749497",
+  "iata": "CGK",
+  "label": "Soekarno–Hatta International Airport",
+  "coord": [
+   -6.127361,
+   106.653833
+  ]
+ },
+ "Sohag International Airport": {
+  "canon": "Sohag International Airport",
+  "qid": "Q4115512",
+  "iata": "HMB",
+  "label": "Sohag International Airport",
+  "coord": [
+   26.339919444444,
+   31.739330555556
+  ]
+ },
+ "Sphinx International Airport": {
+  "canon": "Sphinx International Airport",
+  "qid": "Q28716932",
+  "iata": "SPX",
+  "label": "Sphinx International Airport",
+  "coord": [
+   30.10972222,
+   30.89444444
+  ]
+ },
+ "Sultan Hasanuddin International Airport": {
+  "canon": "Sultan Hasanuddin International Airport",
+  "qid": "Q1432006",
+  "iata": "UPG",
+  "label": "Sultan Hasanuddin International Airport",
+  "coord": [
+   -5.0616666666667,
+   119.55416666667
+  ]
+ },
+ "Suvarnabhumi Airport": {
+  "canon": "Suvarnabhumi Airport",
+  "qid": "Q194316",
+  "iata": "BKK",
+  "label": "Suvarnabhumi Airport",
+  "coord": [
+   13.681111,
+   100.747222
+  ]
+ },
+ "Tabuk Regional Airport": {
+  "canon": "Prince Sultan bin Abdulaziz Airport",
+  "qid": "Q2876145",
+  "iata": "TUU",
+  "label": "Tabuk Regional Airport",
+  "coord": [
+   28.365555555556,
+   36.618888888889
+  ]
+ },
+ "Tashkent International Airport": {
+  "canon": "Tashkent International Airport",
+  "qid": "Q860952",
+  "iata": "TAS",
+  "label": "Tashkent International Airport",
+  "coord": [
+   41.257861111111,
+   69.281186111111
+  ]
+ },
+ "Ta’if Regional Airport": {
+  "canon": "Taif International Airport",
+  "qid": "Q2876136",
+  "iata": "TIF",
+  "label": "Ta’if Regional Airport",
+  "coord": [
+   21.483333333333,
+   40.544444444444
+  ]
+ },
+ "Tbilisi International Airport": {
+  "canon": "Tbilisi International Airport",
+  "qid": "Q778213",
+  "iata": "TBS",
+  "label": "Tbilisi International Airport",
+  "coord": [
+   41.669166666667,
+   44.954722222222
+  ]
+ },
+ "Thiruvananthapuram International Airport": {
+  "canon": "Thiruvananthapuram International Airport",
+  "qid": "Q1466205",
+  "iata": "TRV",
+  "label": "Thiruvananthapuram International Airport",
+  "coord": [
+   8.4822222222222,
+   76.92
+  ]
+ },
+ "Tirana International Airport Nënë Tereza": {
+  "canon": "Tirana International Airport Nënë Tereza",
+  "qid": "Q217226",
+  "iata": "TIA",
+  "label": "Tirana International Airport Nënë Tereza",
+  "coord": [
+   41.414722222222224,
+   19.720555555555556
+  ]
+ },
+ "Tivat Airport": {
+  "canon": "Tivat Airport",
+  "qid": "Q659349",
+  "iata": "TIV",
+  "label": "Tivat Airport",
+  "coord": [
+   42.404722222222,
+   18.723333333333
+  ]
+ },
+ "Trabzon Airport": {
+  "canon": "Trabzon Airport",
+  "qid": "Q1169859",
+  "iata": "TZX",
+  "label": "Trabzon Airport",
+  "coord": [
+   40.9951,
+   39.7897
+  ]
+ },
+ "Tribhuvan International Airport": {
+  "canon": "Tribhuvan International Airport",
+  "qid": "Q61066",
+  "iata": "KTM",
+  "label": "Tribhuvan International Airport",
+  "coord": [
+   27.697222222222,
+   85.357777777778
+  ]
+ },
+ "Turaif Domestic Airport": {
+  "canon": "Turaif Domestic Airport",
+  "qid": "Q2743305",
+  "iata": "TUI",
+  "label": "Turaif Domestic Airport",
+  "coord": [
+   31.692777777778,
+   38.731111111111
+  ]
+ },
+ "Velana International Airport": {
+  "canon": "Velana International Airport",
+  "qid": "Q29104",
+  "iata": "MLE",
+  "label": "Velana International Airport",
+  "coord": [
+   4.191833,
+   73.529111
+  ]
+ },
+ "Venice Marco Polo Airport": {
+  "canon": "Venice Marco Polo Airport",
+  "qid": "Q849347",
+  "iata": "VCE",
+  "label": "Venice Marco Polo Airport",
+  "coord": [
+   45.505277777778,
+   12.351944444444
+  ]
+ },
+ "Vienna International Airport": {
+  "canon": "Vienna International Airport",
+  "qid": "Q32999",
+  "iata": "VIE",
+  "label": "Wien-Schwechat Airport",
+  "coord": [
+   48.110277777777775,
+   16.56972222222222
+  ]
+ },
+ "Vnukovo International Airport": {
+  "canon": "Vnukovo International Airport",
+  "qid": "Q273462",
+  "iata": "VKO",
+  "label": "Vnukovo International Airport",
+  "coord": [
+   55.596111111111,
+   37.2675
+  ]
+ },
+ "Václav Havel Airport Prague": {
+  "canon": "Václav Havel Airport Prague",
+  "qid": "Q99172",
+  "iata": "PRG",
+  "label": "Václav Havel Airport Prague",
+  "coord": [
+   50.100833333333,
+   14.26
+  ]
+ },
+ "Wadi al-Dawasir Domestic Airport": {
+  "canon": "Wadi al-Dawasir Domestic Airport",
+  "qid": "Q2743332",
+  "iata": "WAE",
+  "label": "Wadi al-Dawasir Domestic Airport",
+  "coord": [
+   20.504166666667,
+   45.199444444444
+  ]
+ },
+ "Warsaw Chopin Airport": {
+  "canon": "Warsaw Chopin Airport",
+  "qid": "Q465071",
+  "iata": "WAW",
+  "label": "Warsaw Chopin Airport",
+  "coord": [
+   52.165833333333,
+   20.967222222222
+  ]
+ },
+ "Warsaw–Chopin": {
+  "canon": "Warsaw Chopin Airport",
+  "qid": "Q465071",
+  "iata": "WAW",
+  "label": "Warsaw Chopin Airport",
+  "coord": [
+   52.165833333333,
+   20.967222222222
+  ]
+ },
+ "Washington–Dulles": {
+  "canon": "Dulles International Airport",
+  "qid": "Q466835",
+  "iata": "IAD",
+  "label": "Washington Dulles International Airport",
+  "coord": [
+   38.944444,
+   -77.455833
+  ]
+ },
+ "Yanbu Airport": {
+  "canon": "Prince Abdulmohsen Bin Abdulaziz International Airport",
+  "qid": "Q2875998",
+  "iata": "YNB",
+  "label": "Yanbu Airport",
+  "coord": [
+   24.144166666667,
+   38.063611111111
+  ]
+ },
+ "Zayed International Airport": {
+  "canon": "Zayed International Airport",
+  "qid": "Q643562",
+  "iata": "AUH",
+  "label": "Zayed International Airport",
+  "coord": [
+   24.433055555556,
+   54.651111111111
+  ]
+ },
+ "Zurich Airport": {
+  "canon": "Zurich Airport",
+  "qid": "Q15114",
+  "iata": "ZRH",
+  "label": "Zurich Airport",
+  "coord": [
+   47.45805555555555,
+   8.548055555555555
+  ]
+ },
+ "Zvartnots International Airport": {
+  "canon": "Zvartnots International Airport",
+  "qid": "Q1124922",
+  "iata": "EVN",
+  "label": "Zvartnots International Airport",
+  "coord": [
+   40.147222222222,
+   44.395833333333
+  ]
+ }
+}
