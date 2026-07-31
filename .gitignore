@@ -1,2 +1,5 @@
 shot-*.png
+m-*.png
+live-*.png
 __pycache__/
+.netlify/
