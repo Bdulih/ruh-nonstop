@@ -74,7 +74,7 @@ header.top{
 main{display:flex;flex:1;min-height:0}
 
 /* ---------- map ---------- */
-.mapwrap{position:relative;flex:1;min-width:0;background:var(--sea)}
+.mapwrap{position:relative;flex:1;min-width:0;overflow:hidden;background:var(--sea)}
 svg#map{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
 svg#map.dragging{cursor:grabbing}
 .country{fill:var(--land-quiet);stroke:var(--land-line);stroke-width:.6;vector-effect:non-scaling-stroke;transition:fill .12s}
@@ -123,9 +123,14 @@ svg#map.dragging{cursor:grabbing}
 
 /* ---------- sidebar ---------- */
 aside{
+  position:relative;overflow:hidden;
   width:392px;flex:none;display:flex;flex-direction:column;min-height:0;
   background:var(--surface-1);border-left:1px solid var(--line)
 }
+/* drag handle — mobile bottom sheet only */
+.grab{display:none;flex:none;padding:7px 0 3px;cursor:grab;touch-action:none;justify-content:center}
+.grab:active{cursor:grabbing}
+.grab i{display:block;width:38px;height:4px;border-radius:2px;background:var(--line-strong)}
 .filters{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:11px}
 .frow{display:flex;flex-direction:column;gap:6px}
 .flabel{display:flex;justify-content:space-between;align-items:baseline}
@@ -174,6 +179,7 @@ input[type=search]:focus{outline:2px solid var(--accent);outline-offset:-1px;bor
   display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--surface-1)
 }
 .tally b{color:var(--ink-1);font-weight:600}
+.tally .more{display:none}
 .tally button{font-size:11px;color:var(--accent)}
 
 .list{flex:1;overflow-y:auto;overscroll-behavior:contain;min-height:0}
@@ -262,16 +268,62 @@ input[type=search]:focus{outline:2px solid var(--accent);outline-offset:-1px;bor
 .sheet .x{position:sticky;top:0;float:right;font-size:18px;color:var(--ink-3);line-height:1}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
+/* ---------- mobile: map fills, list rides a draggable bottom sheet ---------- */
 @media (max-width:880px){
-  main{flex-direction:column}
-  .mapwrap{height:48dvh;flex:none}
-  aside{width:auto;flex:1;border-left:0;border-top:1px solid var(--line)}
+  main{position:relative;flex-direction:column}
+  .mapwrap{flex:1;height:auto;width:100%}
+  aside{
+    position:absolute;left:0;right:0;bottom:0;z-index:15;
+    width:auto;height:92dvh;border-left:0;
+    border-top:1px solid var(--line-strong);border-radius:14px 14px 0 0;
+    box-shadow:0 -2px 24px rgba(0,0,0,.20);
+    transform:translateY(var(--sheet,60%));
+    transition:transform .26s cubic-bezier(.32,.72,0,1);
+  }
+  aside.dragging{transition:none}
+  .grab{display:flex}
+  /* peek state shows the handle and the running total, not a half-cut filter */
+  .grab{order:0} .tally{order:1} .filters{order:2} .list{order:3}
+  .tally{border-top:0;font-size:12.5px;padding:8px 16px}
+  .filters{border-bottom:0;border-top:1px solid var(--line)}
+  .mapui.bl{bottom:auto;top:12px;left:auto;right:12px}
+  .legend{max-width:180px}
+  /* comfortable touch targets */
+  .zoomer button{width:40px;height:40px;font-size:17px}
+  .chip{padding:7px 12px;font-size:12.5px}
+  .presets button{padding:6px 10px;font-size:11.5px}
+  .row{padding:10px 16px;gap:11px}
+  .ghead{padding:10px 16px}
+  .iconbtn{width:38px;height:38px}
+  input[type=search]{padding:9px 11px;font-size:16px} /* 16px stops iOS zoom-on-focus */
+  .dual{height:32px}
+  .dual input[type=range]{height:32px}
+  .dual input[type=range]::-webkit-slider-thumb{width:22px;height:22px}
+  .dual input[type=range]::-moz-range-thumb{width:20px;height:20px}
+  .gf a{padding:12px}
   .stats{gap:14px}
   .stat b{font-size:15px}
 }
-@media (max-width:520px){
+@media (max-width:700px){
+  /* one row, no wrapping: title, then the icon buttons. The running totals
+     live in the sheet's summary bar instead, where there is room for them. */
+  header.top{flex-wrap:nowrap;padding:9px 12px;gap:8px}
   .brand .sub{display:none}
-  header.top{padding:8px 12px;gap:10px}
+  .brand h1{font-size:14.5px}
+  .stats{display:none}
+  .tally .more{display:inline}
+  .tally{white-space:nowrap;gap:10px}
+  .tally>div{overflow:hidden;text-overflow:ellipsis}
+  .tally #t-reset{font-size:0}
+  .tally #t-reset::after{content:'Reset';font-size:12px}
+  .legend{max-width:none;padding:6px 8px}
+  .legend .orig,.legend .lt{display:none}
+  .ramp{margin-bottom:2px}
+  .ramp i{width:20px;flex:none}
+  .presets button{padding:7px 11px}
+}
+@media (hover:none){
+  .tip{display:none}          /* no hover cursor to anchor it to */
 }
 </style>
 </head>
@@ -320,7 +372,8 @@ input[type=search]:focus{outline:2px solid var(--accent);outline-offset:-1px;bor
       <div class="tip" id="tip"><b></b><span></span></div>
     </div>
 
-    <aside>
+    <aside id="sheet">
+      <div class="grab" id="grab" role="button" tabindex="0" aria-label="Expand or collapse the destination list"><i></i></div>
       <div class="filters">
         <div class="frow">
           <div class="flabel"><span>Region</span><b id="reg-n"></b></div>
@@ -341,7 +394,7 @@ input[type=search]:focus{outline:2px solid var(--accent);outline-offset:-1px;bor
       </div>
 
       <div class="tally">
-        <div><b id="t-n">0</b> destinations · <span id="t-c">0</span> countries</div>
+        <div><b id="t-n">0</b> destinations · <span id="t-c">0</span> countries<span class="more"> · med <span id="t-m">0</span> km</span></div>
         <button id="t-reset">Reset filters</button>
       </div>
 
@@ -617,19 +670,43 @@ const arcEls=new Map(), dotEls=new Map(), lblEls=new Map();
 const view={k:1,x:0,y:0};
 const K_MIN=1, K_MAX=42;
 let FIT={k:1,x:0,y:0};
-function computeFit(){
-  const padX=W*0.03, padY=H*0.05;
-  const x0=Math.max(0,BBOX.x0-padX), x1=Math.min(W,BBOX.x1+padX);
-  const y0=Math.max(0,BBOX.y0-padY), y1=Math.min(H,BBOX.y1+padY);
-  const k=Math.max(K_MIN,Math.min(K_MAX, Math.min(W/(x1-x0), H/(y1-y0))));
-  FIT={ k, x:W/2-k*(x0+x1)/2, y:H/2-k*(y0+y1)/2 };
+/* The visible band in viewBox units. On mobile the bottom sheet overlays the
+   lower part of the canvas, so "visible" is narrower than the canvas and the
+   map has to be framed into what is actually on screen. */
+let VIS={l:0,t:0,r:W,b:H};
+function computeVisible(){
+  const m=$('#mapwrap').getBoundingClientRect();
+  if(!m.width||!m.height){ VIS={l:0,t:0,r:W,b:H}; return; }
+  const scale=Math.min(m.width/W, m.height/H);
+  const ox=(m.width - W*scale)/2, oy=(m.height - H*scale)/2;
+  let bottomPx=m.height;
+  if(isSheet()){
+    const s=sheet.getBoundingClientRect();
+    if(s.height) bottomPx=Math.min(bottomPx, Math.max(80, s.top-m.top));
+  }
+  VIS={ l:(0-ox)/scale, t:(0-oy)/scale, r:(m.width-ox)/scale, b:(bottomPx-oy)/scale };
 }
-function resetView(){ view.k=FIT.k; view.x=FIT.x; view.y=FIT.y; applyView(); }
+function computeFit(){
+  computeVisible();
+  const padX=W*0.03, padY=H*0.05;
+  const x0=BBOX.x0-padX, x1=BBOX.x1+padX, y0=BBOX.y0-padY, y1=BBOX.y1+padY;
+  const vw=Math.max(1,VIS.r-VIS.l), vh=Math.max(1,VIS.b-VIS.t);
+  const k=Math.max(K_MIN,Math.min(K_MAX, Math.min(vw/(x1-x0), vh/(y1-y0))));
+  FIT={ k, x:(VIS.l+VIS.r)/2-k*(x0+x1)/2, y:(VIS.t+VIS.b)/2-k*(y0+y1)/2 };
+}
+function resetView(){ computeFit(); view.k=FIT.k; view.x=FIT.x; view.y=FIT.y; applyView(); }
 function clampView(){
   view.k=Math.max(K_MIN,Math.min(K_MAX,view.k));
-  const ex=W*(view.k-1), ey=H*(view.k-1);
-  view.x=Math.max(-ex,Math.min(0,view.x));
-  view.y=Math.max(-ey,Math.min(0,view.y));
+  // keep the projected world covering the visible band (or centred in it when
+  // the world is smaller than the band, which happens at the minimum zoom)
+  const fit=(lo,hi,span)=>{
+    const a=hi-span, b=lo;                       // allowed range for the offset
+    return a>b ? [a,b] : [(a+b)/2,(a+b)/2];
+  };
+  const [xa,xb]=fit(VIS.l,VIS.r,W*view.k);
+  const [ya,yb]=fit(VIS.t,VIS.b,H*view.k);
+  view.x=Math.max(xa,Math.min(xb,view.x));
+  view.y=Math.max(ya,Math.min(yb,view.y));
 }
 function applyView(){
   clampView();
@@ -708,13 +785,14 @@ svg.addEventListener('pointerup',endPtr);
 svg.addEventListener('pointercancel',endPtr);
 svg.addEventListener('pointerleave',ev=>{ if(!ptrs.has(ev.pointerId)) hideTip(); });
 
-$('#z-in').onclick =()=>zoomAt(W/2,H/2,1.5);
-$('#z-out').onclick=()=>zoomAt(W/2,H/2,1/1.5);
+const visCx=()=>(VIS.l+VIS.r)/2, visCy=()=>(VIS.t+VIS.b)/2;
+$('#z-in').onclick =()=>zoomAt(visCx(),visCy(),1.5);
+$('#z-out').onclick=()=>zoomAt(visCx(),visCy(),1/1.5);
 $('#z-rst').onclick=resetView;
 addEventListener('keydown',ev=>{
   if(/^(INPUT|TEXTAREA)$/.test(ev.target.tagName)) return;
-  if(ev.key==='+'||ev.key==='=') { ev.preventDefault(); zoomAt(W/2,H/2,1.5); }
-  else if(ev.key==='-'||ev.key==='_'){ ev.preventDefault(); zoomAt(W/2,H/2,1/1.5); }
+  if(ev.key==='+'||ev.key==='=') { ev.preventDefault(); zoomAt(visCx(),visCy(),1.5); }
+  else if(ev.key==='-'||ev.key==='_'){ ev.preventDefault(); zoomAt(visCx(),visCy(),1/1.5); }
   else if(ev.key==='0'){ ev.preventDefault(); resetView(); }
   else if(ev.key==='Escape'){ if($('#about').classList.contains('on')) closeAbout(); else closeDetail(); }
 });
@@ -810,6 +888,7 @@ function render(){
   $('#s-far').textContent=kms.length?fmt(kms[kms.length-1]):'0';
   $('#t-n').textContent=shown.length;
   $('#t-c').textContent=ctry.size;
+  $('#t-m').textContent=fmt(med);
 
   // list, grouped by country, nearest country first
   const groups=new Map();
@@ -924,6 +1003,7 @@ function openDetail(iata){
       </div>
     </div>`;
   $('#detail').classList.add('on');
+  if(isSheet() && snap==='peek') setSnap('half');
   setHover(iata);
 }
 const ordinal=n=>{const s=['th','st','nd','rd'],v=n%100;return s[(v-20)%10]||s[v]||s[0];};
@@ -998,6 +1078,69 @@ $('#about').addEventListener('click',ev=>{ if(ev.target.id==='about') closeAbout
   $('#built').textContent=META.note;
 }
 
+/* ----------------------------------------------- mobile bottom sheet
+   Familiar map-app behaviour: the list rides a sheet over the map with three
+   snap points, dragged by the handle or cycled by tapping it. Inert on desktop,
+   where the sidebar is a normal column. */
+const sheet=$('#sheet'), grab=$('#grab');
+const isSheet = () => matchMedia('(max-width:880px)').matches;
+let snap='half';
+function snapPx(name){
+  const H=sheet.offsetHeight;
+  if(name==='full') return 0;
+  if(name==='half') return Math.max(0, Math.round(H - innerHeight*0.5));
+  return Math.max(0, H - 78);                    // peek: handle + running total
+}
+function setSnap(name,animate){
+  const was=snap; snap=name;
+  sheet.classList.toggle('dragging',animate===false);
+  sheet.style.setProperty('--sheet',snapPx(name)+'px');
+  if(animate===false) requestAnimationFrame(()=>sheet.classList.remove('dragging'));
+  // let the sheet finish moving, then re-frame the map into what is still visible
+  if(was!==name || animate===false) setTimeout(()=>{ if(atFit()) resetView(); else computeVisible(); },animate===false?0:280);
+}
+const atFit=()=>Math.abs(view.k-FIT.k)<1e-6;
+function syncSheet(){
+  if(isSheet()) setSnap(snap,false);
+  else sheet.style.removeProperty('--sheet');
+}
+{
+  let start=null;
+  grab.addEventListener('pointerdown',ev=>{
+    if(!isSheet()) return;
+    grab.setPointerCapture(ev.pointerId);
+    start={y:ev.clientY, base:snapPx(snap), moved:false};
+    sheet.classList.add('dragging');
+  });
+  grab.addEventListener('pointermove',ev=>{
+    if(!start) return;
+    const dy=ev.clientY-start.y;
+    if(Math.abs(dy)>3) start.moved=true;
+    const H=sheet.offsetHeight;
+    sheet.style.setProperty('--sheet',Math.max(0,Math.min(H-78,start.base+dy))+'px');
+  });
+  const release=ev=>{
+    if(!start) return;
+    sheet.classList.remove('dragging');
+    if(!start.moved){                              // tap cycles the snap points
+      setSnap(snap==='peek'?'half':snap==='half'?'full':'peek');
+    } else {
+      const cur=parseFloat(getComputedStyle(sheet).getPropertyValue('--sheet'))||0;
+      let best='half',bd=Infinity;
+      for(const n of ['full','half','peek']){ const d=Math.abs(snapPx(n)-cur); if(d<bd){bd=d;best=n;} }
+      setSnap(best);
+    }
+    start=null;
+  };
+  grab.addEventListener('pointerup',release);
+  grab.addEventListener('pointercancel',release);
+  grab.addEventListener('keydown',ev=>{
+    if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); setSnap(snap==='peek'?'half':snap==='half'?'full':'peek'); }
+  });
+  addEventListener('resize',()=>{ syncSheet(); resetView(); });
+  matchMedia('(max-width:880px)').addEventListener('change',syncSheet);
+}
+
 /* ------------------------------------------------------------------- theme */
 {
   const btn=$('#theme');
@@ -1012,8 +1155,8 @@ $('#about').addEventListener('click',ev=>{ if(ev.target.id==='about') closeAbout
 }
 
 /* -------------------------------------------------------------------- boot */
-syncChips(); syncDual(); computeFit(); resetView();
-addEventListener('resize',()=>{ if(view.k===FIT.k) resetView(); });
+syncChips(); syncDual(); computeFit(); resetView(); syncSheet();
+
 </script>
 </body>
 </html>
