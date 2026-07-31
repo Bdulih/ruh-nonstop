@@ -1,0 +1,57 @@
+{
+ "_comment": "Output of the route-verification pass, 2026-07-31. Each entry was checked against a source independent of the Wikipedia KKIA table (the other endpoint's airport article, an airline's own booking engine or network release, AeroRoutes, or a schedule aggregator). 'add' = restore to the map; 'drop' = remove from the map; 'note' = keep but qualify.",
+ "sampled": "2026-07-31",
+
+ "add": {
+  "ADE": {"airlines": ["Yemenia"], "seasonal": false, "conf": "high",
+          "why": "Aden airport's own Wikipedia destination table lists Yemenia to Riyadh; Anadolu Agency (4 Jan 2026) quotes Yemenia's deputy GM naming Riyadh among four Aden destinations; FlightConnections Yemenia route map updated 2 Jul 2026."},
+  "CMB": {"airlines": ["SriLankan Airlines"], "seasonal": false, "conf": "high",
+          "why": "Bandaranaike (CMB) destination table lists SriLankan to Riyadh with no qualifier; FlightConnections (31 Jul 2026) names SriLankan the only nonstop operator; UL265/UL266 A330-300."},
+  "CNN": {"airlines": ["Air India Express"], "seasonal": false, "conf": "high",
+          "why": "Air India Express's own booking site lists Kannur from Riyadh; Kannur airport article lists it; Kerala press reports international services resumed 1 Jul 2026 with 3 weekly to Riyadh."},
+  "EJH": {"airlines": ["Saudia"], "seasonal": false, "conf": "high",
+          "why": "Al-Wajh Domestic Airport article (edited 7 Jul 2026) lists 'Saudia | Jeddah, Riyadh'; FlightConnections shows RUH 13 flights/month on SV."},
+  "MUX": {"airlines": ["Pakistan International Airlines"], "seasonal": false, "conf": "high",
+          "why": "FlightConnections lists PIA as nonstop operator RUH-MUX."},
+  "TBS": {"airlines": ["flynas"], "seasonal": false, "conf": "high",
+          "why": "FlightConnections lists flynas nonstop RUH-TBS; flynas Summer 2026 network release includes Tbilisi."},
+  "BUS": {"airlines": ["flynas"], "seasonal": true, "conf": "high",
+          "why": "Batumi Airport's own route map lists 'Flynas | Riyadh'; FlightConnections (31 Jul 2026) names flynas the only operator, 6 weekly."},
+  "SZG": {"airlines": ["flynas"], "seasonal": true, "conf": "high",
+          "why": "FlightConnections RUH-SZG; flynas Summer 2026 network release includes Salzburg."},
+  "TIA": {"airlines": ["flynas"], "seasonal": true, "conf": "high",
+          "why": "FlightConnections RUH-TIA; flynas Summer 2026 network release includes Tirana."},
+  "BUD": {"airlines": ["flynas"], "seasonal": true, "conf": "high",
+          "why": "flynas own media-centre Summer 2026 network release lists Budapest among new Riyadh routes."},
+  "TGD": {"airlines": ["flynas"], "seasonal": true, "conf": "medium",
+          "why": "flynas Summer 2026 network release (via TradeArabia) lists Podgorica; single source, not yet corroborated by the airport's own listing."}
+ },
+
+ "drop": {
+  "DMK": {"conf": "high",
+          "why": "Bangkok-Don Mueang was served only by Thai AirAsia X, which extended its suspension, removed schedule filings for 01OCT26-24OCT26 and filed no resumption date (AeroRoutes, 30 Jul 2026). Bangkok is still on the map via Suvarnabhumi (BKK/Saudia)."},
+  "LCA": {"conf": "medium",
+          "why": "FlightConnections: no direct Riyadh-Larnaca flights; Larnaca airport's own destination table does not list Riyadh; flyadeal's published Summer 2026 seasonal network (Milan, Prague, Trabzon, Sarajevo, Sharm El Sheikh) omits it. Checked at peak season, when a live seasonal route would be visible."}
+ },
+
+ "note": {
+  "AMS": {"status": "suspended", "conf": "high",
+          "why": "KLM is the only Riyadh-Amsterdam operator and has suspended the route until 6 September 2026 amid regional airspace disruption (The National, 26 Jul 2026). Kept on the map and flagged, because it is a suspension with a stated return date, not a cancellation."},
+  "CGK": {"status": "seasonal", "conf": "low",
+          "why": "Garuda's Riyadh service is marked terminated; the remaining Jakarta service is Saudia's seasonal Hajj/Umrah operation. Kept as seasonal at low confidence."}
+ },
+
+ "_excluded": {
+  "_comment": "Checked and deliberately left off the map. Recorded so the omissions are visible rather than silent.",
+  "ADB": "Izmir - Saudia last flew 2018, flyadeal 2023; no Saudi point in Izmir's 94 nonstop destinations (FlightConnections, Jul 2026). Wikipedia's Izmir and Saudia pages still show it and appear stale.",
+  "EVN": "Yerevan - absent from Zvartnots' 82 destinations and from flynas's Summer 2026 network.",
+  "JTR": "Santorini - absent from Santorini's 56 destinations at peak season; flynas's last Greek-island flight was 29 Sep 2022. Wikipedia's Santorini page cites a 2023 booking-engine snapshot.",
+  "KTM": "Kathmandu - Himalaya Airlines' own July 2026 schedule notice shows no Riyadh service.",
+  "TIV": "Tivat - not listed among Tivat's nonstop origins.",
+  "BGW": "Baghdad - Riyadh absent from Baghdad's 18 nonstop origins; flynas's Iraq network is Madinah and Jeddah only. No evidence scheduled RUH-BGW ever operated.",
+  "SUB": "Surabaya - no current source found.",
+  "MRU": "Mauritius - no current source found.",
+  "UPG": "Makassar - no current source found.",
+  "ALP": "Aleppo - flynas announced for Aug 2026 (AeroRoutes 27 Jul 2026); not yet flying, and not yet in the Wikipedia table, so held until it starts."
+ }
+}

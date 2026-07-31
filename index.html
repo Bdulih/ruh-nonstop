@@ -100,7 +100,8 @@ svg#map.dragging{cursor:grabbing}
 .arc{fill:none;stroke-width:1;opacity:.32;vector-effect:non-scaling-stroke;transition:opacity .12s}
 .arc.lit{opacity:1;stroke-width:2.4}
 .arc.dim{opacity:.07}
-.dot{stroke:var(--sea);stroke-width:1.2;vector-effect:non-scaling-stroke;cursor:pointer}
+.dot{stroke:var(--sea);stroke-width:1.2;vector-effect:non-scaling-stroke;pointer-events:none}
+svg#map.pick{cursor:pointer}
 .dot.lit{stroke:var(--ink);stroke-width:2.2}
 .origin-ring{fill:none;stroke:var(--origin);opacity:.5;vector-effect:non-scaling-stroke}
 .origin-dot{fill:var(--origin);stroke:var(--sea);stroke-width:1.5;vector-effect:non-scaling-stroke}
@@ -339,13 +340,13 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
   <header class="top">
     <div class="brand">
       <h1>Nonstop from Riyadh</h1>
-      <div class="sub">King Khalid International (RUH) &middot; 24.9576&deg;N 46.6988&deg;E &middot; destinations by great-circle distance</div>
+      <div class="sub">King Khalid International (RUH) &middot; 24.9576&deg;N 46.6988&deg;E &middot; destinations by estimated flight time</div>
     </div>
     <div class="stats">
       <div class="stat"><b id="s-dest">0</b><span>Shown</span></div>
       <div class="stat"><b id="s-ctry">0</b><span>Countries</span></div>
-      <div class="stat"><b id="s-med">0</b><span>Median km</span></div>
-      <div class="stat"><b id="s-far">0</b><span>Farthest</span></div>
+      <div class="stat"><b id="s-med">—</b><span>Median time</span></div>
+      <div class="stat"><b id="s-far">—</b><span>Longest</span></div>
     </div>
     <button class="iconbtn" id="theme" title="Toggle light / dark theme" aria-label="Toggle light or dark theme">
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 100 18 9 9 0 000-18zm0 2v14a7 7 0 010-14z"/></svg>
@@ -377,9 +378,9 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
       </div>
       <div class="mapui bl">
         <div class="legend">
-          <div class="lt">Great-circle distance</div>
+          <div class="lt">Flight time (estimated)</div>
           <div class="ramp" id="ramp"></div>
-          <div class="ramp-ax"><span>0</span><span id="ramp-max">14,000 km</span></div>
+          <div class="ramp-ax"><span>0</span><span id="ramp-max">—</span></div>
           <div class="orig"><i></i> Riyadh (RUH)</div>
         </div>
       </div>
@@ -394,11 +395,11 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
           <div class="chips" id="chips"></div>
         </div>
         <div class="frow">
-          <div class="flabel"><span>Distance</span><b id="dist-lbl">0 – 14,000 km</b></div>
+          <div class="flabel"><span>Flight time</span><b id="dist-lbl">—</b></div>
           <div class="dual" id="dual">
             <div class="track"></div><div class="fill" id="dfill"></div>
-            <input type="range" id="dmin" min="0" max="14000" step="50" value="0" aria-label="Minimum distance in km">
-            <input type="range" id="dmax" min="0" max="14000" step="50" value="14000" aria-label="Maximum distance in km">
+            <input type="range" id="dmin" min="0" max="14000" step="50" value="0" aria-label="Minimum flight time in hours">
+            <input type="range" id="dmax" min="0" max="14000" step="50" value="14000" aria-label="Maximum flight time in hours">
           </div>
           <div class="presets" id="presets"></div>
         </div>
@@ -408,7 +409,7 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
       </div>
 
       <div class="tally">
-        <div><b id="t-n">0</b> destinations · <span id="t-c">0</span> countries<span class="more"> · med <span id="t-m">0</span> km</span></div>
+        <div><b id="t-n">0</b> destinations · <span id="t-c">0</span> countries<span class="more"> · median <span id="t-m">—</span></span></div>
         <button id="t-reset">Reset filters</button>
       </div>
 
@@ -438,13 +439,25 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
     International (RUH), plotted on a Miller cylindrical projection and filterable by
     <b>great-circle distance</b>.</p>
 
-    <h3>Why distance and not flight time</h3>
-    <p>Free schedule sources contradict each other badly. Riyadh–Cairo comes back as 133, 157 or 202
-    flights a week and 1h58, 2h40 or 3h12 depending on who you ask. Caching any of that would produce
-    something that looks authoritative and is wrong within a week. Distance is trigonometry on two
-    coordinates — it is ground truth, it never goes stale, and it answers the same underlying question:
-    how concentrated is this network? For anything schedule-shaped, each destination links out to a
-    live, date-pinned Google Flights query instead.</p>
+    <h3>Where the flight times come from</h3>
+    <p>They are <b>not</b> cached from schedule sources — those are precisely the numbers that disagree
+    with each other (Riyadh–Cairo comes back as 1h58, 2h40 or 3h12 depending on who you ask, and 133,
+    157 or 202 flights a week). Instead each time is <b>derived from great-circle distance</b>: a fixed
+    half-hour on the ground for taxi, climb and descent, plus cruise at <span class="mono">780 km/h</span>
+    block speed.</p>
+    <p class="mono" style="font-size:12px">hours = 0.5 + km / 780</p>
+    <p>That is deterministic, so it never goes stale. It is accurate to roughly ±15% — it checks out at
+    RUH–JED 1h35 (typically 1h45), RUH–CAI 2h34 (2h35), RUH–LHR 6h50 (6h45) — but it is an estimate of a
+    typical nonstop, not a timetable. It knows nothing about winds, routings or the specific aircraft.</p>
+
+    <h3>Where the fares come from</h3>
+    <p>Fares were sampled from live queries on <b id="fare-date"></b>, one anchor route per band, and the
+    band is applied to every route in that band. <b>They are ranges for a distance band, not quotes for a
+    route</b>, they are return economy, and they will drift — fares move faster than schedules do. Treat
+    them as an order of magnitude and use the live link for anything real.</p>
+    <div id="fare-sample"></div>
+    <p>Routes flown by a low-cost carrier are flagged, because that moves the real fare more than
+    distance does at the short end.</p>
 
     <h3>Where the routes come from</h3>
     <div id="about-prov"></div>
@@ -509,129 +522,138 @@ const PROVENANCE = {
 };
 
 const DESTINATIONS = [
-  {"iata":"DWD","city":"Dawadmi","airport":"King Salman Abdulaziz Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":24.4499,"lon":44.121201,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Dawadmi Domestic Airport"},
-  {"iata":"ELQ","city":"Qassim","airport":"Gassim Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":26.302799,"lon":43.774399,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Prince Naif bin Abdulaziz International Airport"},
-  {"iata":"DMM","city":"Dammam","airport":"King Fahd International Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":26.471201,"lon":49.797901,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"King Fahd International Airport"},
-  {"iata":"AQI","city":"Qaisumah","airport":"Al Qaisumah/Hafr Al Batin Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":28.335199,"lon":46.125099,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Qaisumah–Hafar Al-Batin International Airport"},
-  {"iata":"BAH","city":"Bahrain","airport":"Bahrain International Airport","country":"Bahrain","ne":null,"lat":26.2708,"lon":50.633598,"region":"Middle East","airlines":["Gulf Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Bahrain International Airport"},
-  {"iata":"KWI","city":"Kuwait","airport":"Kuwait International Airport","country":"Kuwait","ne":"Kuwait","lat":29.226601,"lon":47.968899,"region":"Middle East","airlines":["Flyadeal","Kuwait Airways"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Kuwait International Airport"},
-  {"iata":"DOH","city":"Doha","airport":"Hamad International Airport","country":"Qatar","ne":"Qatar","lat":25.273056,"lon":51.608056,"region":"Middle East","airlines":["Flynas","Qatar Airways","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Hamad International Airport"},
-  {"iata":"WAE","city":"Wadi al-Dawasir","airport":"Wadi Al Dawasir Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":20.504299,"lon":45.1996,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Wadi al-Dawasir Domestic Airport"},
-  {"iata":"HAS","city":"Ha'il","airport":"Ha'il Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":27.437901,"lon":41.686298,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Hail International Airport"},
-  {"iata":"RAH","city":"Rafha","airport":"Rafha Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":29.6264,"lon":43.490601,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Rafha Domestic Airport"},
-  {"iata":"BHH","city":"Bisha","airport":"Bisha Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":19.9844,"lon":42.620899,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Bisha Domestic Airport"},
-  {"iata":"MED","city":"Medina","airport":"Prince Mohammad Bin Abdulaziz Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":24.5534,"lon":39.705101,"region":"Domestic","airlines":["Flyadeal"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Prince Mohammad bin Abdulaziz International Airport"},
-  {"iata":"ABT","city":"Al Baha","airport":"Al Baha Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":20.296101,"lon":41.6343,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"King Saud Domestic Airport"},
-  {"iata":"TIF","city":"Ta'if","airport":"Ta’if Regional Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":21.483001,"lon":40.543442,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Taif International Airport"},
-  {"iata":"AUH","city":"Abu Dhabi","airport":"Abu Dhabi International Airport","country":"United Arab Emirates","ne":"United Arab Emirates","lat":24.433001,"lon":54.6511,"region":"Middle East","airlines":["Etihad Airways","Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Zayed International Airport"},
-  {"iata":"SHW","city":"Sharurah","airport":"Sharurah Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":17.4669,"lon":47.121399,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Sharurah Domestic Airport"},
-  {"iata":"AJF","city":"Al Jawf","airport":"Al-Jawf Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":29.785101,"lon":40.099998,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Al-Jouf International Airport"},
-  {"iata":"EAM","city":"Najran","airport":"Nejran Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":17.611401,"lon":44.419201,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Najran Regional Airport"},
-  {"iata":"JED","city":"Jeddah","airport":"King Abdulaziz International Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":21.6796,"lon":39.156502,"region":"Domestic","airlines":["Riyadh Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"King Abdulaziz International Airport"},
-  {"iata":"DWC","city":"Dubai","airport":"Al Maktoum International Airport","country":"United Arab Emirates","ne":"United Arab Emirates","lat":24.896356,"lon":55.161389,"region":"Middle East","airlines":["Flyadeal","Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Al Maktoum International Airport"},
-  {"iata":"AHB","city":"Abha","airport":"Abha Regional Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":18.2404,"lon":42.656601,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Abha International Airport"},
-  {"iata":"RAE","city":"Arar","airport":"Arar Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":30.906601,"lon":41.138199,"region":"Domestic","airlines":["Flyadeal","Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Arar Domestic Airport"},
-  {"iata":"DXB","city":"Dubai","airport":"Dubai International Airport","country":"United Arab Emirates","ne":"United Arab Emirates","lat":25.2528,"lon":55.364399,"region":"Middle East","airlines":["Emirates","Flydubai","Riyadh Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Dubai International Airport"},
-  {"iata":"ULH","city":"AlUla","airport":"Majeed Bin Abdulaziz Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":26.48,"lon":38.128889,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Al-Ula International Airport"},
-  {"iata":"YNB","city":"Yanbu","airport":"Prince Abdulmohsin Bin Abdulaziz Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":24.144199,"lon":38.0634,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Prince Abdulmohsen Bin Abdulaziz International Airport"},
-  {"iata":"SHJ","city":"Sharjah","airport":"Sharjah International Airport","country":"United Arab Emirates","ne":"United Arab Emirates","lat":25.3286,"lon":55.5172,"region":"Middle East","airlines":["Air Arabia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Sharjah International Airport"},
-  {"iata":"RSI","city":"Red Sea","airport":"Red Sea International Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":25.630278,"lon":37.078333,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"WD","wiki":"Red Sea International Airport"},
-  {"iata":"GIZ","city":"Jizan","airport":"Jizan Regional Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":16.9011,"lon":42.5858,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"King Abdullah International Airport"},
-  {"iata":"TUU","city":"Tabuk","airport":"Tabuk Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":28.3654,"lon":36.6189,"region":"Domestic","airlines":["Flyadeal","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Prince Sultan bin Abdulaziz Airport"},
-  {"iata":"TUI","city":"Turaif","airport":"Turaif Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":31.692188,"lon":38.731544,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Turaif Domestic Airport"},
-  {"iata":"PZU","city":"Port Sudan","airport":"Port Sudan New International Airport","country":"Sudan","ne":"Sudan","lat":19.433599,"lon":37.2341,"region":"Africa","airlines":["Sudan Airways"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Port Sudan New International Airport"},
-  {"iata":"SLL","city":"Salalah","airport":"Salalah Airport","country":"Oman","ne":"Oman","lat":17.0387,"lon":54.091301,"region":"Middle East","airlines":["Flynas"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Salalah International Airport"},
-  {"iata":"URY","city":"Gurayat","airport":"Gurayat Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":31.412413,"lon":37.278898,"region":"Domestic","airlines":["Flyadeal","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Gurayat Domestic Airport"},
-  {"iata":"NUM","city":"Neom Bay","airport":"NEOM Bay Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":27.928611,"lon":35.296111,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"WD","wiki":"Neom Bay Airport"},
-  {"iata":"MCT","city":"Muscat","airport":"Muscat International Airport","country":"Oman","ne":"Oman","lat":23.5933,"lon":58.284401,"region":"Middle East","airlines":["SalamAir"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Muscat International Airport"},
-  {"iata":"AQJ","city":"Aqaba","airport":"Aqaba King Hussein International Airport","country":"Jordan","ne":"Jordan","lat":29.611601,"lon":35.018101,"region":"Middle East","airlines":["Royal Jordanian"],"seasonal":false,"starts":"2026-09-24","src":"wp-cited","conf":"high","cs":"OF","wiki":"King Hussein International Airport"},
-  {"iata":"SSH","city":"Sharm El Sheikh","airport":"Sharm El Sheikh International Airport","country":"Egypt","ne":"Egypt","lat":27.977301,"lon":34.395,"region":"Africa","airlines":["Air Cairo","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Sharm El Sheikh International Airport"},
-  {"iata":"AMM","city":"Amman","airport":"Queen Alia International Airport","country":"Jordan","ne":"Jordan","lat":31.722601,"lon":35.993198,"region":"Middle East","airlines":["Royal Jordanian","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Queen Alia International Airport"},
-  {"iata":"HRG","city":"Hurghada","airport":"Hurghada International Airport","country":"Egypt","ne":"Egypt","lat":27.178301,"lon":33.7994,"region":"Africa","airlines":["Flynas"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Hurghada International Airport"},
-  {"iata":"DAM","city":"Damascus","airport":"Damascus International Airport","country":"Syria","ne":"Syria","lat":33.411499,"lon":36.515598,"region":"Middle East","airlines":["Flyadeal","Flynas"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Damascus International Airport"},
-  {"iata":"BEY","city":"Beirut","airport":"Beirut Rafic Hariri International Airport","country":"Lebanon","ne":"Lebanon","lat":33.8209,"lon":35.4884,"region":"Middle East","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Beirut–Rafic Hariri International Airport"},
-  {"iata":"HMB","city":"Sohag","airport":"Sohag International Airport","country":"Egypt","ne":"Egypt","lat":26.342778,"lon":31.742778,"region":"Africa","airlines":["Air Cairo","Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Sohag International Airport"},
-  {"iata":"ATZ","city":"Asyut","airport":"Assiut International Airport","country":"Egypt","ne":"Egypt","lat":27.046499,"lon":31.011999,"region":"Africa","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Assiut Airport"},
-  {"iata":"HTY","city":"Hatay","airport":"Hatay Airport","country":"Turkey","ne":"Turkey","lat":36.362778,"lon":36.282223,"region":"Middle East","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Hatay Airport"},
-  {"iata":"CAI","city":"Cairo","airport":"Cairo International Airport","country":"Egypt","ne":"Egypt","lat":30.121901,"lon":31.4056,"region":"Africa","airlines":["Air Arabia","Egyptair","Flyadeal","Riyadh Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Cairo International Airport"},
-  {"iata":"SPX","city":"Giza","airport":"Sphinx International Airport","country":"Egypt","ne":"Egypt","lat":30.109722,"lon":30.894444,"region":"Africa","airlines":["Air Cairo","Flynas"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"WD","wiki":"Sphinx International Airport"},
-  {"iata":"LCA","city":"Larnaca","airport":"Larnaca International Airport","country":"Cyprus","ne":"Cyprus","lat":34.875099,"lon":33.624901,"region":"Middle East","airlines":["Flyadeal","Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Larnaca International Airport"},
-  {"iata":"GYD","city":"Baku","airport":"Heydar Aliyev International Airport","country":"Azerbaijan","ne":"Azerbaijan","lat":40.467499,"lon":50.0467,"region":"Caucasus & C. Asia","airlines":["Azerbaijan Airlines"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Heydar Aliyev International Airport"},
-  {"iata":"HBE","city":"Alexandria","airport":"Borg El Arab International Airport","country":"Egypt","ne":"Egypt","lat":30.9177,"lon":29.6964,"region":"Africa","airlines":["Air Arabia","Egyptair","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Alexandria International Airport (Egypt)"},
-  {"iata":"RZV","city":"Rize","airport":"Rize–Artvin Airport","country":"Turkey","ne":"Turkey","lat":41.175556,"lon":40.845,"region":"Middle East","airlines":["Flynas"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"WD","wiki":"Rize–Artvin Airport"},
-  {"iata":"TZX","city":"Trabzon","airport":"Trabzon International Airport","country":"Turkey","ne":"Turkey","lat":40.995098,"lon":39.7897,"region":"Middle East","airlines":["Flyadeal","Pegasus Airlines"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Trabzon Airport"},
-  {"iata":"DBB","city":"El Alamein","airport":"El Alamein International Airport","country":"Egypt","ne":"Egypt","lat":30.9245,"lon":28.461399,"region":"Africa","airlines":["Flynas","Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"El Alamein International Airport"},
-  {"iata":"ADD","city":"Addis Ababa","airport":"Addis Ababa Bole International Airport","country":"Ethiopia","ne":"Ethiopia","lat":8.97789,"lon":38.799301,"region":"Africa","airlines":["Ethiopian Airlines","Flynas"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Addis Ababa Bole International Airport"},
-  {"iata":"AYT","city":"Antalya","airport":"Antalya International Airport","country":"Turkey","ne":"Turkey","lat":36.898701,"lon":30.800501,"region":"Middle East","airlines":["Flyadeal","Flynas","Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Antalya Airport"},
-  {"iata":"KHI","city":"Karachi","airport":"Jinnah International Airport","country":"Pakistan","ne":"Pakistan","lat":24.9065,"lon":67.160797,"region":"South Asia","airlines":["Flyadeal"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Jinnah International Airport"},
-  {"iata":"AER","city":"Sochi","airport":"Sochi International Airport","country":"Russia","ne":"Russia","lat":43.449902,"lon":39.9566,"region":"Europe","airlines":["azimuth"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Sochi International Airport"},
-  {"iata":"BJV","city":"Bodrum","airport":"Milas Bodrum International Airport","country":"Turkey","ne":"Turkey","lat":37.250599,"lon":27.664301,"region":"Middle East","airlines":["Flyadeal","Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Milas–Bodrum Airport"},
-  {"iata":"SAW","city":"Istanbul","airport":"Sabiha Gökçen International Airport","country":"Turkey","ne":"Turkey","lat":40.898602,"lon":29.3092,"region":"Middle East","airlines":["AJet","Pegasus Airlines"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Sabiha Gökçen International Airport"},
-  {"iata":"KBL","city":"Kabul","airport":"Hamid Karzai International Airport","country":"Afghanistan","ne":"Afghanistan","lat":34.565899,"lon":69.212303,"region":"South Asia","airlines":["Kam Air"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Kabul International Airport"},
-  {"iata":"JMK","city":"Mykonos","airport":"Mikonos Airport","country":"Greece","ne":"Greece","lat":37.435101,"lon":25.348101,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Mykonos Airport"},
-  {"iata":"IST","city":"Istanbul","airport":"Istanbul Airport","country":"Turkey","ne":"Turkey","lat":41.275278,"lon":28.751944,"region":"Middle East","airlines":["Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Istanbul Airport"},
-  {"iata":"ATH","city":"Athens","airport":"Eleftherios Venizelos International Airport","country":"Greece","ne":"Greece","lat":37.936401,"lon":23.9445,"region":"Europe","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Athens International Airport"},
-  {"iata":"PEW","city":"Peshawar","airport":"Peshawar International Airport","country":"Pakistan","ne":"Pakistan","lat":33.9939,"lon":71.514603,"region":"South Asia","airlines":["Flyadeal","Serene Air"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Bacha Khan International Airport"},
-  {"iata":"ISB","city":"Islamabad","airport":"New Islamabad International Airport","country":"Pakistan","ne":"Pakistan","lat":33.560713,"lon":72.851613,"region":"South Asia","airlines":["AirSial","Fly Jinnah","Flyadeal"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Islamabad International Airport"},
-  {"iata":"TAS","city":"Tashkent","airport":"Tashkent International Airport","country":"Uzbekistan","ne":"Uzbekistan","lat":41.2579,"lon":69.281197,"region":"Caucasus & C. Asia","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Tashkent International Airport"},
-  {"iata":"BOM","city":"Mumbai","airport":"Chhatrapati Shivaji International Airport","country":"India","ne":"India","lat":19.088699,"lon":72.867897,"region":"South Asia","airlines":["Akasa Air","IndiGo","Riyadh Air","Saudia"],"seasonal":false,"starts":"2026-08-04","src":"wp-cited","conf":"high","cs":"OF","wiki":"Chhatrapati Shivaji Maharaj International Airport"},
-  {"iata":"LHE","city":"Lahore","airport":"Alama Iqbal International Airport","country":"Pakistan","ne":"Pakistan","lat":31.521601,"lon":74.403603,"region":"South Asia","airlines":["AirSial","Flyadeal"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Allama Iqbal International Airport"},
-  {"iata":"SKT","city":"Sialkot","airport":"Sialkot Airport","country":"Pakistan","ne":"Pakistan","lat":32.535557,"lon":74.363892,"region":"South Asia","airlines":["Flyadeal","Pakistan International Airlines"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Sialkot International Airport"},
-  {"iata":"DEL","city":"Delhi","airport":"Indira Gandhi International Airport","country":"India","ne":"India","lat":28.5665,"lon":77.103104,"region":"South Asia","airlines":["Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Indira Gandhi International Airport"},
-  {"iata":"NBO","city":"Nairobi","airport":"Jomo Kenyatta International Airport","country":"Kenya","ne":"Kenya","lat":-1.31924,"lon":36.927799,"region":"Africa","airlines":["Flynas"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Jomo Kenyatta International Airport"},
-  {"iata":"EBB","city":"Entebbe","airport":"Entebbe International Airport","country":"Uganda","ne":"Uganda","lat":0.042386,"lon":32.443501,"region":"Africa","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Entebbe International Airport"},
-  {"iata":"SJJ","city":"Sarajevo","airport":"Sarajevo International Airport","country":"Bosnia and Herzegovina","ne":"Bosnia and Herz.","lat":43.8246,"lon":18.331499,"region":"Europe","airlines":["Flyadeal"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Sarajevo International Airport"},
-  {"iata":"HYD","city":"Hyderabad","airport":"Rajiv Gandhi International Airport","country":"India","ne":"India","lat":17.231318,"lon":78.429855,"region":"South Asia","airlines":["Flyadeal","Flynas","IndiGo"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Rajiv Gandhi International Airport"},
-  {"iata":"LKO","city":"Lucknow","airport":"Chaudhary Charan Singh International Airport","country":"India","ne":"India","lat":26.760599,"lon":80.889297,"region":"South Asia","airlines":["Air India Express","Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Chaudhary Charan Singh International Airport"},
-  {"iata":"CCJ","city":"Kozhikode","airport":"Calicut International Airport","country":"India","ne":"India","lat":11.1368,"lon":75.955299,"region":"South Asia","airlines":["Air India Express","Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Calicut International Airport"},
-  {"iata":"VKO","city":"Moscow","airport":"Vnukovo International Airport","country":"Russia","ne":"Russia","lat":55.591499,"lon":37.261501,"region":"Europe","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Vnukovo International Airport"},
-  {"iata":"BLR","city":"Bengaluru","airport":"Kempegowda International Airport","country":"India","ne":"India","lat":13.1979,"lon":77.706299,"region":"South Asia","airlines":["Air India Express","IndiGo"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Kempegowda International Airport"},
-  {"iata":"SVO","city":"Moscow","airport":"Sheremetyevo International Airport","country":"Russia","ne":"Russia","lat":55.972599,"lon":37.4146,"region":"Europe","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Sheremetyevo International Airport"},
-  {"iata":"COK","city":"Kochi","airport":"Cochin International Airport","country":"India","ne":"India","lat":10.152,"lon":76.401901,"region":"South Asia","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Cochin International Airport"},
-  {"iata":"KRK","city":"Krakow","airport":"Kraków John Paul II International Airport","country":"Poland","ne":"Poland","lat":50.077702,"lon":19.7848,"region":"Europe","airlines":["Flynas"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Kraków John Paul II International Airport"},
-  {"iata":"FCO","city":"Rome","airport":"Leonardo da Vinci–Fiumicino Airport","country":"Italy","ne":"Italy","lat":41.800278,"lon":12.238889,"region":"Europe","airlines":["Flynas","ITA Airways","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Rome Fiumicino Airport"},
-  {"iata":"MLE","city":"Malé","airport":"Malé International Airport","country":"Maldives","ne":null,"lat":4.19183,"lon":73.529099,"region":"South Asia","airlines":["BeOnd","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Velana International Airport"},
-  {"iata":"VIE","city":"Vienna","airport":"Vienna International Airport","country":"Austria","ne":"Austria","lat":48.110298,"lon":16.5697,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Vienna International Airport"},
-  {"iata":"TRV","city":"Thiruvananthapuram","airport":"Trivandrum International Airport","country":"India","ne":"India","lat":8.48212,"lon":76.920097,"region":"South Asia","airlines":["Air India Express"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Thiruvananthapuram International Airport"},
-  {"iata":"WAW","city":"Warsaw","airport":"Warsaw Chopin Airport","country":"Poland","ne":"Poland","lat":52.165699,"lon":20.9671,"region":"Europe","airlines":["LOT Polish Airlines"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Warsaw Chopin Airport"},
-  {"iata":"VCE","city":"Venice","airport":"Venice Marco Polo Airport","country":"Italy","ne":"Italy","lat":45.505299,"lon":12.3519,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Venice Marco Polo Airport"},
-  {"iata":"PRG","city":"Prague","airport":"Václav Havel Airport Prague","country":"Czech Republic","ne":"Czechia","lat":50.1008,"lon":14.26,"region":"Europe","airlines":["Flyadeal","Flynas"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Václav Havel Airport Prague"},
-  {"iata":"MUC","city":"Munich","airport":"Munich Airport","country":"Germany","ne":"Germany","lat":48.353802,"lon":11.7861,"region":"Europe","airlines":["Lufthansa","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Munich Airport"},
-  {"iata":"BGY","city":"Milan","airport":"Il Caravaggio International Airport","country":"Italy","ne":"Italy","lat":45.673901,"lon":9.70417,"region":"Europe","airlines":["Flyadeal"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Milan Bergamo Airport"},
-  {"iata":"MXP","city":"Milan","airport":"Malpensa International Airport","country":"Italy","ne":"Italy","lat":45.6306,"lon":8.72811,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Milan Malpensa Airport"},
-  {"iata":"NCE","city":"Nice","airport":"Nice-Côte d'Azur Airport","country":"France","ne":"France","lat":43.658401,"lon":7.21587,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Nice Côte d'Azur Airport"},
-  {"iata":"ZRH","city":"Zurich","airport":"Zürich Airport","country":"Switzerland","ne":"Switzerland","lat":47.464699,"lon":8.54917,"region":"Europe","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Zurich Airport"},
-  {"iata":"FRA","city":"Frankfurt","airport":"Frankfurt am Main Airport","country":"Germany","ne":"Germany","lat":50.033333,"lon":8.570556,"region":"Europe","airlines":["Lufthansa","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Frankfurt Airport"},
-  {"iata":"GVA","city":"Geneva","airport":"Geneva Cointrin International Airport","country":"Switzerland","ne":"Switzerland","lat":46.238098,"lon":6.10895,"region":"Europe","airlines":["Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Geneva Airport"},
-  {"iata":"DAC","city":"Dhaka","airport":"Hazrat Shahjalal International Airport","country":"Bangladesh","ne":"Bangladesh","lat":23.843347,"lon":90.397783,"region":"South Asia","airlines":["Riyadh Air","US-Bangla Airlines"],"seasonal":false,"starts":"2026-08-07","src":"wp-cited","conf":"high","cs":"OF","wiki":"Hazrat Shahjalal International Airport"},
-  {"iata":"BCN","city":"Barcelona","airport":"Barcelona International Airport","country":"Spain","ne":"Spain","lat":41.2971,"lon":2.07846,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Josep Tarradellas Barcelona–El Prat Airport"},
-  {"iata":"AMS","city":"Amsterdam","airport":"Amsterdam Airport Schiphol","country":"Netherlands","ne":"Netherlands","lat":52.308601,"lon":4.76389,"region":"Europe","airlines":["KLM"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Amsterdam Airport Schiphol"},
-  {"iata":"CDG","city":"Paris","airport":"Charles de Gaulle International Airport","country":"France","ne":"France","lat":49.012798,"lon":2.55,"region":"Europe","airlines":["Air France","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Charles de Gaulle Airport"},
-  {"iata":"MAD","city":"Madrid","airport":"Adolfo Suárez Madrid–Barajas Airport","country":"Spain","ne":"Spain","lat":40.471926,"lon":-3.56264,"region":"Europe","airlines":["Riyadh Air"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Madrid–Barajas Airport"},
-  {"iata":"LHR","city":"London","airport":"London Heathrow Airport","country":"United Kingdom","ne":"United Kingdom","lat":51.4706,"lon":-0.461941,"region":"Europe","airlines":["Riyadh Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Heathrow Airport"},
-  {"iata":"AGP","city":"Malaga","airport":"Málaga Airport","country":"Spain","ne":"Spain","lat":36.6749,"lon":-4.49911,"region":"Europe","airlines":["Riyadh Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Málaga Airport"},
-  {"iata":"MAN","city":"Manchester","airport":"Manchester Airport","country":"United Kingdom","ne":"United Kingdom","lat":53.353699,"lon":-2.27495,"region":"Europe","airlines":["Riyadh Air"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Manchester Airport"},
-  {"iata":"CMN","city":"Casablanca","airport":"Mohammed V International Airport","country":"Morocco","ne":"Morocco","lat":33.3675,"lon":-7.58997,"region":"Africa","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Mohammed V International Airport"},
-  {"iata":"DMK","city":"Bangkok","airport":"Don Mueang International Airport","country":"Thailand","ne":"Thailand","lat":13.9126,"lon":100.607002,"region":"E. & SE. Asia","airlines":["Thai AirAsia X"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Don Mueang International Airport"},
-  {"iata":"BKK","city":"Bangkok","airport":"Suvarnabhumi Airport","country":"Thailand","ne":"Thailand","lat":13.6811,"lon":100.747002,"region":"E. & SE. Asia","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Suvarnabhumi Airport"},
-  {"iata":"HKT","city":"Phuket","airport":"Phuket International Airport","country":"Thailand","ne":"Thailand","lat":8.1132,"lon":98.316902,"region":"E. & SE. Asia","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Phuket International Airport"},
-  {"iata":"KUL","city":"Kuala Lumpur","airport":"Kuala Lumpur International Airport","country":"Malaysia","ne":"Malaysia","lat":2.74558,"lon":101.709999,"region":"E. & SE. Asia","airlines":["Riyadh Air"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Kuala Lumpur International Airport"},
-  {"iata":"PKX","city":"Beijing","airport":"Beijing Daxing International Airport","country":"China","ne":"China","lat":39.509945,"lon":116.41092,"region":"E. & SE. Asia","airlines":["China Southern Airlines","Saudia"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Beijing Daxing International Airport"},
-  {"iata":"PEK","city":"Beijing","airport":"Beijing Capital International Airport","country":"China","ne":"China","lat":40.080101,"lon":116.584999,"region":"E. & SE. Asia","airlines":["Air China"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Beijing Capital International Airport"},
-  {"iata":"SIN","city":"Singapore","airport":"Singapore Changi Airport","country":"Singapore","ne":null,"lat":1.35019,"lon":103.994003,"region":"E. & SE. Asia","airlines":["Singapore Airlines"],"seasonal":false,"starts":"2026-09-01","src":"wp-cited","conf":"high","cs":"OF","wiki":"Changi Airport"},
-  {"iata":"CAN","city":"Guangzhou","airport":"Guangzhou Baiyun International Airport","country":"China","ne":"China","lat":23.392401,"lon":113.299004,"region":"E. & SE. Asia","airlines":["China Southern Airlines"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Guangzhou Baiyun International Airport"},
-  {"iata":"SZX","city":"Shenzhen","airport":"Shenzhen Bao'an International Airport","country":"China","ne":"China","lat":22.639299,"lon":113.810997,"region":"E. & SE. Asia","airlines":["China Southern Airlines"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Shenzhen Bao'an International Airport"},
-  {"iata":"HKG","city":"Hong Kong","airport":"Hong Kong International Airport","country":"Hong Kong","ne":null,"lat":22.308901,"lon":113.915001,"region":"E. & SE. Asia","airlines":["Cathay Pacific"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Hong Kong International Airport"},
-  {"iata":"PVG","city":"Shanghai","airport":"Shanghai Pudong International Airport","country":"China","ne":"China","lat":31.1434,"lon":121.805,"region":"E. & SE. Asia","airlines":["China Eastern Airlines"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Shanghai Pudong International Airport"},
-  {"iata":"CGK","city":"Jakarta","airport":"Soekarno-Hatta International Airport","country":"Indonesia","ne":"Indonesia","lat":-6.12557,"lon":106.655998,"region":"E. & SE. Asia","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Soekarno–Hatta International Airport"},
-  {"iata":"MNL","city":"Manila","airport":"Ninoy Aquino International Airport","country":"Philippines","ne":"Philippines","lat":14.5086,"lon":121.019997,"region":"E. & SE. Asia","airlines":["Cebu Pacific","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Ninoy Aquino International Airport"},
-  {"iata":"NRT","city":"Tokyo","airport":"Narita International Airport","country":"Japan","ne":"Japan","lat":35.764702,"lon":140.386002,"region":"E. & SE. Asia","airlines":["Saudia"],"seasonal":false,"starts":"2026-11-17","src":"wp-cited","conf":"high","cs":"OF","wiki":"Narita International Airport"},
-  {"iata":"JFK","city":"New York","airport":"John F Kennedy International Airport","country":"United States","ne":"United States of America","lat":40.639801,"lon":-73.7789,"region":"Americas","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"John F. Kennedy International Airport"},
-  {"iata":"IAD","city":"Washington","airport":"Washington Dulles International Airport","country":"United States","ne":"United States of America","lat":38.9445,"lon":-77.455803,"region":"Americas","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Dulles International Airport"},
-  {"iata":"ATL","city":"Atlanta","airport":"Hartsfield Jackson Atlanta International Airport","country":"United States","ne":"United States of America","lat":33.6367,"lon":-84.428101,"region":"Americas","airlines":["Delta Air Lines"],"seasonal":false,"starts":"2026-10-23","src":"wp-cited","conf":"high","cs":"OF","wiki":"Hartsfield–Jackson Atlanta International Airport"}
+  {"iata":"DWD","city":"Dawadmi","airport":"King Salman Abdulaziz Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":24.4499,"lon":44.121201,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Dawadmi Domestic Airport","hrs":0.84,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"ELQ","city":"Qassim","airport":"Gassim Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":26.302799,"lon":43.774399,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Prince Naif bin Abdulaziz International Airport","hrs":0.92,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"DMM","city":"Dammam","airport":"King Fahd International Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":26.471201,"lon":49.797901,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"King Fahd International Airport","hrs":0.95,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"AQI","city":"Qaisumah","airport":"Al Qaisumah/Hafr Al Batin Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":28.335199,"lon":46.125099,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Qaisumah–Hafar Al-Batin International Airport","hrs":0.99,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"BAH","city":"Bahrain","airport":"Bahrain International Airport","country":"Bahrain","ne":null,"lat":26.2708,"lon":50.633598,"region":"Middle East","airlines":["Gulf Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Bahrain International Airport","hrs":1.04,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"KWI","city":"Kuwait","airport":"Kuwait International Airport","country":"Kuwait","ne":"Kuwait","lat":29.226601,"lon":47.968899,"region":"Middle East","airlines":["Flyadeal","Kuwait Airways"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Kuwait International Airport","hrs":1.13,"fb":0,"lcc":true,"status":null,"why":null},
+  {"iata":"DOH","city":"Doha","airport":"Hamad International Airport","country":"Qatar","ne":"Qatar","lat":25.273056,"lon":51.608056,"region":"Middle East","airlines":["Flynas","Qatar Airways","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Hamad International Airport","hrs":1.14,"fb":0,"lcc":true,"status":null,"why":null},
+  {"iata":"WAE","city":"Wadi al-Dawasir","airport":"Wadi Al Dawasir Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":20.504299,"lon":45.1996,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Wadi al-Dawasir Domestic Airport","hrs":1.16,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"HAS","city":"Ha'il","airport":"Ha'il Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":27.437901,"lon":41.686298,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Hail International Airport","hrs":1.23,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"RAH","city":"Rafha","airport":"Rafha Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":29.6264,"lon":43.490601,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Rafha Domestic Airport","hrs":1.28,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"BHH","city":"Bisha","airport":"Bisha Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":19.9844,"lon":42.620899,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Bisha Domestic Airport","hrs":1.39,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"MED","city":"Medina","airport":"Prince Mohammad Bin Abdulaziz Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":24.5534,"lon":39.705101,"region":"Domestic","airlines":["Flyadeal"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Prince Mohammad bin Abdulaziz International Airport","hrs":1.41,"fb":0,"lcc":true,"status":null,"why":null},
+  {"iata":"ABT","city":"Al Baha","airport":"Al Baha Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":20.296101,"lon":41.6343,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"King Saud Domestic Airport","hrs":1.44,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"TIF","city":"Ta'if","airport":"Ta’if Regional Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":21.483001,"lon":40.543442,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Taif International Airport","hrs":1.45,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"AUH","city":"Abu Dhabi","airport":"Abu Dhabi International Airport","country":"United Arab Emirates","ne":"United Arab Emirates","lat":24.433001,"lon":54.6511,"region":"Middle East","airlines":["Etihad Airways","Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Zayed International Airport","hrs":1.53,"fb":0,"lcc":true,"status":null,"why":null},
+  {"iata":"SHW","city":"Sharurah","airport":"Sharurah Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":17.4669,"lon":47.121399,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Sharurah Domestic Airport","hrs":1.57,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"AJF","city":"Al Jawf","airport":"Al-Jawf Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":29.785101,"lon":40.099998,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Al-Jouf International Airport","hrs":1.58,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"EAM","city":"Najran","airport":"Nejran Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":17.611401,"lon":44.419201,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Najran Regional Airport","hrs":1.59,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"JED","city":"Jeddah","airport":"King Abdulaziz International Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":21.6796,"lon":39.156502,"region":"Domestic","airlines":["Riyadh Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"King Abdulaziz International Airport","hrs":1.59,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"DWC","city":"Dubai","airport":"Al Maktoum International Airport","country":"United Arab Emirates","ne":"United Arab Emirates","lat":24.896356,"lon":55.161389,"region":"Middle East","airlines":["Flyadeal","Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Al Maktoum International Airport","hrs":1.59,"fb":0,"lcc":true,"status":null,"why":null},
+  {"iata":"AHB","city":"Abha","airport":"Abha Regional Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":18.2404,"lon":42.656601,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Abha International Airport","hrs":1.6,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"RAE","city":"Arar","airport":"Arar Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":30.906601,"lon":41.138199,"region":"Domestic","airlines":["Flyadeal","Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Arar Domestic Airport","hrs":1.6,"fb":0,"lcc":true,"status":null,"why":null},
+  {"iata":"DXB","city":"Dubai","airport":"Dubai International Airport","country":"United Arab Emirates","ne":"United Arab Emirates","lat":25.2528,"lon":55.364399,"region":"Middle East","airlines":["Emirates","Flydubai","Riyadh Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Dubai International Airport","hrs":1.62,"fb":0,"lcc":true,"status":null,"why":null},
+  {"iata":"ULH","city":"AlUla","airport":"Majeed Bin Abdulaziz Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":26.48,"lon":38.128889,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Al-Ula International Airport","hrs":1.62,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"YNB","city":"Yanbu","airport":"Prince Abdulmohsin Bin Abdulaziz Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":24.144199,"lon":38.0634,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Prince Abdulmohsen Bin Abdulaziz International Airport","hrs":1.63,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"SHJ","city":"Sharjah","airport":"Sharjah International Airport","country":"United Arab Emirates","ne":"United Arab Emirates","lat":25.3286,"lon":55.5172,"region":"Middle East","airlines":["Air Arabia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Sharjah International Airport","hrs":1.64,"fb":0,"lcc":true,"status":null,"why":null},
+  {"iata":"RSI","city":"Red Sea","airport":"Red Sea International Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":25.630278,"lon":37.078333,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"WD","wiki":"Red Sea International Airport","hrs":1.74,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"GIZ","city":"Jizan","airport":"Jizan Regional Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":16.9011,"lon":42.5858,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"King Abdullah International Airport","hrs":1.77,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"EJH","city":"Al Wajh","airport":"Al Wajh Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":26.198601,"lon":36.476398,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"restored","conf":"high","cs":"OF","wiki":"Al-Wajh Domestic Airport","hrs":1.83,"fb":0,"lcc":false,"status":null,"why":"Al-Wajh Domestic Airport article (edited 7 Jul 2026) lists 'Saudia | Jeddah, Riyadh'; FlightConnections shows RUH 13 flights/month on SV."},
+  {"iata":"TUU","city":"Tabuk","airport":"Tabuk Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":28.3654,"lon":36.6189,"region":"Domestic","airlines":["Flyadeal","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Prince Sultan bin Abdulaziz Airport","hrs":1.87,"fb":0,"lcc":true,"status":null,"why":null},
+  {"iata":"TUI","city":"Turaif","airport":"Turaif Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":31.692188,"lon":38.731544,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Turaif Domestic Airport","hrs":1.89,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"PZU","city":"Port Sudan","airport":"Port Sudan New International Airport","country":"Sudan","ne":"Sudan","lat":19.433599,"lon":37.2341,"region":"Africa","airlines":["Sudan Airways"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Port Sudan New International Airport","hrs":1.98,"fb":0,"lcc":false,"status":null,"why":null},
+  {"iata":"SLL","city":"Salalah","airport":"Salalah Airport","country":"Oman","ne":"Oman","lat":17.0387,"lon":54.091301,"region":"Middle East","airlines":["Flynas"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Salalah International Airport","hrs":2.0,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"URY","city":"Gurayat","airport":"Gurayat Domestic Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":31.412413,"lon":37.278898,"region":"Domestic","airlines":["Flyadeal","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Gurayat Domestic Airport","hrs":2.0,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"NUM","city":"Neom Bay","airport":"NEOM Bay Airport","country":"Saudi Arabia","ne":"Saudi Arabia","lat":27.928611,"lon":35.296111,"region":"Domestic","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"WD","wiki":"Neom Bay Airport","hrs":2.02,"fb":1,"lcc":false,"status":null,"why":null},
+  {"iata":"MCT","city":"Muscat","airport":"Muscat International Airport","country":"Oman","ne":"Oman","lat":23.5933,"lon":58.284401,"region":"Middle East","airlines":["SalamAir"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Muscat International Airport","hrs":2.02,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"AQJ","city":"Aqaba","airport":"Aqaba King Hussein International Airport","country":"Jordan","ne":"Jordan","lat":29.611601,"lon":35.018101,"region":"Middle East","airlines":["Royal Jordanian"],"seasonal":false,"starts":"2026-09-24","src":"wp-cited","conf":"high","cs":"OF","wiki":"King Hussein International Airport","hrs":2.12,"fb":1,"lcc":false,"status":null,"why":null},
+  {"iata":"SSH","city":"Sharm El Sheikh","airport":"Sharm El Sheikh International Airport","country":"Egypt","ne":"Egypt","lat":27.977301,"lon":34.395,"region":"Africa","airlines":["Air Cairo","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Sharm El Sheikh International Airport","hrs":2.13,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"AMM","city":"Amman","airport":"Queen Alia International Airport","country":"Jordan","ne":"Jordan","lat":31.722601,"lon":35.993198,"region":"Middle East","airlines":["Royal Jordanian","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Queen Alia International Airport","hrs":2.15,"fb":1,"lcc":false,"status":null,"why":null},
+  {"iata":"HRG","city":"Hurghada","airport":"Hurghada International Airport","country":"Egypt","ne":"Egypt","lat":27.178301,"lon":33.7994,"region":"Africa","airlines":["Flynas"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Hurghada International Airport","hrs":2.18,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"ADE","city":"Aden","airport":"Aden International Airport","country":"Yemen","ne":"Yemen","lat":12.8295,"lon":45.028801,"region":"Middle East","airlines":["Yemenia"],"seasonal":false,"starts":null,"src":"restored","conf":"high","cs":"OF","wiki":"Aden International Airport","hrs":2.24,"fb":1,"lcc":false,"status":null,"why":"Aden airport's own Wikipedia destination table lists Yemenia to Riyadh; Anadolu Agency (4 Jan 2026) quotes Yemenia's deputy GM naming Riyadh among four Aden destinations; FlightConnections Yemenia route map updated 2 Jul 2026."},
+  {"iata":"DAM","city":"Damascus","airport":"Damascus International Airport","country":"Syria","ne":"Syria","lat":33.411499,"lon":36.515598,"region":"Middle East","airlines":["Flyadeal","Flynas"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Damascus International Airport","hrs":2.25,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"BEY","city":"Beirut","airport":"Beirut Rafic Hariri International Airport","country":"Lebanon","ne":"Lebanon","lat":33.8209,"lon":35.4884,"region":"Middle East","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Beirut–Rafic Hariri International Airport","hrs":2.38,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"HMB","city":"Sohag","airport":"Sohag International Airport","country":"Egypt","ne":"Egypt","lat":26.342778,"lon":31.742778,"region":"Africa","airlines":["Air Cairo","Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Sohag International Airport","hrs":2.43,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"ATZ","city":"Asyut","airport":"Assiut International Airport","country":"Egypt","ne":"Egypt","lat":27.046499,"lon":31.011999,"region":"Africa","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Assiut Airport","hrs":2.53,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"HTY","city":"Hatay","airport":"Hatay Airport","country":"Turkey","ne":"Turkey","lat":36.362778,"lon":36.282223,"region":"Middle East","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Hatay Airport","hrs":2.56,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"CAI","city":"Cairo","airport":"Cairo International Airport","country":"Egypt","ne":"Egypt","lat":30.121901,"lon":31.4056,"region":"Africa","airlines":["Air Arabia","Egyptair","Flyadeal","Riyadh Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Cairo International Airport","hrs":2.57,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"SPX","city":"Giza","airport":"Sphinx International Airport","country":"Egypt","ne":"Egypt","lat":30.109722,"lon":30.894444,"region":"Africa","airlines":["Air Cairo","Flynas"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"WD","wiki":"Sphinx International Airport","hrs":2.63,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"GYD","city":"Baku","airport":"Heydar Aliyev International Airport","country":"Azerbaijan","ne":"Azerbaijan","lat":40.467499,"lon":50.0467,"region":"Caucasus & C. Asia","airlines":["Azerbaijan Airlines"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Heydar Aliyev International Airport","hrs":2.75,"fb":1,"lcc":false,"status":null,"why":null},
+  {"iata":"HBE","city":"Alexandria","airport":"Borg El Arab International Airport","country":"Egypt","ne":"Egypt","lat":30.9177,"lon":29.6964,"region":"Africa","airlines":["Air Arabia","Egyptair","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Alexandria International Airport (Egypt)","hrs":2.8,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"TBS","city":"Tbilisi","airport":"Tbilisi International Airport","country":"Georgia","ne":"Georgia","lat":41.669201,"lon":44.9547,"region":"Caucasus & C. Asia","airlines":["flynas"],"seasonal":false,"starts":null,"src":"restored","conf":"high","cs":"OF","wiki":"Tbilisi International Airport","hrs":2.89,"fb":1,"lcc":true,"status":null,"why":"FlightConnections lists flynas nonstop RUH-TBS; flynas Summer 2026 network release includes Tbilisi."},
+  {"iata":"RZV","city":"Rize","airport":"Rize–Artvin Airport","country":"Turkey","ne":"Turkey","lat":41.175556,"lon":40.845,"region":"Middle East","airlines":["Flynas"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"WD","wiki":"Rize–Artvin Airport","hrs":2.91,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"TZX","city":"Trabzon","airport":"Trabzon International Airport","country":"Turkey","ne":"Turkey","lat":40.995098,"lon":39.7897,"region":"Middle East","airlines":["Flyadeal","Pegasus Airlines"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Trabzon Airport","hrs":2.93,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"DBB","city":"El Alamein","airport":"El Alamein International Airport","country":"Egypt","ne":"Egypt","lat":30.9245,"lon":28.461399,"region":"Africa","airlines":["Flynas","Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"El Alamein International Airport","hrs":2.95,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"BUS","city":"Batumi","airport":"Batumi International Airport","country":"Georgia","ne":"Georgia","lat":41.610298,"lon":41.599701,"region":"Caucasus & C. Asia","airlines":["flynas"],"seasonal":true,"starts":null,"src":"restored","conf":"high","cs":"OF","wiki":"Batumi International Airport","hrs":2.95,"fb":1,"lcc":true,"status":null,"why":"Batumi Airport's own route map lists 'Flynas | Riyadh'; FlightConnections (31 Jul 2026) names flynas the only operator, 6 weekly."},
+  {"iata":"ADD","city":"Addis Ababa","airport":"Addis Ababa Bole International Airport","country":"Ethiopia","ne":"Ethiopia","lat":8.97789,"lon":38.799301,"region":"Africa","airlines":["Ethiopian Airlines","Flynas"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Addis Ababa Bole International Airport","hrs":3.02,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"AYT","city":"Antalya","airport":"Antalya International Airport","country":"Turkey","ne":"Turkey","lat":36.898701,"lon":30.800501,"region":"Middle East","airlines":["Flyadeal","Flynas","Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Antalya Airport","hrs":3.08,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"KHI","city":"Karachi","airport":"Jinnah International Airport","country":"Pakistan","ne":"Pakistan","lat":24.9065,"lon":67.160797,"region":"South Asia","airlines":["Flyadeal"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Jinnah International Airport","hrs":3.14,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"AER","city":"Sochi","airport":"Sochi International Airport","country":"Russia","ne":"Russia","lat":43.449902,"lon":39.9566,"region":"Europe","airlines":["azimuth"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Sochi International Airport","hrs":3.25,"fb":1,"lcc":false,"status":null,"why":null},
+  {"iata":"BJV","city":"Bodrum","airport":"Milas Bodrum International Airport","country":"Turkey","ne":"Turkey","lat":37.250599,"lon":27.664301,"region":"Middle East","airlines":["Flyadeal","Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Milas–Bodrum Airport","hrs":3.4,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"SAW","city":"Istanbul","airport":"Sabiha Gökçen International Airport","country":"Turkey","ne":"Turkey","lat":40.898602,"lon":29.3092,"region":"Middle East","airlines":["AJet","Pegasus Airlines"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Sabiha Gökçen International Airport","hrs":3.57,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"KBL","city":"Kabul","airport":"Hamid Karzai International Airport","country":"Afghanistan","ne":"Afghanistan","lat":34.565899,"lon":69.212303,"region":"South Asia","airlines":["Kam Air"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Kabul International Airport","hrs":3.59,"fb":1,"lcc":false,"status":null,"why":null},
+  {"iata":"JMK","city":"Mykonos","airport":"Mikonos Airport","country":"Greece","ne":"Greece","lat":37.435101,"lon":25.348101,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Mykonos Airport","hrs":3.64,"fb":1,"lcc":false,"status":null,"why":null},
+  {"iata":"IST","city":"Istanbul","airport":"Istanbul Airport","country":"Turkey","ne":"Turkey","lat":41.275278,"lon":28.751944,"region":"Middle East","airlines":["Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Istanbul Airport","hrs":3.65,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"MUX","city":"Multan","airport":"Multan International Airport","country":"Pakistan","ne":"Pakistan","lat":30.203199,"lon":71.419098,"region":"South Asia","airlines":["Pakistan International Airlines"],"seasonal":false,"starts":null,"src":"restored","conf":"high","cs":"OF","wiki":"Multan International Airport","hrs":3.7,"fb":1,"lcc":false,"status":null,"why":"FlightConnections lists PIA as nonstop operator RUH-MUX."},
+  {"iata":"ATH","city":"Athens","airport":"Eleftherios Venizelos International Airport","country":"Greece","ne":"Greece","lat":37.936401,"lon":23.9445,"region":"Europe","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Athens International Airport","hrs":3.81,"fb":1,"lcc":false,"status":null,"why":null},
+  {"iata":"PEW","city":"Peshawar","airport":"Peshawar International Airport","country":"Pakistan","ne":"Pakistan","lat":33.9939,"lon":71.514603,"region":"South Asia","airlines":["Flyadeal","Serene Air"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Bacha Khan International Airport","hrs":3.83,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"ISB","city":"Islamabad","airport":"New Islamabad International Airport","country":"Pakistan","ne":"Pakistan","lat":33.560713,"lon":72.851613,"region":"South Asia","airlines":["AirSial","Fly Jinnah","Flyadeal"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Islamabad International Airport","hrs":3.96,"fb":1,"lcc":true,"status":null,"why":null},
+  {"iata":"TAS","city":"Tashkent","airport":"Tashkent International Airport","country":"Uzbekistan","ne":"Uzbekistan","lat":41.2579,"lon":69.281197,"region":"Caucasus & C. Asia","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Tashkent International Airport","hrs":4.04,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"BOM","city":"Mumbai","airport":"Chhatrapati Shivaji International Airport","country":"India","ne":"India","lat":19.088699,"lon":72.867897,"region":"South Asia","airlines":["Akasa Air","IndiGo","Riyadh Air","Saudia"],"seasonal":false,"starts":"2026-08-04","src":"wp-cited","conf":"high","cs":"OF","wiki":"Chhatrapati Shivaji Maharaj International Airport","hrs":4.05,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"LHE","city":"Lahore","airport":"Alama Iqbal International Airport","country":"Pakistan","ne":"Pakistan","lat":31.521601,"lon":74.403603,"region":"South Asia","airlines":["AirSial","Flyadeal"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Allama Iqbal International Airport","hrs":4.09,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"SKT","city":"Sialkot","airport":"Sialkot Airport","country":"Pakistan","ne":"Pakistan","lat":32.535557,"lon":74.363892,"region":"South Asia","airlines":["Flyadeal","Pakistan International Airlines"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Sialkot International Airport","hrs":4.11,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"DEL","city":"Delhi","airport":"Indira Gandhi International Airport","country":"India","ne":"India","lat":28.5665,"lon":77.103104,"region":"South Asia","airlines":["Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Indira Gandhi International Airport","hrs":4.39,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"TIA","city":"Tirana","airport":"Tirana International Airport Mother Teresa","country":"Albania","ne":"Albania","lat":41.4147,"lon":19.7206,"region":"Europe","airlines":["flynas"],"seasonal":true,"starts":null,"src":"restored","conf":"high","cs":"OF","wiki":"Tirana International Airport Nënë Tereza","hrs":4.45,"fb":2,"lcc":true,"status":null,"why":"FlightConnections RUH-TIA; flynas Summer 2026 network release includes Tirana."},
+  {"iata":"NBO","city":"Nairobi","airport":"Jomo Kenyatta International Airport","country":"Kenya","ne":"Kenya","lat":-1.31924,"lon":36.927799,"region":"Africa","airlines":["Flynas"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Jomo Kenyatta International Airport","hrs":4.48,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"EBB","city":"Entebbe","airport":"Entebbe International Airport","country":"Uganda","ne":"Uganda","lat":0.042386,"lon":32.443501,"region":"Africa","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Entebbe International Airport","hrs":4.56,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"TGD","city":"Podgorica","airport":"Podgorica Airport","country":"Montenegro","ne":"Montenegro","lat":42.359402,"lon":19.2519,"region":"Europe","airlines":["flynas"],"seasonal":true,"starts":null,"src":"restored","conf":"medium","cs":"OF","wiki":null,"hrs":4.56,"fb":2,"lcc":true,"status":null,"why":"flynas Summer 2026 network release (via TradeArabia) lists Podgorica; single source, not yet corroborated by the airport's own listing."},
+  {"iata":"SJJ","city":"Sarajevo","airport":"Sarajevo International Airport","country":"Bosnia and Herzegovina","ne":"Bosnia and Herz.","lat":43.8246,"lon":18.331499,"region":"Europe","airlines":["Flyadeal"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Sarajevo International Airport","hrs":4.75,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"CNN","city":"Kannur","airport":"Kannur International Airport","country":"India","ne":"India","lat":11.918614,"lon":75.547211,"region":"South Asia","airlines":["Air India Express"],"seasonal":false,"starts":null,"src":"restored","conf":"high","cs":"OF","wiki":"Kannur International Airport","hrs":4.81,"fb":2,"lcc":true,"status":null,"why":"Air India Express's own booking site lists Kannur from Riyadh; Kannur airport article lists it; Kerala press reports international services resumed 1 Jul 2026 with 3 weekly to Riyadh."},
+  {"iata":"HYD","city":"Hyderabad","airport":"Rajiv Gandhi International Airport","country":"India","ne":"India","lat":17.231318,"lon":78.429855,"region":"South Asia","airlines":["Flyadeal","Flynas","IndiGo"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Rajiv Gandhi International Airport","hrs":4.85,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"LKO","city":"Lucknow","airport":"Chaudhary Charan Singh International Airport","country":"India","ne":"India","lat":26.760599,"lon":80.889297,"region":"South Asia","airlines":["Air India Express","Flynas"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Chaudhary Charan Singh International Airport","hrs":4.88,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"CCJ","city":"Kozhikode","airport":"Calicut International Airport","country":"India","ne":"India","lat":11.1368,"lon":75.955299,"region":"South Asia","airlines":["Air India Express","Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Calicut International Airport","hrs":4.91,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"BUD","city":"Budapest","airport":"Budapest Liszt Ferenc International Airport","country":"Hungary","ne":"Hungary","lat":47.42976,"lon":19.261093,"region":"Europe","airlines":["flynas"],"seasonal":true,"starts":null,"src":"restored","conf":"high","cs":"OF","wiki":null,"hrs":4.95,"fb":2,"lcc":true,"status":null,"why":"flynas own media-centre Summer 2026 network release lists Budapest among new Riyadh routes."},
+  {"iata":"VKO","city":"Moscow","airport":"Vnukovo International Airport","country":"Russia","ne":"Russia","lat":55.591499,"lon":37.261501,"region":"Europe","airlines":["Flynas"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Vnukovo International Airport","hrs":4.98,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"BLR","city":"Bengaluru","airport":"Kempegowda International Airport","country":"India","ne":"India","lat":13.1979,"lon":77.706299,"region":"South Asia","airlines":["Air India Express","IndiGo"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Kempegowda International Airport","hrs":4.99,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"SVO","city":"Moscow","airport":"Sheremetyevo International Airport","country":"Russia","ne":"Russia","lat":55.972599,"lon":37.4146,"region":"Europe","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Sheremetyevo International Airport","hrs":5.03,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"COK","city":"Kochi","airport":"Cochin International Airport","country":"India","ne":"India","lat":10.152,"lon":76.401901,"region":"South Asia","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Cochin International Airport","hrs":5.04,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"KRK","city":"Krakow","airport":"Kraków John Paul II International Airport","country":"Poland","ne":"Poland","lat":50.077702,"lon":19.7848,"region":"Europe","airlines":["Flynas"],"seasonal":true,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Kraków John Paul II International Airport","hrs":5.15,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"FCO","city":"Rome","airport":"Leonardo da Vinci–Fiumicino Airport","country":"Italy","ne":"Italy","lat":41.800278,"lon":12.238889,"region":"Europe","airlines":["Flynas","ITA Airways","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Rome Fiumicino Airport","hrs":5.21,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"MLE","city":"Malé","airport":"Malé International Airport","country":"Maldives","ne":null,"lat":4.19183,"lon":73.529099,"region":"South Asia","airlines":["BeOnd","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Velana International Airport","hrs":5.22,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"VIE","city":"Vienna","airport":"Vienna International Airport","country":"Austria","ne":"Austria","lat":48.110298,"lon":16.5697,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Vienna International Airport","hrs":5.22,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"TRV","city":"Thiruvananthapuram","airport":"Trivandrum International Airport","country":"India","ne":"India","lat":8.48212,"lon":76.920097,"region":"South Asia","airlines":["Air India Express"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Thiruvananthapuram International Airport","hrs":5.23,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"WAW","city":"Warsaw","airport":"Warsaw Chopin Airport","country":"Poland","ne":"Poland","lat":52.165699,"lon":20.9671,"region":"Europe","airlines":["LOT Polish Airlines"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Warsaw Chopin Airport","hrs":5.27,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"VCE","city":"Venice","airport":"Venice Marco Polo Airport","country":"Italy","ne":"Italy","lat":45.505299,"lon":12.3519,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Venice Marco Polo Airport","hrs":5.4,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"SZG","city":"Salzburg","airport":"Salzburg Airport","country":"Austria","ne":"Austria","lat":47.793301,"lon":13.0043,"region":"Europe","airlines":["flynas"],"seasonal":true,"starts":null,"src":"restored","conf":"high","cs":"OF","wiki":"Salzburg Airport","hrs":5.49,"fb":2,"lcc":true,"status":null,"why":"FlightConnections RUH-SZG; flynas Summer 2026 network release includes Salzburg."},
+  {"iata":"PRG","city":"Prague","airport":"Václav Havel Airport Prague","country":"Czech Republic","ne":"Czechia","lat":50.1008,"lon":14.26,"region":"Europe","airlines":["Flyadeal","Flynas"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Václav Havel Airport Prague","hrs":5.56,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"MUC","city":"Munich","airport":"Munich Airport","country":"Germany","ne":"Germany","lat":48.353802,"lon":11.7861,"region":"Europe","airlines":["Lufthansa","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Munich Airport","hrs":5.63,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"BGY","city":"Milan","airport":"Il Caravaggio International Airport","country":"Italy","ne":"Italy","lat":45.673901,"lon":9.70417,"region":"Europe","airlines":["Flyadeal"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Milan Bergamo Airport","hrs":5.65,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"CMB","city":"Colombo","airport":"Bandaranaike International Colombo Airport","country":"Sri Lanka","ne":"Sri Lanka","lat":7.18076,"lon":79.884102,"region":"South Asia","airlines":["SriLankan Airlines"],"seasonal":false,"starts":null,"src":"restored","conf":"high","cs":"OF","wiki":"Bandaranaike International Airport","hrs":5.68,"fb":2,"lcc":false,"status":null,"why":"Bandaranaike (CMB) destination table lists SriLankan to Riyadh with no qualifier; FlightConnections (31 Jul 2026) names SriLankan the only nonstop operator; UL265/UL266 A330-300."},
+  {"iata":"MXP","city":"Milan","airport":"Malpensa International Airport","country":"Italy","ne":"Italy","lat":45.6306,"lon":8.72811,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Milan Malpensa Airport","hrs":5.74,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"NCE","city":"Nice","airport":"Nice-Côte d'Azur Airport","country":"France","ne":"France","lat":43.658401,"lon":7.21587,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Nice Côte d'Azur Airport","hrs":5.79,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"ZRH","city":"Zurich","airport":"Zürich Airport","country":"Switzerland","ne":"Switzerland","lat":47.464699,"lon":8.54917,"region":"Europe","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Zurich Airport","hrs":5.85,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"FRA","city":"Frankfurt","airport":"Frankfurt am Main Airport","country":"Germany","ne":"Germany","lat":50.033333,"lon":8.570556,"region":"Europe","airlines":["Lufthansa","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Frankfurt Airport","hrs":6.0,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"GVA","city":"Geneva","airport":"Geneva Cointrin International Airport","country":"Switzerland","ne":"Switzerland","lat":46.238098,"lon":6.10895,"region":"Europe","airlines":["Flynas","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Geneva Airport","hrs":6.01,"fb":2,"lcc":true,"status":null,"why":null},
+  {"iata":"DAC","city":"Dhaka","airport":"Hazrat Shahjalal International Airport","country":"Bangladesh","ne":"Bangladesh","lat":23.843347,"lon":90.397783,"region":"South Asia","airlines":["Riyadh Air","US-Bangla Airlines"],"seasonal":false,"starts":"2026-08-07","src":"wp-cited","conf":"high","cs":"OF","wiki":"Hazrat Shahjalal International Airport","hrs":6.15,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"BCN","city":"Barcelona","airport":"Barcelona International Airport","country":"Spain","ne":"Spain","lat":41.2971,"lon":2.07846,"region":"Europe","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Josep Tarradellas Barcelona–El Prat Airport","hrs":6.24,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"AMS","city":"Amsterdam","airport":"Amsterdam Airport Schiphol","country":"Netherlands","ne":"Netherlands","lat":52.308601,"lon":4.76389,"region":"Europe","airlines":["KLM"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Amsterdam Airport Schiphol","hrs":6.45,"fb":2,"lcc":false,"status":"suspended","why":"KLM is the only Riyadh-Amsterdam operator and has suspended the route until 6 September 2026 amid regional airspace disruption (The National, 26 Jul 2026). Kept on the map and flagged, because it is a suspension with a stated return date, not a cancellation."},
+  {"iata":"CDG","city":"Paris","airport":"Charles de Gaulle International Airport","country":"France","ne":"France","lat":49.012798,"lon":2.55,"region":"Europe","airlines":["Air France","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Charles de Gaulle Airport","hrs":6.46,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"MAD","city":"Madrid","airport":"Adolfo Suárez Madrid–Barajas Airport","country":"Spain","ne":"Spain","lat":40.471926,"lon":-3.56264,"region":"Europe","airlines":["Riyadh Air"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Madrid–Barajas Airport","hrs":6.83,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"LHR","city":"London","airport":"London Heathrow Airport","country":"United Kingdom","ne":"United Kingdom","lat":51.4706,"lon":-0.461941,"region":"Europe","airlines":["Riyadh Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Heathrow Airport","hrs":6.83,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"AGP","city":"Malaga","airport":"Málaga Airport","country":"Spain","ne":"Spain","lat":36.6749,"lon":-4.49911,"region":"Europe","airlines":["Riyadh Air","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Málaga Airport","hrs":6.91,"fb":2,"lcc":false,"status":null,"why":null},
+  {"iata":"MAN","city":"Manchester","airport":"Manchester Airport","country":"United Kingdom","ne":"United Kingdom","lat":53.353699,"lon":-2.27495,"region":"Europe","airlines":["Riyadh Air"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Manchester Airport","hrs":7.07,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"CMN","city":"Casablanca","airport":"Mohammed V International Airport","country":"Morocco","ne":"Morocco","lat":33.3675,"lon":-7.58997,"region":"Africa","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Mohammed V International Airport","hrs":7.29,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"BKK","city":"Bangkok","airport":"Suvarnabhumi Airport","country":"Thailand","ne":"Thailand","lat":13.6811,"lon":100.747002,"region":"E. & SE. Asia","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Suvarnabhumi Airport","hrs":7.9,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"HKT","city":"Phuket","airport":"Phuket International Airport","country":"Thailand","ne":"Thailand","lat":8.1132,"lon":98.316902,"region":"E. & SE. Asia","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Phuket International Airport","hrs":7.9,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"KUL","city":"Kuala Lumpur","airport":"Kuala Lumpur International Airport","country":"Malaysia","ne":"Malaysia","lat":2.74558,"lon":101.709999,"region":"E. & SE. Asia","airlines":["Riyadh Air"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Kuala Lumpur International Airport","hrs":8.68,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"PKX","city":"Beijing","airport":"Beijing Daxing International Airport","country":"China","ne":"China","lat":39.509945,"lon":116.41092,"region":"E. & SE. Asia","airlines":["China Southern Airlines","Saudia"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Beijing Daxing International Airport","hrs":8.95,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"PEK","city":"Beijing","airport":"Beijing Capital International Airport","country":"China","ne":"China","lat":40.080101,"lon":116.584999,"region":"E. & SE. Asia","airlines":["Air China"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Beijing Capital International Airport","hrs":8.96,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"SIN","city":"Singapore","airport":"Singapore Changi Airport","country":"Singapore","ne":null,"lat":1.35019,"lon":103.994003,"region":"E. & SE. Asia","airlines":["Singapore Airlines"],"seasonal":false,"starts":"2026-09-01","src":"wp-cited","conf":"high","cs":"OF","wiki":"Changi Airport","hrs":9.06,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"CAN","city":"Guangzhou","airport":"Guangzhou Baiyun International Airport","country":"China","ne":"China","lat":23.392401,"lon":113.299004,"region":"E. & SE. Asia","airlines":["China Southern Airlines"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Guangzhou Baiyun International Airport","hrs":9.07,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"SZX","city":"Shenzhen","airport":"Shenzhen Bao'an International Airport","country":"China","ne":"China","lat":22.639299,"lon":113.810997,"region":"E. & SE. Asia","airlines":["China Southern Airlines"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Shenzhen Bao'an International Airport","hrs":9.17,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"HKG","city":"Hong Kong","airport":"Hong Kong International Airport","country":"Hong Kong","ne":null,"lat":22.308901,"lon":113.915001,"region":"E. & SE. Asia","airlines":["Cathay Pacific"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Hong Kong International Airport","hrs":9.19,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"PVG","city":"Shanghai","airport":"Shanghai Pudong International Airport","country":"China","ne":"China","lat":31.1434,"lon":121.805,"region":"E. & SE. Asia","airlines":["China Eastern Airlines"],"seasonal":false,"starts":null,"src":"wp-uncited","conf":"medium","cs":"OF","wiki":"Shanghai Pudong International Airport","hrs":9.81,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"CGK","city":"Jakarta","airport":"Soekarno-Hatta International Airport","country":"Indonesia","ne":"Indonesia","lat":-6.12557,"lon":106.655998,"region":"E. & SE. Asia","airlines":["Saudia"],"seasonal":true,"starts":null,"src":"wp-cited","conf":"low","cs":"OF","wiki":"Soekarno–Hatta International Airport","hrs":9.91,"fb":3,"lcc":false,"status":"seasonal","why":"Garuda's Riyadh service is marked terminated; the remaining Jakarta service is Saudia's seasonal Hajj/Umrah operation. Kept as seasonal at low confidence."},
+  {"iata":"MNL","city":"Manila","airport":"Ninoy Aquino International Airport","country":"Philippines","ne":"Philippines","lat":14.5086,"lon":121.019997,"region":"E. & SE. Asia","airlines":["Cebu Pacific","Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Ninoy Aquino International Airport","hrs":10.47,"fb":3,"lcc":true,"status":null,"why":null},
+  {"iata":"NRT","city":"Tokyo","airport":"Narita International Airport","country":"Japan","ne":"Japan","lat":35.764702,"lon":140.386002,"region":"E. & SE. Asia","airlines":["Saudia"],"seasonal":false,"starts":"2026-11-17","src":"wp-cited","conf":"high","cs":"OF","wiki":"Narita International Airport","hrs":11.69,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"JFK","city":"New York","airport":"John F Kennedy International Airport","country":"United States","ne":"United States of America","lat":40.639801,"lon":-73.7789,"region":"Americas","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"John F. Kennedy International Airport","hrs":13.94,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"IAD","city":"Washington","airport":"Washington Dulles International Airport","country":"United States","ne":"United States of America","lat":38.9445,"lon":-77.455803,"region":"Americas","airlines":["Saudia"],"seasonal":false,"starts":null,"src":"wp-cited","conf":"high","cs":"OF","wiki":"Dulles International Airport","hrs":14.4,"fb":3,"lcc":false,"status":null,"why":null},
+  {"iata":"ATL","city":"Atlanta","airport":"Hartsfield Jackson Atlanta International Airport","country":"United States","ne":"United States of America","lat":33.6367,"lon":-84.428101,"region":"Americas","airlines":["Delta Air Lines"],"seasonal":false,"starts":"2026-10-23","src":"wp-cited","conf":"high","cs":"OF","wiki":"Hartsfield–Jackson Atlanta International Airport","hrs":15.5,"fb":3,"lcc":false,"status":null,"why":null}
 ];
 
-const META = {"note":"Route table built 2026-07-31 from the English Wikipedia \"King Khalid International Airport\" article (live revision plus the 11 January 2026 revision for routes since deleted), with destinations resolved to IATA codes through Wikidata and coordinates from OpenFlights. 120 destinations. No flight times, frequencies or fares are stored anywhere in this file — by design."};
+const META = {"note":"Route table built 2026-07-31 from the English Wikipedia \"King Khalid International Airport\" article (live revision plus the 11 January 2026 revision for routes since deleted), with destinations resolved to IATA codes through Wikidata and coordinates from OpenFlights. 129 destinations. No flight times, frequencies or fares are stored anywhere in this file — by design."};
 
 /* ---------------------------------------------------------------- geometry */
 const R_KM = 6371.0088, D2R = Math.PI/180, R2D = 180/Math.PI;
@@ -728,8 +750,11 @@ function decodeTopology(topo, objName){
 }
 
 /* -------------------------------------------------------------- prep data */
-const BANDS = [{"max":1000,"label":"<1,000 km"},{"max":2500,"label":"1–2.5k"},{"max":5000,"label":"2.5–5k"},{"max":8000,"label":"5–8k"},{"max":1000000000,"label":"8k+"}];
-const bandOf = km => { for(let i=0;i<BANDS.length;i++) if(km<BANDS[i].max) return i; return BANDS.length-1; };
+const BANDS = [{"max":2,"label":"under 2h"},{"max":4,"label":"2–4h"},{"max":7,"label":"4–7h"},{"max":11,"label":"7–11h"},{"max":1000000000,"label":"11h+"}];
+const FARES = {"sampled":"2026-07-31","bands":[{"max":2,"lo":300,"hi":700,"anchor":"RUH-JED","note":"flyadeal from SAR 299 and flynas from SAR 329 one-way economy, own booking sites"},{"max":4,"lo":650,"hi":1500,"anchor":"RUH-CAI","note":"best return SAR 670, typical SAR 840-1,416, monthly average SAR 412-650 (Skyscanner, Flyin)"},{"max":7,"lo":900,"hi":2900,"anchor":"RUH-DEL / RUH-IST / RUH-LHR","note":"Delhi best return SAR 964 (typical 880-1,220); Istanbul return SAR 1,311-2,871; London best return SAR 1,760, from SAR 1,315 (Skyscanner, Air India)"},{"max":1000000000,"lo":2400,"hi":4100,"anchor":"RUH-MNL / RUH-JFK","note":"Manila from SAR 2,401 all-in (Philippine Airlines); New York round trip from about USD 675, typical USD 590-1,097 at SAR 3.75/USD (Expedia, FareCompare)"}],"ground":0.5,"kmh":780.0};
+const bandOf = hrs => { for(let i=0;i<BANDS.length;i++) if(hrs<BANDS[i].max) return i; return BANDS.length-1; };
+/* 2.57 -> "2h34" */
+const fmtH = h => `${Math.floor(h)}h${String(Math.round((h-Math.floor(h))*60)).padStart(2,'0')}`;
 
 const TODAY = new Date();
 const iso = d => d.toISOString().slice(0,10);
@@ -738,18 +763,19 @@ for(const d of DESTINATIONS){
   d.km   = Math.round(haversine(ORIGIN.lat,ORIGIN.lon,d.lat,d.lon));
   d.x    = projX(d.lon);
   d.y    = projY(d.lat);
-  d.band = bandOf(d.km);
+  d.band = bandOf(d.hrs);
   d.future = !!(d.starts && new Date(d.starts) > TODAY);
   d.hay  = (d.city+' '+d.airport+' '+d.country+' '+d.iata+' '+d.region+' '+d.airlines.join(' ')).toLowerCase();
+  d.fare = FARES.bands[d.fb];
 }
-DESTINATIONS.sort((a,b)=>a.km-b.km);
+DESTINATIONS.sort((a,b)=>a.hrs-b.hrs);
 
-const MAX_KM = Math.ceil(Math.max(...DESTINATIONS.map(d=>d.km))/500)*500;
+const MAX_H = Math.ceil(Math.max(...DESTINATIONS.map(d=>d.hrs))*2)/2;
 const REGIONS = [...new Set(DESTINATIONS.map(d=>d.region))]
   .sort((a,b)=>DESTINATIONS.filter(d=>d.region===b).length - DESTINATIONS.filter(d=>d.region===a).length);
 
 /* ------------------------------------------------------------------ state */
-const state = { regions:new Set(REGIONS), min:0, max:MAX_KM, q:'', hover:null, sel:null, closed:new Set() };
+const state = { regions:new Set(REGIONS), min:0, max:MAX_H, q:'', hover:null, sel:null, closed:new Set() };
 const $  = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const svg=$('#map'), scene=$('#scene');
@@ -780,7 +806,8 @@ const cEls = new Map();
 const NS='http://www.w3.org/2000/svg';
 const arcEls=new Map(), dotEls=new Map(), lblEls=new Map();
 {
-  const fa=document.createDocumentFragment(), fd=document.createDocumentFragment(), fl=document.createDocumentFragment();
+  const fa=document.createDocumentFragment(), fd=document.createDocumentFragment(),
+        fl=document.createDocumentFragment();
   for(const d of DESTINATIONS){
     const a=document.createElementNS(NS,'path');
     a.setAttribute('d',greatCirclePath(ORIGIN.lat,ORIGIN.lon,d.lat,d.lon,48));
@@ -791,7 +818,6 @@ const arcEls=new Map(), dotEls=new Map(), lblEls=new Map();
     const c=document.createElementNS(NS,'circle');
     c.setAttribute('cx',d.x.toFixed(2)); c.setAttribute('cy',d.y.toFixed(2));
     c.setAttribute('class','dot'); c.setAttribute('fill',`var(--d${d.band+1})`);
-    c.dataset.iata=d.iata;
     fd.appendChild(c); dotEls.set(d.iata,c);
 
     const t=document.createElementNS(NS,'text');
@@ -823,11 +849,12 @@ let FIT={k:1,x:0,y:0};
 /* The visible band in viewBox units. On mobile the bottom sheet overlays the
    lower part of the canvas, so "visible" is narrower than the canvas and the
    map has to be framed into what is actually on screen. */
-let VIS={l:0,t:0,r:W,b:H};
+let VIS={l:0,t:0,r:W,b:H}, RENDER_SCALE=1;
 function computeVisible(){
   const m=$('#mapwrap').getBoundingClientRect();
   if(!m.width||!m.height){ VIS={l:0,t:0,r:W,b:H}; return; }
   const scale=Math.min(m.width/W, m.height/H);
+  RENDER_SCALE=scale;
   const ox=(m.width - W*scale)/2, oy=(m.height - H*scale)/2;
   let bottomPx=m.height;
   if(isSheet()){
@@ -844,24 +871,36 @@ function computeFit(){
   const k=Math.max(K_MIN,Math.min(K_MAX, Math.min(vw/(x1-x0), vh/(y1-y0))));
   FIT={ k, x:(VIS.l+VIS.r)/2-k*(x0+x1)/2, y:(VIS.t+VIS.b)/2-k*(y0+y1)/2 };
 }
-function resetView(){ computeFit(); view.k=FIT.k; view.x=FIT.x; view.y=FIT.y; applyView(); }
+function resetView(){ computeFit(); view.k=FIT.k; view.x=FIT.x; view.y=FIT.y; lastK=null; applyView(); }
 function clampView(){
   view.k=Math.max(K_MIN,Math.min(K_MAX,view.k));
   // keep the projected world covering the visible band (or centred in it when
   // the world is smaller than the band, which happens at the minimum zoom)
   const fit=(lo,hi,span)=>{
-    const a=hi-span, b=lo;                       // allowed range for the offset
-    return a>b ? [a,b] : [(a+b)/2,(a+b)/2];
+    // Offsets that keep the projected world covering [lo,hi]. When the world is
+    // wider than the band (the normal case) that is the interval [hi-span, lo];
+    // when it is narrower there is no such offset, so centre it instead.
+    const a=hi-span, b=lo;
+    return a<=b ? [a,b] : [(a+b)/2,(a+b)/2];
   };
   const [xa,xb]=fit(VIS.l,VIS.r,W*view.k);
   const [ya,yb]=fit(VIS.t,VIS.b,H*view.k);
   view.x=Math.max(xa,Math.min(xb,view.x));
   view.y=Math.max(ya,Math.min(yb,view.y));
 }
+let lastK=null, applyPending=false;
+function scheduleApply(){
+  if(applyPending) return;
+  applyPending=true;
+  requestAnimationFrame(()=>{ applyPending=false; applyView(); });
+}
 function applyView(){
   clampView();
   scene.setAttribute('transform',`translate(${view.x.toFixed(3)},${view.y.toFixed(3)}) scale(${view.k.toFixed(4)})`);
   const k=view.k;
+  if(k===lastK) return;               // a pure pan needs no counter-scaling
+  lastK=k;
+  const rs=RENDER_SCALE||1;
   for(const [ia,c] of dotEls) c.setAttribute('r',(3.1/k).toFixed(3));
   for(const el of $$('.origin-ring')) el.setAttribute('r',(+el.dataset.r/k).toFixed(3));
   $('.origin-dot').setAttribute('r',(4.2/k).toFixed(3));
@@ -897,11 +936,12 @@ svg.addEventListener('wheel',ev=>{
   zoomAt(p.x,p.y, Math.exp(-ev.deltaY*(ev.deltaMode===1?0.05:0.0016)));
 },{passive:false});
 
-const ptrs=new Map(); let pinch=null, dragged=false;
+const ptrs=new Map(); let pinch=null, dragged=false, downIata=null;
 svg.addEventListener('pointerdown',ev=>{
   svg.setPointerCapture(ev.pointerId);
   ptrs.set(ev.pointerId,{...svgPoint(ev),cx:ev.clientX,cy:ev.clientY});
   dragged=false;
+  downIata = pickAt(ev);
   if(ptrs.size===2){
     const [a,b]=[...ptrs.values()];
     pinch={d:Math.hypot(a.cx-b.cx,a.cy-b.cy), mid:{x:(a.x+b.x)/2,y:(a.y+b.y)/2}};
@@ -916,24 +956,31 @@ svg.addEventListener('pointermove',ev=>{
     ptrs.set(ev.pointerId,cur);
     const [a,b]=[...ptrs.values()];
     const nd=Math.hypot(a.cx-b.cx,a.cy-b.cy);
-    if(pinch.d>0){ zoomAt(pinch.mid.x,pinch.mid.y, nd/pinch.d); }
-    pinch.d=nd; dragged=true;
+    const mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+    if(pinch.d>0){ zoomAt(mid.x,mid.y, nd/pinch.d); }
+    pinch.d=nd; pinch.mid=mid; dragged=true;
     return;
   }
   if(Math.abs(cur.cx-prev.cx)+Math.abs(cur.cy-prev.cy)>2) dragged=true;
-  view.x += (cur.x-prev.x)*view.k;
-  view.y += (cur.y-prev.y)*view.k;
-  ptrs.set(ev.pointerId,{...svgPoint(ev),cx:ev.clientX,cy:ev.clientY});
-  applyView();
+  // svgPoint() is already in viewBox units, which is the same space the scene
+  // transform translates in — so the delta applies 1:1. Scaling it by view.k
+  // made panning k times too fast, which is what read as "glitchy" when zoomed.
+  view.x += cur.x-prev.x;
+  view.y += cur.y-prev.y;
+  ptrs.set(ev.pointerId,cur);
+  scheduleApply();
 });
 function endPtr(ev){
   ptrs.delete(ev.pointerId);
   if(ptrs.size<2) pinch=null;
-  if(ptrs.size===0) svg.classList.remove('dragging');
+  if(ptrs.size===0){
+    svg.classList.remove('dragging');
+    if(!dragged && downIata && visible.has(downIata)) openDetail(downIata);
+    downIata=null;
+  }
 }
 svg.addEventListener('pointerup',endPtr);
 svg.addEventListener('pointercancel',endPtr);
-svg.addEventListener('pointerleave',ev=>{ if(!ptrs.has(ev.pointerId)) hideTip(); });
 
 const visCx=()=>(VIS.l+VIS.r)/2, visCy=()=>(VIS.t+VIS.b)/2;
 $('#z-in').onclick =()=>zoomAt(visCx(),visCy(),1.5);
@@ -958,6 +1005,24 @@ function updateLabelVisibility(){
     const on = visible.has(d.iata) && (showAll || state.hover===d.iata || state.sel===d.iata);
     t.style.display = on ? '' : 'none';
   }
+}
+
+/* Which destination is the pointer over? Resolved by nearest-neighbour in scene
+   space rather than by SVG hit-testing: enlarging the targets enough to be
+   tappable makes them overlap in dense clusters, and DOM order then decides the
+   winner, so you click one city and open another. Nearest is what people mean. */
+const PICK_PX = 14;
+function pickAt(ev){
+  const p=svgPoint(ev);
+  const sx=(p.x-view.x)/view.k, sy=(p.y-view.y)/view.k;
+  const maxD=PICK_PX/((RENDER_SCALE||1)*view.k);
+  let best=null, bd=maxD*maxD;
+  for(const d of DESTINATIONS){
+    if(!visible.has(d.iata)) continue;
+    const dx=d.x-sx, dy=d.y-sy, q=dx*dx+dy*dy;
+    if(q<bd){ bd=q; best=d.iata; }
+  }
+  return best;
 }
 
 const tip=$('#tip');
@@ -992,26 +1057,20 @@ function setHover(iata,ev){
   updateLabelVisibility();
 }
 
-$('#g-dots').addEventListener('pointerover',ev=>{
-  const ia=ev.target.dataset&&ev.target.dataset.iata;
-  if(ia&&visible.has(ia)) setHover(ia,ev);
+svg.addEventListener('pointermove',ev=>{
+  if(ptrs.size) return;                       // mid-drag: don't fight the pan
+  const ia=pickAt(ev);
+  svg.classList.toggle('pick',!!ia);
+  if(ia) setHover(ia,ev); else if(state.hover) setHover(null);
 });
-$('#g-dots').addEventListener('pointermove',ev=>{
-  const ia=ev.target.dataset&&ev.target.dataset.iata;
-  if(ia&&visible.has(ia)) showTip(DEST_BY[ia],ev);
-});
-$('#g-dots').addEventListener('pointerout',ev=>{
-  if(ev.target.dataset&&ev.target.dataset.iata) setHover(null);
-});
-$('#g-dots').addEventListener('click',ev=>{
-  const ia=ev.target.dataset&&ev.target.dataset.iata;
-  if(ia&&visible.has(ia)&&!dragged) openDetail(ia);
-});
+svg.addEventListener('pointerleave',()=>{ if(!ptrs.size) setHover(null); });
+// Selection resolves on pointerup, not click: pointer capture retargets the
+// click event to the <svg>, so a delegated click listener never fires.
 
 /* ------------------------------------------------------------------ filter */
 function passes(d){
   if(!state.regions.has(d.region)) return false;
-  if(d.km<state.min||d.km>state.max) return false;
+  if(d.hrs<state.min||d.hrs>state.max) return false;
   if(state.q && !d.hay.includes(state.q)) return false;
   return true;
 }
@@ -1029,34 +1088,34 @@ function render(){
   for(const [n,p] of cEls) p.classList.toggle('has',litC.has(n));
 
   // stats
-  const kms=shown.map(d=>d.km).sort((a,b)=>a-b);
-  const med = kms.length ? (kms.length%2 ? kms[(kms.length-1)/2] : Math.round((kms[kms.length/2-1]+kms[kms.length/2])/2)) : 0;
+  const hs=shown.map(d=>d.hrs).sort((a,b)=>a-b);
+  const med = hs.length ? (hs.length%2 ? hs[(hs.length-1)/2] : (hs[hs.length/2-1]+hs[hs.length/2])/2) : 0;
   const ctry=new Set(shown.map(d=>d.country));
   $('#s-dest').textContent=shown.length;
   $('#s-ctry').textContent=ctry.size;
-  $('#s-med').textContent=fmt(med);
-  $('#s-far').textContent=kms.length?fmt(kms[kms.length-1]):'0';
+  $('#s-med').textContent=hs.length?fmtH(med):'—';
+  $('#s-far').textContent=hs.length?fmtH(hs[hs.length-1]):'—';
   $('#t-n').textContent=shown.length;
   $('#t-c').textContent=ctry.size;
-  $('#t-m').textContent=fmt(med);
+  $('#t-m').textContent=hs.length?fmtH(med):'—';
 
   // list, grouped by country, nearest country first
   const groups=new Map();
   for(const d of shown){ if(!groups.has(d.country)) groups.set(d.country,[]); groups.get(d.country).push(d); }
-  const order=[...groups.entries()].sort((a,b)=>Math.min(...a[1].map(d=>d.km))-Math.min(...b[1].map(d=>d.km)));
+  const order=[...groups.entries()].sort((a,b)=>Math.min(...a[1].map(d=>d.hrs))-Math.min(...b[1].map(d=>d.hrs)));
 
   const list=$('#list');
   if(!shown.length){ list.innerHTML='<div class="empty">No destinations match these filters.</div>'; updateLabelVisibility(); return; }
   const html=order.map(([country,ds])=>{
     const closed=state.closed.has(country);
-    const near=Math.min(...ds.map(d=>d.km)), far=Math.max(...ds.map(d=>d.km));
-    const range=ds.length>1?`${fmt(near)}–${fmt(far)}`:fmt(near);
+    const near=Math.min(...ds.map(d=>d.hrs)), far=Math.max(...ds.map(d=>d.hrs));
+    const range=ds.length>1?`${fmtH(near)}–${fmtH(far)}`:fmtH(near);
     return `<section class="grp${closed?' closed':''}" data-country="${esc(country)}" data-ne="${esc(ds[0].ne||'')}">
       <button class="ghead" aria-expanded="${!closed}">
         <span class="caret">▼</span>
         <span class="cname">${esc(country)}</span>
         <span class="cn">${ds.length}</span>
-        <span class="cdist">${range} km</span>
+        <span class="cdist">${range}</span>
       </button>
       <div class="rows">${ds.map(d=>`
         <button class="row" data-iata="${d.iata}">
@@ -1064,7 +1123,7 @@ function render(){
           <span class="code">${d.iata}</span>
           <span class="nm">${esc(d.city)}</span>
           <span class="tags">${d.future?'<span class="tag future">soon</span>':''}${d.seasonal?'<span class="tag seasonal">seas.</span>':''}${d.conf!=='high'?`<span class="tag med" title="Confidence: ${d.conf}">${d.conf==='medium'?'~':'?'}</span>`:''}</span>
-          <span class="km">${fmt(d.km)}</span>
+          <span class="km">${fmtH(d.hrs)}</span>
         </button>`).join('')}</div>
     </section>`;
   }).join('');
@@ -1123,8 +1182,10 @@ function openDetail(iata){
     return `${Math.round(b)}° ${dirs[Math.round(b/22.5)%16]}`;
   })();
   $('#d-body').innerHTML=`
-    <div class="big"><b>${fmt(d.km)}</b><span>km great-circle from RUH</span></div>
+    <div class="big"><b>${fmtH(d.hrs)}</b><span>estimated nonstop flight time</span></div>
     <dl class="kv">
+      <dt>Distance</dt><dd>${fmt(d.km)} km great-circle</dd>
+      <dt>Typical fare</dt><dd>SAR ${fmt(d.fare.lo)}–${fmt(d.fare.hi)} return economy${d.lcc?' · low-cost carrier on this route':''}</dd>
       <dt>Region</dt><dd>${esc(d.region)}</dd>
       <dt>Bearing</dt><dd class="mono">${bearing}</dd>
       <dt>Coordinates</dt><dd class="mono">${d.lat.toFixed(4)}, ${d.lon.toFixed(4)}</dd>
@@ -1134,20 +1195,24 @@ function openDetail(iata){
     <div class="dsec">
       <h3>Operated nonstop by</h3>
       <div class="pills">${d.airlines.map(a=>`<span class="pill">${esc(a)}</span>`).join('')||'<span class="pill">—</span>'}</div>
+      ${d.lcc?'<p class="note">A low-cost carrier serves this route, so real fares often land at or below the bottom of the band.</p>':''}
       ${d.seasonal?'<p class="note">Listed as a seasonal route only — it does not operate year-round.</p>':''}
       ${d.future?`<p class="note">Announced, not yet flying. First service ${esc(d.starts)}.</p>`:''}
+      ${d.status==='suspended'?`<p class="note"><b>Currently suspended.</b> ${esc(d.why||'')}</p>`:''}
     </div>
     <div class="dsec">
       <h3>Check live schedules</h3>
       <div class="gf">${nextDates().map(x=>
         `<a href="${gflights(d.iata,x.d)}" target="_blank" rel="noopener"><b>${x.label}</b><span>${x.d} →</span></a>`).join('')}</div>
-      <p class="note">Flight times and frequencies are deliberately not stored in this page — free
-      sources disagree and go stale fast. These links run a live, date-pinned query instead.</p>
+      <p class="note">The time above is estimated from distance, and the fare is a band sampled on
+      ${esc(FARES.sampled)} — neither is a schedule or a quote. These links run a live, date-pinned
+      query for the real numbers.</p>
     </div>
     <div class="dsec">
       <h3>Provenance &amp; confidence</h3>
       <div class="prov ${d.conf}">
         <b>${esc(p.label)}</b> · confidence ${d.conf}<br>${p.detail}
+        ${d.why?`<br><br><b>This route:</b> ${esc(d.why)}`:''}
         <br><span style="color:var(--ink-3)">Coordinates: ${d.cs==='OF'?'OpenFlights airports.dat':'Wikidata P625'}.</span>
         ${d.wiki?`<br><a href="https://en.wikipedia.org/wiki/${encodeURIComponent(d.wiki.replace(/ /g,'_'))}" target="_blank" rel="noopener">Airport article →</a>`:''}
       </div>
@@ -1168,8 +1233,7 @@ $('#d-back').onclick=closeDetail;
   chips.addEventListener('click',ev=>{
     const b=ev.target.closest('.chip'); if(!b) return;
     if(b.dataset.all){
-      const allOn=state.regions.size===REGIONS.length;
-      state.regions = allOn ? new Set() : new Set(REGIONS);
+      state.regions = state.regions.size ? new Set() : new Set(REGIONS);
     } else {
       const r=b.dataset.r;
       if(state.regions.has(r)) state.regions.delete(r); else state.regions.add(r);
@@ -1179,28 +1243,28 @@ $('#d-back').onclick=closeDetail;
 }
 function syncChips(){
   for(const b of $$('.chip[data-r]')) b.setAttribute('aria-pressed',String(state.regions.has(b.dataset.r)));
-  $('.chip.all').textContent = state.regions.size===REGIONS.length ? 'Clear' : 'All';
+  $('.chip.all').textContent = state.regions.size ? 'Clear' : 'All';
   $('#reg-n').textContent = state.regions.size===REGIONS.length ? 'all' : `${state.regions.size} of ${REGIONS.length}`;
 }
 
 const dmin=$('#dmin'), dmax=$('#dmax');
-dmin.max=dmax.max=MAX_KM; dmax.value=MAX_KM;
-$('#ramp-max').textContent=fmt(MAX_KM)+' km';
+dmin.max=dmax.max=MAX_H; dmin.step=dmax.step=0.25; dmax.value=MAX_H;
+$('#ramp-max').textContent=fmtH(MAX_H);
 $('#ramp').innerHTML=BANDS.map((b,i)=>`<i style="background:var(--d${i+1})" title="${b.label}"></i>`).join('');
 function syncDual(){
   let a=+dmin.value, b=+dmax.value;
   if(a>b){ if(document.activeElement===dmin) b=a; else a=b; dmin.value=a; dmax.value=b; }
   state.min=a; state.max=b;
-  $('#dfill').style.left=(a/MAX_KM*100)+'%';
-  $('#dfill').style.width=((b-a)/MAX_KM*100)+'%';
-  $('#dist-lbl').textContent=`${fmt(a)} – ${fmt(b)} km`;
+  $('#dfill').style.left=(a/MAX_H*100)+'%';
+  $('#dfill').style.width=((b-a)/MAX_H*100)+'%';
+  $('#dist-lbl').textContent=`${fmtH(a)} – ${fmtH(b)}`;
   render();
 }
 dmin.addEventListener('input',syncDual); dmax.addEventListener('input',syncDual);
 
 $('#presets').innerHTML=BANDS.map((b,i)=>
-  `<button data-lo="${i?BANDS[i-1].max:0}" data-hi="${Math.min(b.max,MAX_KM)}">${b.label}</button>`).join('')
-  + `<button data-lo="0" data-hi="${MAX_KM}">All</button>`;
+  `<button data-lo="${i?BANDS[i-1].max:0}" data-hi="${Math.min(b.max,MAX_H)}">${b.label}</button>`).join('')
+  + `<button data-lo="0" data-hi="${MAX_H}">All</button>`;
 $('#presets').addEventListener('click',ev=>{
   const b=ev.target.closest('button'); if(!b) return;
   dmin.value=b.dataset.lo; dmax.value=b.dataset.hi; syncDual();
@@ -1209,7 +1273,7 @@ $('#presets').addEventListener('click',ev=>{
 $('#q').addEventListener('input',ev=>{ state.q=ev.target.value.trim().toLowerCase(); render(); });
 $('#t-reset').onclick=()=>{
   state.regions=new Set(REGIONS); state.q=''; $('#q').value='';
-  dmin.value=0; dmax.value=MAX_KM; state.closed.clear();
+  dmin.value=0; dmax.value=MAX_H; state.closed.clear();
   syncChips(); syncDual();
 };
 
@@ -1226,6 +1290,10 @@ $('#about').addEventListener('click',ev=>{ if(ev.target.id==='about') closeAbout
   $('#wd-list').textContent=[...new Set(DESTINATIONS.filter(d=>d.cs==='WD').map(d=>d.iata))].join(', ')||'none';
   $('#nopoly').textContent=[...new Set(DESTINATIONS.filter(d=>!d.ne).map(d=>d.country))].join(', ')||'none';
   $('#built').textContent=META.note;
+  $('#fare-date').textContent=FARES.sampled;
+  $('#fare-sample').innerHTML='<ul>'+FARES.bands.map(b=>
+    `<li><b>${b.label||''}up to ${b.max>1e8?'the longest route':fmtH(b.max)}</b> → SAR ${fmt(b.lo)}–${fmt(b.hi)} return.
+     Anchor <span class="mono">${esc(b.anchor)}</span>: ${esc(b.note)}</li>`).join('')+'</ul>';
 }
 
 /* ----------------------------------------------- mobile bottom sheet

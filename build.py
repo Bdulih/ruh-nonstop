@@ -168,9 +168,52 @@ def normalise_date(s):
 cur = collect(p('rows3_current.json'))
 old = collect(p('rows3_jan2026.json'))
 
-restored = {}
-if os.path.exists(p('restored.json')):
-    restored = json.load(open(p('restored.json')))
+VERIFIED = json.load(open(p('verified.json')))
+
+# --- flight time -------------------------------------------------------------
+# Block time is NOT cached from schedule sources -- those are exactly the numbers
+# that disagree with each other (Riyadh-Cairo comes back as 1h58 / 2h40 / 3h12).
+# It is derived from great-circle distance instead: a fixed ground overhead for
+# taxi, climb and descent, plus cruise at a typical airliner block speed. That is
+# deterministic and never goes stale. Checked against reality:
+#   RUH-JED  852 km -> 1h35 (typical 1h45)   RUH-CAI 1612 km -> 2h34 (typical 2h35)
+#   RUH-DXB  873 km -> 1h37 (typical 1h50)   RUH-LHR 4941 km -> 6h50 (typical 6h45)
+# Good to roughly +/-15%; the UI says so and links out for the real schedule.
+GROUND_H, BLOCK_KMH = 0.5, 780.0
+def flight_hours(km):
+    return round(GROUND_H + km / BLOCK_KMH, 2)
+
+# --- fare bands --------------------------------------------------------------
+# Sampled from live fare queries on 2026-07-31, one anchor route per band. These
+# are TYPICAL RETURN ECONOMY RANGES for the band, not quotes for any route, and
+# they will drift. The UI shows the sample date and every route links out live.
+FARE_SAMPLED = VERIFIED['sampled']
+FARE_BANDS = [
+    dict(max=2,     lo=300,  hi=700,
+         anchor='RUH-JED', note='flyadeal from SAR 299 and flynas from SAR 329 one-way economy, own booking sites'),
+    dict(max=4,     lo=650,  hi=1500,
+         anchor='RUH-CAI', note='best return SAR 670, typical SAR 840-1,416, monthly average SAR 412-650 (Skyscanner, Flyin)'),
+    dict(max=7,     lo=900,  hi=2900,
+         anchor='RUH-DEL / RUH-IST / RUH-LHR',
+         note='Delhi best return SAR 964 (typical 880-1,220); Istanbul return SAR 1,311-2,871; London best return SAR 1,760, from SAR 1,315 (Skyscanner, Air India)'),
+    dict(max=10**9, lo=2400, hi=4100,
+         anchor='RUH-MNL / RUH-JFK',
+         note='Manila from SAR 2,401 all-in (Philippine Airlines); New York round trip from about USD 675, typical USD 590-1,097 at SAR 3.75/USD (Expedia, FareCompare)'),
+]
+def fare_band(hrs):
+    for i, b in enumerate(FARE_BANDS):
+        if hrs < b['max']:
+            return i
+    return len(FARE_BANDS) - 1
+
+# Carriers that sell as low-cost. A route with one of these is reliably cheaper
+# than the band suggests; this is a fact about the airline list, not a guess.
+LOW_COST = {
+    'flynas', 'Flynas', 'flyadeal', 'Flyadeal', 'Air Arabia', 'Flydubai', 'flydubai',
+    'AJet', 'Pegasus Airlines', 'Akasa Air', 'IndiGo', 'Fly Jinnah', 'SalamAir',
+    'Cebu Pacific', 'Thai AirAsia X', 'AirSial', 'Air India Express', 'Air Cairo',
+    'Jazeera Airways',
+}
 
 PROVENANCE = {
     'wp-cited': dict(
@@ -197,14 +240,29 @@ for iata, e in sorted(cur.items()):
     conf = 'high' if e['sourced'] else 'medium'
     DESTS.append(dict(iata=iata, **info, e=e, src=src, conf=conf))
 
-for iata, r in sorted(restored.items()):
+# routes Wikipedia deleted that were re-confirmed against an independent source
+for iata, r in sorted(VERIFIED['add'].items()):
     if iata in cur:
         continue
-    e = old.get(iata)
-    if not e:
-        continue
-    info = airport_info(iata, e['wd'])
-    DESTS.append(dict(iata=iata, **info, e=e, src='restored', conf=r.get('conf', 'medium')))
+    e = old.get(iata) or dict(airlines=[], seasonal=False, sourced=False, cn=False,
+                              starts=None, wiki=None, wd={})
+    e = dict(e, airlines=r['airlines'], seasonal=r['seasonal'])
+    info = airport_info(iata, e.get('wd') or {})
+    DESTS.append(dict(iata=iata, **info, e=e, src='restored', conf=r['conf'], why=r['why']))
+
+# routes still on Wikipedia that the verification pass found are no longer flying
+DROP = VERIFIED['drop']
+before = len(DESTS)
+DESTS = [d for d in DESTS if d['iata'] not in DROP]
+print(f'dropped {before - len(DESTS)} verified-ended destinations: {sorted(DROP)}')
+
+# routes kept but qualified
+for d in DESTS:
+    n = VERIFIED['note'].get(d['iata'])
+    if n:
+        d['conf'] = n.get('conf', d['conf'])
+        d['status'] = n['status']
+        d['why'] = n['why']
 
 records = []
 for d in DESTS:
@@ -216,12 +274,18 @@ for d in DESTS:
     region = REGION_OF_COUNTRY.get(country)
     if not region:
         raise SystemExit(f'no region for {country!r} — add it to REGION_OF_COUNTRY')
+    km = haversine(RUH, (d['lat'], d['lon']))
+    airlines = d['e']['airlines']
     records.append(dict(
         iata=d['iata'], city=d['city'], airport=d['airport'], country=country, ne=ne,
         lat=round(d['lat'], 6), lon=round(d['lon'], 6), region=region,
-        airlines=d['e']['airlines'], seasonal=d['e']['seasonal'],
+        airlines=airlines, seasonal=d['e']['seasonal'],
         starts=d['e']['starts'], src=d['src'], conf=d['conf'], cs=d['cs'],
-        wiki=d['e']['wiki']))
+        wiki=d['e']['wiki'],
+        hrs=flight_hours(km),
+        fb=fare_band(flight_hours(km)),
+        lcc=bool(set(airlines) & LOW_COST),
+        status=d.get('status'), why=d.get('why')))
 
 records.sort(key=lambda r: haversine(RUH, (r['lat'], r['lon'])))
 
@@ -236,12 +300,15 @@ for iata, want in CHECKS.items():
         raise SystemExit(f'SANITY CHECK FAILED RUH-{iata}: got {got} want {want}')
 print('sanity checks pass:', ' | '.join(f'RUH-{k} {v} km' for k, v in CHECKS.items()))
 
+# Colour ramp and quick-filter buckets, both in hours. Because block time is a
+# linear function of distance these are the same partition either way -- hours is
+# simply the unit people think in.
 BANDS = [
-    dict(max=1000,   label='<1,000 km'),
-    dict(max=2500,   label='1–2.5k'),
-    dict(max=5000,   label='2.5–5k'),
-    dict(max=8000,   label='5–8k'),
-    dict(max=10**9,  label='8k+'),
+    dict(max=2,      label='under 2h'),
+    dict(max=4,      label='2–4h'),
+    dict(max=7,      label='4–7h'),
+    dict(max=11,     label='7–11h'),
+    dict(max=10**9,  label='11h+'),
 ]
 
 built = datetime.date.today().isoformat()
@@ -263,7 +330,9 @@ html = (tpl.replace('__TOPO__', topo)
            .replace('__PROVENANCE__', json.dumps(PROVENANCE, ensure_ascii=False, indent=1))
            .replace('__DATA__', '[\n' + ',\n'.join('  ' + dumps(r) for r in records) + '\n]')
            .replace('__META__', dumps(META))
-           .replace('__BANDS__', dumps(BANDS)))
+           .replace('__BANDS__', dumps(BANDS))
+           .replace('__FARES__', dumps(dict(sampled=FARE_SAMPLED, bands=FARE_BANDS,
+                                            ground=GROUND_H, kmh=BLOCK_KMH))))
 
 out = os.path.join(HERE, 'index.html')
 open(out, 'w', encoding='utf-8').write(html)

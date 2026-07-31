@@ -100,7 +100,8 @@ svg#map.dragging{cursor:grabbing}
 .arc{fill:none;stroke-width:1;opacity:.32;vector-effect:non-scaling-stroke;transition:opacity .12s}
 .arc.lit{opacity:1;stroke-width:2.4}
 .arc.dim{opacity:.07}
-.dot{stroke:var(--sea);stroke-width:1.2;vector-effect:non-scaling-stroke;cursor:pointer}
+.dot{stroke:var(--sea);stroke-width:1.2;vector-effect:non-scaling-stroke;pointer-events:none}
+svg#map.pick{cursor:pointer}
 .dot.lit{stroke:var(--ink);stroke-width:2.2}
 .origin-ring{fill:none;stroke:var(--origin);opacity:.5;vector-effect:non-scaling-stroke}
 .origin-dot{fill:var(--origin);stroke:var(--sea);stroke-width:1.5;vector-effect:non-scaling-stroke}
@@ -339,13 +340,13 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
   <header class="top">
     <div class="brand">
       <h1>Nonstop from Riyadh</h1>
-      <div class="sub">King Khalid International (RUH) &middot; 24.9576&deg;N 46.6988&deg;E &middot; destinations by great-circle distance</div>
+      <div class="sub">King Khalid International (RUH) &middot; 24.9576&deg;N 46.6988&deg;E &middot; destinations by estimated flight time</div>
     </div>
     <div class="stats">
       <div class="stat"><b id="s-dest">0</b><span>Shown</span></div>
       <div class="stat"><b id="s-ctry">0</b><span>Countries</span></div>
-      <div class="stat"><b id="s-med">0</b><span>Median km</span></div>
-      <div class="stat"><b id="s-far">0</b><span>Farthest</span></div>
+      <div class="stat"><b id="s-med">—</b><span>Median time</span></div>
+      <div class="stat"><b id="s-far">—</b><span>Longest</span></div>
     </div>
     <button class="iconbtn" id="theme" title="Toggle light / dark theme" aria-label="Toggle light or dark theme">
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 100 18 9 9 0 000-18zm0 2v14a7 7 0 010-14z"/></svg>
@@ -377,9 +378,9 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
       </div>
       <div class="mapui bl">
         <div class="legend">
-          <div class="lt">Great-circle distance</div>
+          <div class="lt">Flight time (estimated)</div>
           <div class="ramp" id="ramp"></div>
-          <div class="ramp-ax"><span>0</span><span id="ramp-max">14,000 km</span></div>
+          <div class="ramp-ax"><span>0</span><span id="ramp-max">—</span></div>
           <div class="orig"><i></i> Riyadh (RUH)</div>
         </div>
       </div>
@@ -394,11 +395,11 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
           <div class="chips" id="chips"></div>
         </div>
         <div class="frow">
-          <div class="flabel"><span>Distance</span><b id="dist-lbl">0 – 14,000 km</b></div>
+          <div class="flabel"><span>Flight time</span><b id="dist-lbl">—</b></div>
           <div class="dual" id="dual">
             <div class="track"></div><div class="fill" id="dfill"></div>
-            <input type="range" id="dmin" min="0" max="14000" step="50" value="0" aria-label="Minimum distance in km">
-            <input type="range" id="dmax" min="0" max="14000" step="50" value="14000" aria-label="Maximum distance in km">
+            <input type="range" id="dmin" min="0" max="14000" step="50" value="0" aria-label="Minimum flight time in hours">
+            <input type="range" id="dmax" min="0" max="14000" step="50" value="14000" aria-label="Maximum flight time in hours">
           </div>
           <div class="presets" id="presets"></div>
         </div>
@@ -408,7 +409,7 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
       </div>
 
       <div class="tally">
-        <div><b id="t-n">0</b> destinations · <span id="t-c">0</span> countries<span class="more"> · med <span id="t-m">0</span> km</span></div>
+        <div><b id="t-n">0</b> destinations · <span id="t-c">0</span> countries<span class="more"> · median <span id="t-m">—</span></span></div>
         <button id="t-reset">Reset filters</button>
       </div>
 
@@ -438,13 +439,25 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
     International (RUH), plotted on a Miller cylindrical projection and filterable by
     <b>great-circle distance</b>.</p>
 
-    <h3>Why distance and not flight time</h3>
-    <p>Free schedule sources contradict each other badly. Riyadh–Cairo comes back as 133, 157 or 202
-    flights a week and 1h58, 2h40 or 3h12 depending on who you ask. Caching any of that would produce
-    something that looks authoritative and is wrong within a week. Distance is trigonometry on two
-    coordinates — it is ground truth, it never goes stale, and it answers the same underlying question:
-    how concentrated is this network? For anything schedule-shaped, each destination links out to a
-    live, date-pinned Google Flights query instead.</p>
+    <h3>Where the flight times come from</h3>
+    <p>They are <b>not</b> cached from schedule sources — those are precisely the numbers that disagree
+    with each other (Riyadh–Cairo comes back as 1h58, 2h40 or 3h12 depending on who you ask, and 133,
+    157 or 202 flights a week). Instead each time is <b>derived from great-circle distance</b>: a fixed
+    half-hour on the ground for taxi, climb and descent, plus cruise at <span class="mono">780 km/h</span>
+    block speed.</p>
+    <p class="mono" style="font-size:12px">hours = 0.5 + km / 780</p>
+    <p>That is deterministic, so it never goes stale. It is accurate to roughly ±15% — it checks out at
+    RUH–JED 1h35 (typically 1h45), RUH–CAI 2h34 (2h35), RUH–LHR 6h50 (6h45) — but it is an estimate of a
+    typical nonstop, not a timetable. It knows nothing about winds, routings or the specific aircraft.</p>
+
+    <h3>Where the fares come from</h3>
+    <p>Fares were sampled from live queries on <b id="fare-date"></b>, one anchor route per band, and the
+    band is applied to every route in that band. <b>They are ranges for a distance band, not quotes for a
+    route</b>, they are return economy, and they will drift — fares move faster than schedules do. Treat
+    them as an order of magnitude and use the live link for anything real.</p>
+    <div id="fare-sample"></div>
+    <p>Routes flown by a low-cost carrier are flagged, because that moves the real fare more than
+    distance does at the short end.</p>
 
     <h3>Where the routes come from</h3>
     <div id="about-prov"></div>
@@ -595,7 +608,10 @@ function decodeTopology(topo, objName){
 
 /* -------------------------------------------------------------- prep data */
 const BANDS = __BANDS__;
-const bandOf = km => { for(let i=0;i<BANDS.length;i++) if(km<BANDS[i].max) return i; return BANDS.length-1; };
+const FARES = __FARES__;
+const bandOf = hrs => { for(let i=0;i<BANDS.length;i++) if(hrs<BANDS[i].max) return i; return BANDS.length-1; };
+/* 2.57 -> "2h34" */
+const fmtH = h => `${Math.floor(h)}h${String(Math.round((h-Math.floor(h))*60)).padStart(2,'0')}`;
 
 const TODAY = new Date();
 const iso = d => d.toISOString().slice(0,10);
@@ -604,18 +620,19 @@ for(const d of DESTINATIONS){
   d.km   = Math.round(haversine(ORIGIN.lat,ORIGIN.lon,d.lat,d.lon));
   d.x    = projX(d.lon);
   d.y    = projY(d.lat);
-  d.band = bandOf(d.km);
+  d.band = bandOf(d.hrs);
   d.future = !!(d.starts && new Date(d.starts) > TODAY);
   d.hay  = (d.city+' '+d.airport+' '+d.country+' '+d.iata+' '+d.region+' '+d.airlines.join(' ')).toLowerCase();
+  d.fare = FARES.bands[d.fb];
 }
-DESTINATIONS.sort((a,b)=>a.km-b.km);
+DESTINATIONS.sort((a,b)=>a.hrs-b.hrs);
 
-const MAX_KM = Math.ceil(Math.max(...DESTINATIONS.map(d=>d.km))/500)*500;
+const MAX_H = Math.ceil(Math.max(...DESTINATIONS.map(d=>d.hrs))*2)/2;
 const REGIONS = [...new Set(DESTINATIONS.map(d=>d.region))]
   .sort((a,b)=>DESTINATIONS.filter(d=>d.region===b).length - DESTINATIONS.filter(d=>d.region===a).length);
 
 /* ------------------------------------------------------------------ state */
-const state = { regions:new Set(REGIONS), min:0, max:MAX_KM, q:'', hover:null, sel:null, closed:new Set() };
+const state = { regions:new Set(REGIONS), min:0, max:MAX_H, q:'', hover:null, sel:null, closed:new Set() };
 const $  = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const svg=$('#map'), scene=$('#scene');
@@ -646,7 +663,8 @@ const cEls = new Map();
 const NS='http://www.w3.org/2000/svg';
 const arcEls=new Map(), dotEls=new Map(), lblEls=new Map();
 {
-  const fa=document.createDocumentFragment(), fd=document.createDocumentFragment(), fl=document.createDocumentFragment();
+  const fa=document.createDocumentFragment(), fd=document.createDocumentFragment(),
+        fl=document.createDocumentFragment();
   for(const d of DESTINATIONS){
     const a=document.createElementNS(NS,'path');
     a.setAttribute('d',greatCirclePath(ORIGIN.lat,ORIGIN.lon,d.lat,d.lon,48));
@@ -657,7 +675,6 @@ const arcEls=new Map(), dotEls=new Map(), lblEls=new Map();
     const c=document.createElementNS(NS,'circle');
     c.setAttribute('cx',d.x.toFixed(2)); c.setAttribute('cy',d.y.toFixed(2));
     c.setAttribute('class','dot'); c.setAttribute('fill',`var(--d${d.band+1})`);
-    c.dataset.iata=d.iata;
     fd.appendChild(c); dotEls.set(d.iata,c);
 
     const t=document.createElementNS(NS,'text');
@@ -689,11 +706,12 @@ let FIT={k:1,x:0,y:0};
 /* The visible band in viewBox units. On mobile the bottom sheet overlays the
    lower part of the canvas, so "visible" is narrower than the canvas and the
    map has to be framed into what is actually on screen. */
-let VIS={l:0,t:0,r:W,b:H};
+let VIS={l:0,t:0,r:W,b:H}, RENDER_SCALE=1;
 function computeVisible(){
   const m=$('#mapwrap').getBoundingClientRect();
   if(!m.width||!m.height){ VIS={l:0,t:0,r:W,b:H}; return; }
   const scale=Math.min(m.width/W, m.height/H);
+  RENDER_SCALE=scale;
   const ox=(m.width - W*scale)/2, oy=(m.height - H*scale)/2;
   let bottomPx=m.height;
   if(isSheet()){
@@ -710,24 +728,36 @@ function computeFit(){
   const k=Math.max(K_MIN,Math.min(K_MAX, Math.min(vw/(x1-x0), vh/(y1-y0))));
   FIT={ k, x:(VIS.l+VIS.r)/2-k*(x0+x1)/2, y:(VIS.t+VIS.b)/2-k*(y0+y1)/2 };
 }
-function resetView(){ computeFit(); view.k=FIT.k; view.x=FIT.x; view.y=FIT.y; applyView(); }
+function resetView(){ computeFit(); view.k=FIT.k; view.x=FIT.x; view.y=FIT.y; lastK=null; applyView(); }
 function clampView(){
   view.k=Math.max(K_MIN,Math.min(K_MAX,view.k));
   // keep the projected world covering the visible band (or centred in it when
   // the world is smaller than the band, which happens at the minimum zoom)
   const fit=(lo,hi,span)=>{
-    const a=hi-span, b=lo;                       // allowed range for the offset
-    return a>b ? [a,b] : [(a+b)/2,(a+b)/2];
+    // Offsets that keep the projected world covering [lo,hi]. When the world is
+    // wider than the band (the normal case) that is the interval [hi-span, lo];
+    // when it is narrower there is no such offset, so centre it instead.
+    const a=hi-span, b=lo;
+    return a<=b ? [a,b] : [(a+b)/2,(a+b)/2];
   };
   const [xa,xb]=fit(VIS.l,VIS.r,W*view.k);
   const [ya,yb]=fit(VIS.t,VIS.b,H*view.k);
   view.x=Math.max(xa,Math.min(xb,view.x));
   view.y=Math.max(ya,Math.min(yb,view.y));
 }
+let lastK=null, applyPending=false;
+function scheduleApply(){
+  if(applyPending) return;
+  applyPending=true;
+  requestAnimationFrame(()=>{ applyPending=false; applyView(); });
+}
 function applyView(){
   clampView();
   scene.setAttribute('transform',`translate(${view.x.toFixed(3)},${view.y.toFixed(3)}) scale(${view.k.toFixed(4)})`);
   const k=view.k;
+  if(k===lastK) return;               // a pure pan needs no counter-scaling
+  lastK=k;
+  const rs=RENDER_SCALE||1;
   for(const [ia,c] of dotEls) c.setAttribute('r',(3.1/k).toFixed(3));
   for(const el of $$('.origin-ring')) el.setAttribute('r',(+el.dataset.r/k).toFixed(3));
   $('.origin-dot').setAttribute('r',(4.2/k).toFixed(3));
@@ -763,11 +793,12 @@ svg.addEventListener('wheel',ev=>{
   zoomAt(p.x,p.y, Math.exp(-ev.deltaY*(ev.deltaMode===1?0.05:0.0016)));
 },{passive:false});
 
-const ptrs=new Map(); let pinch=null, dragged=false;
+const ptrs=new Map(); let pinch=null, dragged=false, downIata=null;
 svg.addEventListener('pointerdown',ev=>{
   svg.setPointerCapture(ev.pointerId);
   ptrs.set(ev.pointerId,{...svgPoint(ev),cx:ev.clientX,cy:ev.clientY});
   dragged=false;
+  downIata = pickAt(ev);
   if(ptrs.size===2){
     const [a,b]=[...ptrs.values()];
     pinch={d:Math.hypot(a.cx-b.cx,a.cy-b.cy), mid:{x:(a.x+b.x)/2,y:(a.y+b.y)/2}};
@@ -782,24 +813,31 @@ svg.addEventListener('pointermove',ev=>{
     ptrs.set(ev.pointerId,cur);
     const [a,b]=[...ptrs.values()];
     const nd=Math.hypot(a.cx-b.cx,a.cy-b.cy);
-    if(pinch.d>0){ zoomAt(pinch.mid.x,pinch.mid.y, nd/pinch.d); }
-    pinch.d=nd; dragged=true;
+    const mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+    if(pinch.d>0){ zoomAt(mid.x,mid.y, nd/pinch.d); }
+    pinch.d=nd; pinch.mid=mid; dragged=true;
     return;
   }
   if(Math.abs(cur.cx-prev.cx)+Math.abs(cur.cy-prev.cy)>2) dragged=true;
-  view.x += (cur.x-prev.x)*view.k;
-  view.y += (cur.y-prev.y)*view.k;
-  ptrs.set(ev.pointerId,{...svgPoint(ev),cx:ev.clientX,cy:ev.clientY});
-  applyView();
+  // svgPoint() is already in viewBox units, which is the same space the scene
+  // transform translates in — so the delta applies 1:1. Scaling it by view.k
+  // made panning k times too fast, which is what read as "glitchy" when zoomed.
+  view.x += cur.x-prev.x;
+  view.y += cur.y-prev.y;
+  ptrs.set(ev.pointerId,cur);
+  scheduleApply();
 });
 function endPtr(ev){
   ptrs.delete(ev.pointerId);
   if(ptrs.size<2) pinch=null;
-  if(ptrs.size===0) svg.classList.remove('dragging');
+  if(ptrs.size===0){
+    svg.classList.remove('dragging');
+    if(!dragged && downIata && visible.has(downIata)) openDetail(downIata);
+    downIata=null;
+  }
 }
 svg.addEventListener('pointerup',endPtr);
 svg.addEventListener('pointercancel',endPtr);
-svg.addEventListener('pointerleave',ev=>{ if(!ptrs.has(ev.pointerId)) hideTip(); });
 
 const visCx=()=>(VIS.l+VIS.r)/2, visCy=()=>(VIS.t+VIS.b)/2;
 $('#z-in').onclick =()=>zoomAt(visCx(),visCy(),1.5);
@@ -824,6 +862,24 @@ function updateLabelVisibility(){
     const on = visible.has(d.iata) && (showAll || state.hover===d.iata || state.sel===d.iata);
     t.style.display = on ? '' : 'none';
   }
+}
+
+/* Which destination is the pointer over? Resolved by nearest-neighbour in scene
+   space rather than by SVG hit-testing: enlarging the targets enough to be
+   tappable makes them overlap in dense clusters, and DOM order then decides the
+   winner, so you click one city and open another. Nearest is what people mean. */
+const PICK_PX = 14;
+function pickAt(ev){
+  const p=svgPoint(ev);
+  const sx=(p.x-view.x)/view.k, sy=(p.y-view.y)/view.k;
+  const maxD=PICK_PX/((RENDER_SCALE||1)*view.k);
+  let best=null, bd=maxD*maxD;
+  for(const d of DESTINATIONS){
+    if(!visible.has(d.iata)) continue;
+    const dx=d.x-sx, dy=d.y-sy, q=dx*dx+dy*dy;
+    if(q<bd){ bd=q; best=d.iata; }
+  }
+  return best;
 }
 
 const tip=$('#tip');
@@ -858,26 +914,20 @@ function setHover(iata,ev){
   updateLabelVisibility();
 }
 
-$('#g-dots').addEventListener('pointerover',ev=>{
-  const ia=ev.target.dataset&&ev.target.dataset.iata;
-  if(ia&&visible.has(ia)) setHover(ia,ev);
+svg.addEventListener('pointermove',ev=>{
+  if(ptrs.size) return;                       // mid-drag: don't fight the pan
+  const ia=pickAt(ev);
+  svg.classList.toggle('pick',!!ia);
+  if(ia) setHover(ia,ev); else if(state.hover) setHover(null);
 });
-$('#g-dots').addEventListener('pointermove',ev=>{
-  const ia=ev.target.dataset&&ev.target.dataset.iata;
-  if(ia&&visible.has(ia)) showTip(DEST_BY[ia],ev);
-});
-$('#g-dots').addEventListener('pointerout',ev=>{
-  if(ev.target.dataset&&ev.target.dataset.iata) setHover(null);
-});
-$('#g-dots').addEventListener('click',ev=>{
-  const ia=ev.target.dataset&&ev.target.dataset.iata;
-  if(ia&&visible.has(ia)&&!dragged) openDetail(ia);
-});
+svg.addEventListener('pointerleave',()=>{ if(!ptrs.size) setHover(null); });
+// Selection resolves on pointerup, not click: pointer capture retargets the
+// click event to the <svg>, so a delegated click listener never fires.
 
 /* ------------------------------------------------------------------ filter */
 function passes(d){
   if(!state.regions.has(d.region)) return false;
-  if(d.km<state.min||d.km>state.max) return false;
+  if(d.hrs<state.min||d.hrs>state.max) return false;
   if(state.q && !d.hay.includes(state.q)) return false;
   return true;
 }
@@ -895,34 +945,34 @@ function render(){
   for(const [n,p] of cEls) p.classList.toggle('has',litC.has(n));
 
   // stats
-  const kms=shown.map(d=>d.km).sort((a,b)=>a-b);
-  const med = kms.length ? (kms.length%2 ? kms[(kms.length-1)/2] : Math.round((kms[kms.length/2-1]+kms[kms.length/2])/2)) : 0;
+  const hs=shown.map(d=>d.hrs).sort((a,b)=>a-b);
+  const med = hs.length ? (hs.length%2 ? hs[(hs.length-1)/2] : (hs[hs.length/2-1]+hs[hs.length/2])/2) : 0;
   const ctry=new Set(shown.map(d=>d.country));
   $('#s-dest').textContent=shown.length;
   $('#s-ctry').textContent=ctry.size;
-  $('#s-med').textContent=fmt(med);
-  $('#s-far').textContent=kms.length?fmt(kms[kms.length-1]):'0';
+  $('#s-med').textContent=hs.length?fmtH(med):'—';
+  $('#s-far').textContent=hs.length?fmtH(hs[hs.length-1]):'—';
   $('#t-n').textContent=shown.length;
   $('#t-c').textContent=ctry.size;
-  $('#t-m').textContent=fmt(med);
+  $('#t-m').textContent=hs.length?fmtH(med):'—';
 
   // list, grouped by country, nearest country first
   const groups=new Map();
   for(const d of shown){ if(!groups.has(d.country)) groups.set(d.country,[]); groups.get(d.country).push(d); }
-  const order=[...groups.entries()].sort((a,b)=>Math.min(...a[1].map(d=>d.km))-Math.min(...b[1].map(d=>d.km)));
+  const order=[...groups.entries()].sort((a,b)=>Math.min(...a[1].map(d=>d.hrs))-Math.min(...b[1].map(d=>d.hrs)));
 
   const list=$('#list');
   if(!shown.length){ list.innerHTML='<div class="empty">No destinations match these filters.</div>'; updateLabelVisibility(); return; }
   const html=order.map(([country,ds])=>{
     const closed=state.closed.has(country);
-    const near=Math.min(...ds.map(d=>d.km)), far=Math.max(...ds.map(d=>d.km));
-    const range=ds.length>1?`${fmt(near)}–${fmt(far)}`:fmt(near);
+    const near=Math.min(...ds.map(d=>d.hrs)), far=Math.max(...ds.map(d=>d.hrs));
+    const range=ds.length>1?`${fmtH(near)}–${fmtH(far)}`:fmtH(near);
     return `<section class="grp${closed?' closed':''}" data-country="${esc(country)}" data-ne="${esc(ds[0].ne||'')}">
       <button class="ghead" aria-expanded="${!closed}">
         <span class="caret">▼</span>
         <span class="cname">${esc(country)}</span>
         <span class="cn">${ds.length}</span>
-        <span class="cdist">${range} km</span>
+        <span class="cdist">${range}</span>
       </button>
       <div class="rows">${ds.map(d=>`
         <button class="row" data-iata="${d.iata}">
@@ -930,7 +980,7 @@ function render(){
           <span class="code">${d.iata}</span>
           <span class="nm">${esc(d.city)}</span>
           <span class="tags">${d.future?'<span class="tag future">soon</span>':''}${d.seasonal?'<span class="tag seasonal">seas.</span>':''}${d.conf!=='high'?`<span class="tag med" title="Confidence: ${d.conf}">${d.conf==='medium'?'~':'?'}</span>`:''}</span>
-          <span class="km">${fmt(d.km)}</span>
+          <span class="km">${fmtH(d.hrs)}</span>
         </button>`).join('')}</div>
     </section>`;
   }).join('');
@@ -989,8 +1039,10 @@ function openDetail(iata){
     return `${Math.round(b)}° ${dirs[Math.round(b/22.5)%16]}`;
   })();
   $('#d-body').innerHTML=`
-    <div class="big"><b>${fmt(d.km)}</b><span>km great-circle from RUH</span></div>
+    <div class="big"><b>${fmtH(d.hrs)}</b><span>estimated nonstop flight time</span></div>
     <dl class="kv">
+      <dt>Distance</dt><dd>${fmt(d.km)} km great-circle</dd>
+      <dt>Typical fare</dt><dd>SAR ${fmt(d.fare.lo)}–${fmt(d.fare.hi)} return economy${d.lcc?' · low-cost carrier on this route':''}</dd>
       <dt>Region</dt><dd>${esc(d.region)}</dd>
       <dt>Bearing</dt><dd class="mono">${bearing}</dd>
       <dt>Coordinates</dt><dd class="mono">${d.lat.toFixed(4)}, ${d.lon.toFixed(4)}</dd>
@@ -1000,20 +1052,24 @@ function openDetail(iata){
     <div class="dsec">
       <h3>Operated nonstop by</h3>
       <div class="pills">${d.airlines.map(a=>`<span class="pill">${esc(a)}</span>`).join('')||'<span class="pill">—</span>'}</div>
+      ${d.lcc?'<p class="note">A low-cost carrier serves this route, so real fares often land at or below the bottom of the band.</p>':''}
       ${d.seasonal?'<p class="note">Listed as a seasonal route only — it does not operate year-round.</p>':''}
       ${d.future?`<p class="note">Announced, not yet flying. First service ${esc(d.starts)}.</p>`:''}
+      ${d.status==='suspended'?`<p class="note"><b>Currently suspended.</b> ${esc(d.why||'')}</p>`:''}
     </div>
     <div class="dsec">
       <h3>Check live schedules</h3>
       <div class="gf">${nextDates().map(x=>
         `<a href="${gflights(d.iata,x.d)}" target="_blank" rel="noopener"><b>${x.label}</b><span>${x.d} →</span></a>`).join('')}</div>
-      <p class="note">Flight times and frequencies are deliberately not stored in this page — free
-      sources disagree and go stale fast. These links run a live, date-pinned query instead.</p>
+      <p class="note">The time above is estimated from distance, and the fare is a band sampled on
+      ${esc(FARES.sampled)} — neither is a schedule or a quote. These links run a live, date-pinned
+      query for the real numbers.</p>
     </div>
     <div class="dsec">
       <h3>Provenance &amp; confidence</h3>
       <div class="prov ${d.conf}">
         <b>${esc(p.label)}</b> · confidence ${d.conf}<br>${p.detail}
+        ${d.why?`<br><br><b>This route:</b> ${esc(d.why)}`:''}
         <br><span style="color:var(--ink-3)">Coordinates: ${d.cs==='OF'?'OpenFlights airports.dat':'Wikidata P625'}.</span>
         ${d.wiki?`<br><a href="https://en.wikipedia.org/wiki/${encodeURIComponent(d.wiki.replace(/ /g,'_'))}" target="_blank" rel="noopener">Airport article →</a>`:''}
       </div>
@@ -1034,8 +1090,7 @@ $('#d-back').onclick=closeDetail;
   chips.addEventListener('click',ev=>{
     const b=ev.target.closest('.chip'); if(!b) return;
     if(b.dataset.all){
-      const allOn=state.regions.size===REGIONS.length;
-      state.regions = allOn ? new Set() : new Set(REGIONS);
+      state.regions = state.regions.size ? new Set() : new Set(REGIONS);
     } else {
       const r=b.dataset.r;
       if(state.regions.has(r)) state.regions.delete(r); else state.regions.add(r);
@@ -1045,28 +1100,28 @@ $('#d-back').onclick=closeDetail;
 }
 function syncChips(){
   for(const b of $$('.chip[data-r]')) b.setAttribute('aria-pressed',String(state.regions.has(b.dataset.r)));
-  $('.chip.all').textContent = state.regions.size===REGIONS.length ? 'Clear' : 'All';
+  $('.chip.all').textContent = state.regions.size ? 'Clear' : 'All';
   $('#reg-n').textContent = state.regions.size===REGIONS.length ? 'all' : `${state.regions.size} of ${REGIONS.length}`;
 }
 
 const dmin=$('#dmin'), dmax=$('#dmax');
-dmin.max=dmax.max=MAX_KM; dmax.value=MAX_KM;
-$('#ramp-max').textContent=fmt(MAX_KM)+' km';
+dmin.max=dmax.max=MAX_H; dmin.step=dmax.step=0.25; dmax.value=MAX_H;
+$('#ramp-max').textContent=fmtH(MAX_H);
 $('#ramp').innerHTML=BANDS.map((b,i)=>`<i style="background:var(--d${i+1})" title="${b.label}"></i>`).join('');
 function syncDual(){
   let a=+dmin.value, b=+dmax.value;
   if(a>b){ if(document.activeElement===dmin) b=a; else a=b; dmin.value=a; dmax.value=b; }
   state.min=a; state.max=b;
-  $('#dfill').style.left=(a/MAX_KM*100)+'%';
-  $('#dfill').style.width=((b-a)/MAX_KM*100)+'%';
-  $('#dist-lbl').textContent=`${fmt(a)} – ${fmt(b)} km`;
+  $('#dfill').style.left=(a/MAX_H*100)+'%';
+  $('#dfill').style.width=((b-a)/MAX_H*100)+'%';
+  $('#dist-lbl').textContent=`${fmtH(a)} – ${fmtH(b)}`;
   render();
 }
 dmin.addEventListener('input',syncDual); dmax.addEventListener('input',syncDual);
 
 $('#presets').innerHTML=BANDS.map((b,i)=>
-  `<button data-lo="${i?BANDS[i-1].max:0}" data-hi="${Math.min(b.max,MAX_KM)}">${b.label}</button>`).join('')
-  + `<button data-lo="0" data-hi="${MAX_KM}">All</button>`;
+  `<button data-lo="${i?BANDS[i-1].max:0}" data-hi="${Math.min(b.max,MAX_H)}">${b.label}</button>`).join('')
+  + `<button data-lo="0" data-hi="${MAX_H}">All</button>`;
 $('#presets').addEventListener('click',ev=>{
   const b=ev.target.closest('button'); if(!b) return;
   dmin.value=b.dataset.lo; dmax.value=b.dataset.hi; syncDual();
@@ -1075,7 +1130,7 @@ $('#presets').addEventListener('click',ev=>{
 $('#q').addEventListener('input',ev=>{ state.q=ev.target.value.trim().toLowerCase(); render(); });
 $('#t-reset').onclick=()=>{
   state.regions=new Set(REGIONS); state.q=''; $('#q').value='';
-  dmin.value=0; dmax.value=MAX_KM; state.closed.clear();
+  dmin.value=0; dmax.value=MAX_H; state.closed.clear();
   syncChips(); syncDual();
 };
 
@@ -1092,6 +1147,10 @@ $('#about').addEventListener('click',ev=>{ if(ev.target.id==='about') closeAbout
   $('#wd-list').textContent=[...new Set(DESTINATIONS.filter(d=>d.cs==='WD').map(d=>d.iata))].join(', ')||'none';
   $('#nopoly').textContent=[...new Set(DESTINATIONS.filter(d=>!d.ne).map(d=>d.country))].join(', ')||'none';
   $('#built').textContent=META.note;
+  $('#fare-date').textContent=FARES.sampled;
+  $('#fare-sample').innerHTML='<ul>'+FARES.bands.map(b=>
+    `<li><b>${b.label||''}up to ${b.max>1e8?'the longest route':fmtH(b.max)}</b> → SAR ${fmt(b.lo)}–${fmt(b.hi)} return.
+     Anchor <span class="mono">${esc(b.anchor)}</span>: ${esc(b.note)}</li>`).join('')+'</ul>';
 }
 
 /* ----------------------------------------------- mobile bottom sheet
