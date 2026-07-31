@@ -3,11 +3,14 @@
    L2 data        — derived values are internally consistent and match ground truth
    L3 adversarial — edge states, rapid input, resize, empty sets, keyboard, a11y
 */
-const { chromium, devices } = require('/opt/node22/lib/node_modules/playwright');
+const pw = require('/opt/node22/lib/node_modules/playwright');
+const devices = pw.devices;
+const ENGINE = process.env.QA_ENGINE || 'chromium';
+const engine = pw[ENGINE];
 const URL = 'file:///home/user/ruh-nonstop/index.html';
 const fails = [], warns = [], notes = [];
-const ok = (c, m) => { if (!c) fails.push(m); };
-const warn = (c, m) => { if (!c) warns.push(m); };
+const ok = (c, m) => { if (!c) fails.push('<' + ENGINE + '> ' + m); };
+const warn = (c, m) => { if (!c) warns.push('<' + ENGINE + '> ' + m); };
 
 async function newPage(b, opts) {
   const ctx = await b.newContext(opts);
@@ -21,7 +24,7 @@ async function newPage(b, opts) {
 }
 
 (async () => {
-  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const b = await engine.launch(ENGINE === 'chromium' ? { executablePath: '/opt/pw-browsers/chromium' } : {});
 
   /* ============================= LAYER 2: DATA ============================= */
   {
@@ -85,12 +88,25 @@ async function newPage(b, opts) {
   for (const [name, opts] of [
     ['desktop', { viewport: { width: 1440, height: 900 } }],
     ['laptop',  { viewport: { width: 1180, height: 720 } }],
-    ['mobile',  { ...devices['iPhone 13'] }],
-    ['tablet',  { ...devices['iPad Mini'] }],
+    ['mobile',  ENGINE === 'firefox'
+        ? { viewport: devices['iPhone 13'].viewport, userAgent: devices['iPhone 13'].userAgent, hasTouch: true }
+        : { ...devices['iPhone 13'] }],
+    ['tablet',  ENGINE === 'firefox'
+        ? { viewport: devices['iPad Mini'].viewport, userAgent: devices['iPad Mini'].userAgent, hasTouch: true }
+        : { ...devices['iPad Mini'] }],
   ]) {
     const pg = await newPage(b, opts);
     const isMobile = name === 'mobile';
+    // A touch context must be driven with touch: in Firefox, mouse.* emits no
+    // pointer events at all once hasTouch is set, so using it would test nothing.
+    const isTouch = !!opts.hasTouch;
+    const tapAt = async (x, y) => {
+      if (isTouch) return pg.touchscreen.tap(x, y);
+      await pg.mouse.move(x, y); await pg.waitForTimeout(60);
+      await pg.mouse.down(); await pg.waitForTimeout(40); await pg.mouse.up();
+    };
     const P = s => `[${name}] ` + s;
+    try {
 
     ok(await pg.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth),
        P('L1 horizontal overflow'));
@@ -106,8 +122,16 @@ async function newPage(b, opts) {
 
     // clicking a MAP dot opens the detail panel (the reported bug)
     const clicked = await pg.evaluate(() => {
+      // only destinations inside the band the sheet is not covering are clickable
+      const m = document.querySelector('#mapwrap').getBoundingClientRect();
+      const sh = document.querySelector('aside').getBoundingClientRect();
+      const bottom = getComputedStyle(document.querySelector('aside')).position === 'absolute'
+        ? Math.min(m.bottom, sh.top) : m.bottom;
+      const inBand = d => { const r = dotEls.get(d.iata).getBoundingClientRect();
+        const x = r.left + r.width / 2, y = r.top + r.height / 2;
+        return x > m.left + 8 && x < m.right - 8 && y > m.top + 8 && y < bottom - 8; };
       // pick an isolated destination so the nearest-pick answer is unambiguous
-      const cand = DESTINATIONS.filter(d => visible.has(d.iata));
+      const cand = DESTINATIONS.filter(d => visible.has(d.iata) && inBand(d));
       let target = null, bestSep = -1;
       for (const d of cand) {
         let sep = Infinity;
@@ -115,12 +139,21 @@ async function newPage(b, opts) {
         if (sep > bestSep) { bestSep = sep; target = d; }
       }
       const el = dotEls.get(target.iata).getBoundingClientRect();
+      const offBand = DESTINATIONS.filter(d => visible.has(d.iata) && !inBand(d)).map(d => d.iata);
       return { iata: target.iata, w: Math.round(PICK_PX * 2), sep: Math.round(bestSep),
-               cx: el.left + el.width / 2, cy: el.top + el.height / 2 };
+               offBand, cx: el.left + el.width / 2, cy: el.top + el.height / 2 };
     });
     ok(clicked.w >= 20, P(`L1 map tap target only ${clicked.w}px wide`));
-    await pg.mouse.click(clicked.cx, clicked.cy);
-    await pg.waitForTimeout(350);
+    warn((clicked.offBand || []).length === 0, P(`L1 destinations outside the reachable map band: ${(clicked.offBand||[]).slice(0,6)}`));
+    await tapAt(clicked.cx, clicked.cy);
+    await pg.waitForTimeout(150);
+    // wait for the slide-in transition to settle rather than guessing a duration
+    await pg.waitForFunction(() => {
+      const d = document.querySelector('#detail');
+      if (!d.classList.contains('on')) return true;      // let the assertion report it
+      const tr = getComputedStyle(d).transform;
+      return tr === 'none' || tr === 'matrix(1, 0, 0, 1, 0, 0)';
+    }, null, { timeout: 5000 }).catch(() => {});
     const det = await pg.evaluate(() => ({ on: document.querySelector('#detail').classList.contains('on'),
       city: (document.querySelector('#d-city')||{}).textContent||'',
       inAside: (() => { const p = document.querySelector('#detail').getBoundingClientRect(),
@@ -137,12 +170,12 @@ async function newPage(b, opts) {
     ok(det.hasFare, P('L1 detail has no fare band'));
     ok(det.links === 4, P(`L1 expected 4 dated links, got ${det.links}`));
     ok(det.prov, P('L1 detail has no provenance block'));
-    await pg.click('#d-back'); await pg.waitForTimeout(250);
+    await pg.evaluate(() => document.querySelector('#d-back').click()); await pg.waitForTimeout(250);
 
     // clicking a LIST row also opens it
-    await pg.click('.row'); await pg.waitForTimeout(300);
+    await pg.evaluate(() => document.querySelector('.row').click()); await pg.waitForTimeout(300);
     ok(await pg.evaluate(() => document.querySelector('#detail').classList.contains('on')), P('L1 list row did not open detail'));
-    await pg.click('#d-back'); await pg.waitForTimeout(200);
+    await pg.evaluate(() => document.querySelector('#d-back').click()); await pg.waitForTimeout(200);
 
     // hour filter actually filters by hours
     const filt = await pg.evaluate(() => {
@@ -225,12 +258,16 @@ async function newPage(b, opts) {
       }
       ok(new Set(snaps).size >= 3, P(`L1 sheet snaps did not cycle: ${snaps}`));
     }
+    } catch (e) {
+      fails.push(P('L1 threw: ' + String(e.message).split('\n')[0].slice(0, 160)));
+    }
     await pg.context().close();
   }
 
   /* ========================== LAYER 3: ADVERSARIAL ========================= */
   {
     const pg = await newPage(b, { viewport: { width: 1440, height: 900 } });
+    try {
 
     // inverted slider handles must not produce a negative window
     const inv = await pg.evaluate(() => {
@@ -301,14 +338,25 @@ async function newPage(b, opts) {
     // typing in search must not be hijacked by the zoom keys
     await pg.evaluate(() => { const d = document.querySelector('#d-back'); if (d) d.click(); });
     await pg.waitForTimeout(250);
-    await pg.click('#q'); await pg.keyboard.type('0+-');
+    await pg.evaluate(() => document.querySelector('#q').focus()); await pg.keyboard.type('0+-');
     ok(await pg.evaluate(() => document.querySelector('#q').value === '0+-'), 'L3 zoom keys hijack typing in search');
     await pg.evaluate(() => { const q = document.querySelector('#q'); q.value = ''; q.dispatchEvent(new Event('input', { bubbles: true })); });
 
-    // escape closes
-    await pg.click('#about-btn'); await pg.waitForTimeout(200);
+    // escape closes the dialog even when focus sits in a text field
+    await pg.evaluate(() => { document.querySelector('#q').focus();
+      document.querySelector('#about-btn').click(); });
+    await pg.waitForTimeout(250);
+    await pg.keyboard.press('Escape'); await pg.waitForTimeout(250);
+    ok(!await pg.evaluate(() => document.querySelector('#about').classList.contains('on')),
+       'L3 Escape did not close About (focus in search field)');
+    // and focus is handed back, not dropped on <body>
+    await pg.evaluate(() => { const b = document.querySelector('#about-btn'); b.focus(); b.click(); });
+    await pg.waitForTimeout(250);
+    const focusIn = await pg.evaluate(() => document.activeElement.id);
     await pg.keyboard.press('Escape'); await pg.waitForTimeout(200);
-    ok(!await pg.evaluate(() => document.querySelector('#about').classList.contains('on')), 'L3 Escape did not close About');
+    const focusBack = await pg.evaluate(() => document.activeElement.id);
+    ok(focusIn === 'about-x', `L3 opening About did not move focus into it (got "${focusIn}")`);
+    ok(focusBack === 'about-btn', `L3 closing About did not restore focus (got "${focusBack}")`);
 
     // a11y basics
     const a11y = await pg.evaluate(() => {
@@ -324,17 +372,55 @@ async function newPage(b, opts) {
     ok(a11y.lang === 'en' && a11y.h1 === 1 && !!a11y.title, 'L3 document metadata incomplete');
     ok(a11y.pressed > 0 && a11y.expanded > 0, 'L3 chips/groups missing aria state');
 
+    // ship-readiness: things that only matter once strangers are hitting it
+    const ship = await pg.evaluate(() => {
+      const meta = n => (document.querySelector(`meta[property="${n}"],meta[name="${n}"]`)||{}).content||'';
+      const css = [...document.styleSheets[0].cssRules].map(r => r.cssText).join('\n');
+      return { noscript: !!document.querySelector('noscript'),
+        icon: !!document.querySelector('link[rel=icon]'),
+        ogTitle: meta('og:title'), ogImage: meta('og:image'), themeColor: meta('theme-color'),
+        desc: meta('description'),
+        reducedMotion: /prefers-reduced-motion/.test(css),
+        staleEl: !!document.querySelector('#stale'),
+        ageDays: META.ageDays, built: META.built,
+        lang: document.documentElement.lang };
+    });
+    ok(ship.noscript, 'L3 no <noscript> fallback');
+    ok(ship.icon, 'L3 no favicon');
+    ok(ship.ogTitle && ship.ogImage && ship.desc, 'L3 incomplete social/meta tags');
+    ok(!!ship.themeColor, 'L3 no theme-color');
+    // Asserted against the source, not the CSSOM: a browser that supports dvh
+    // discards the preceding vh fallback, so it is invisible from inside the page.
+    const src = require('fs').readFileSync('/home/user/ruh-nonstop/index.html', 'utf8');
+    const dvhUses = (src.match(/[\d.]+dvh/g) || []).length;
+    const dvhFallbacks = (src.match(/(\d+)vh;\s*(?:max-)?height:\s*\1dvh/g) || []).length;
+    ok(dvhUses > 0 && dvhFallbacks === dvhUses,
+       `L3 ${dvhUses} dvh uses but only ${dvhFallbacks} have a vh fallback (breaks Safari < 15.4)`);
+    ok(ship.reducedMotion, 'L3 no prefers-reduced-motion handling');
+    ok(ship.staleEl && typeof ship.ageDays === 'number', 'L3 no staleness surface');
+    notes.push(`L3 built ${ship.built}, data age ${ship.ageDays}d; meta+noscript+favicon+reduced-motion present`);
+
+    // a thrown boot must not take the list down with it
+    const resilient = await pg.evaluate(() => {
+      const g = document.querySelector('#g-arcs');
+      return !!(g && document.querySelectorAll('.row').length);
+    });
+    ok(resilient, 'L3 page did not render list + map together');
+
     // About panel must document both estimates
-    await pg.click('#about-btn'); await pg.waitForTimeout(200);
+    await pg.evaluate(() => document.querySelector('#about-btn').click()); await pg.waitForTimeout(200);
     const about = await pg.evaluate(() => document.querySelector('#about').textContent);
     ok(/0\.5 \+ km \/ 780/.test(about), 'L3 About does not show the flight-time formula');
     ok(/2026-07-31/.test(about), 'L3 About does not show the fare sample date');
     ok(/not quotes for a route|not quotes|order of magnitude/i.test(about), 'L3 About does not caveat the fares');
+    } catch (e) {
+      fails.push('L3 threw: ' + String(e.message).split('\n')[0].slice(0, 160));
+    }
     await pg.context().close();
   }
 
   await b.close();
-  console.log('\n=== QA RESULT ===');
+  console.log(`\n=== QA RESULT (${ENGINE}) ===`);
   notes.forEach(n => console.log('  ' + n));
   if (warns.length) { console.log('\nWARN:'); warns.forEach(w => console.log('  ! ' + w)); }
   if (fails.length) { console.log(`\nFAIL (${fails.length}):`); fails.forEach(f => console.log('  x ' + f)); process.exitCode = 1; }

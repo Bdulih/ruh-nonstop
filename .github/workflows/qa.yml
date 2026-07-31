@@ -1,0 +1,74 @@
+# Keeps the page honest over time: the build must reproduce index.html exactly,
+# and all three browser engines must pass the QA suite. Runs on every push, and
+# weekly so route/fare staleness surfaces even when nobody is touching the repo.
+name: QA
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build is reproducible
+        # index.html is committed and is the deliverable. If rebuilding from
+        # data/ changes it, the committed file and the inputs have drifted.
+        run: |
+          cp index.html /tmp/committed.html
+          python3 build.py
+          if ! diff -q /tmp/committed.html index.html >/dev/null; then
+            echo "::error::index.html is not what build.py produces from data/. Run 'python3 build.py' and commit."
+            diff <(head -c 2000 /tmp/committed.html) <(head -c 2000 index.html) || true
+            exit 1
+          fi
+          echo "index.html reproduces exactly"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install browsers
+        run: |
+          npm i -D playwright@1.56.1
+          npx playwright install --with-deps chromium firefox webkit
+
+      - name: QA — Chromium
+        run: QA_ENGINE=chromium npx node qa.js
+      - name: QA — Firefox
+        run: QA_ENGINE=firefox npx node qa.js
+      - name: QA — WebKit
+        run: QA_ENGINE=webkit npx node qa.js
+
+      - name: Page weight budget
+        # A single file served to a lot of people on mobile data. Fail if the
+        # gzipped payload grows past a size that is defensible over 4G.
+        run: |
+          raw=$(stat -c%s index.html)
+          gz=$(gzip -9 -c index.html | wc -c)
+          echo "index.html: $raw bytes raw, $gz bytes gzipped"
+          if [ "$gz" -gt 102400 ]; then
+            echo "::error::gzipped page is ${gz} bytes, over the 100 KB budget"
+            exit 1
+          fi
+
+      - name: Data freshness
+        # Warns rather than fails: stale data is a prompt to re-verify, not a
+        # broken build. The page itself also tells the reader once it is old.
+        run: |
+          d=$(python3 -c "import json,datetime;print(json.load(open('data/verified.json'))['sampled'])")
+          age=$(( ( $(date +%s) - $(date -d "$d" +%s) ) / 86400 ))
+          echo "route/fare data sampled $d — $age days old"
+          if [ "$age" -gt 90 ]; then
+            echo "::warning::Route and fare data is $age days old. Re-run the verification pass and re-sample fares."
+          fi

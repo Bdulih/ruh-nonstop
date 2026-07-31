@@ -116,6 +116,33 @@ RUH–CAI  1612 km
 RUH–LHR  4941 km
 ```
 
+## Shipping
+
+Built to be handed to a lot of people and then left alone.
+
+**Browsers.** The QA suite runs on **Chromium, Firefox and WebKit** — WebKit being the engine behind
+iOS Safari, which for a Riyadh audience is most of the traffic — across desktop, laptop, tablet and
+phone viewports. Cross-engine testing caught three real defects that Chromium alone did not:
+`setPointerCapture` throwing in Firefox and silently killing selection, a modal that could not be
+dismissed with Escape once focus was in the search field, and a missing `100vh` fallback that would
+have broken layout on Safari before 15.4.
+
+**Weight.** 217 KB raw, **68 KB gzipped**, one request. CI fails the build if the gzipped payload goes
+over 100 KB. Ready to interact in ~210 ms; a filter re-render costs ~2.7 ms and a zoom step ~0.9 ms,
+across 129 routes and 177 country polygons.
+
+**Degradation.** `<noscript>` explains the page and links to the data. The boot sequence is wrapped so
+a map failure leaves the list working rather than white-screening. Modal focus is trapped and
+restored, Escape always closes, and `prefers-reduced-motion` is honoured.
+
+**Staleness.** This is the thing that actually rots. The page carries its own build date and, once the
+data is more than 90 days old, says so in the header rather than ageing quietly into being wrong. CI
+re-checks weekly and warns on the same threshold.
+
+**CI** (`.github/workflows/qa.yml`) runs on every push, every PR, and weekly. It verifies that
+`index.html` is exactly what `build.py` produces from `data/` — so the committed deliverable can never
+drift from its inputs — then runs all three engines, the weight budget, and the freshness check.
+
 ## Known limits
 
 - Schedules change constantly. A listed route may be suspended tomorrow.
@@ -124,20 +151,25 @@ RUH–LHR  4941 km
 - Codeshares excluded; only the operating carrier is listed. No cargo-only routes.
 - At 1:110m there is no polygon for Bahrain, Hong Kong, Singapore or the Maldives, so those appear as
   a dot with no landmass. That is the source resolution, not a bug.
+- English only. A meaningful share of the audience reads Arabic, and an RTL Arabic version would be a
+  real improvement — it is not built.
+- Fare bands are sampled per time band, not per route, so a route can sit well outside its band.
 
 ## Rebuilding and testing
 
 `index.html` is generated, but it is committed and is the deliverable — you never need to run this.
 
 ```sh
-python3 build.py     # reads data/, writes index.html
-node qa.js           # three-layer QA, exits non-zero on failure
+python3 build.py                 # reads data/, writes index.html
+QA_ENGINE=chromium node qa.js    # also: firefox, webkit
 ```
 
 `build.py` fails the build rather than emitting bad data: it asserts the four reference distances, and
 refuses to guess a coordinate, country or region it does not have.
 
-`qa.js` drives the real page in Chromium across four viewports:
+`qa.js` drives the real page across four viewports (desktop, laptop, tablet, phone) in whichever
+engine `QA_ENGINE` names — touch contexts are driven with touch, since Firefox emits no pointer events
+from synthetic mouse input once `hasTouch` is set:
 
 - **Layer 1 — functional.** Every control on desktop, laptop, tablet and phone: map-dot selection,
   list selection, the hour filter, region chips, search, collapsible groups, empty state, zoom
@@ -152,3 +184,18 @@ refuses to guess a coordinate, country or region it does not have.
 The destination table lives in one array at the top of the `<script>` block in `index.html`
 (`DESTINATIONS`), so a row can be added or corrected there directly without touching any rendering
 code. `data/` holds the pinned upstream inputs so the build is reproducible offline.
+
+## Refreshing the data
+
+Route data and fares are the parts that go stale. To re-verify:
+
+1. Re-fetch the Wikipedia table and re-resolve IATA codes through Wikidata into `data/`.
+2. Re-check anything the table added or dropped against a source independent of it — the other
+   endpoint's airport article, the airline's own booking engine or network release, or AeroRoutes —
+   and record the verdict and its evidence in `data/verified.json`.
+3. Re-sample one fare anchor per time band and update `FARE_BANDS` in `build.py`, including the
+   `sampled` date in `data/verified.json`.
+4. `python3 build.py && QA_ENGINE=chromium node qa.js`, then commit `index.html` alongside the data.
+
+Nothing here is inferred. If a route cannot be sourced it does not go on the map, and the reason it
+was excluded is written down in `data/verified.json`.

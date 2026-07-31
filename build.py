@@ -312,7 +312,7 @@ BANDS = [
 ]
 
 built = datetime.date.today().isoformat()
-META = dict(note=(
+META = dict(built=built, note=(
     f'Route table built {built} from the English Wikipedia "King Khalid International Airport" '
     f'article (live revision plus the 11 January 2026 revision for routes since deleted), '
     f'with destinations resolved to IATA codes through Wikidata and coordinates from OpenFlights. '
