@@ -3,11 +3,24 @@
    L2 data        — derived values are internally consistent and match ground truth
    L3 adversarial — edge states, rapid input, resize, empty sets, keyboard, a11y
 */
-const pw = require('/opt/node22/lib/node_modules/playwright');
+// Resolve Playwright from wherever it lives: a local node_modules in CI, or a
+// global install on a dev machine. Hard-coding one path makes this unrunnable
+// everywhere else.
+const pw = (() => {
+  const tried = [];
+  for (const p of ['playwright', '/opt/node22/lib/node_modules/playwright',
+                   '/usr/lib/node_modules/playwright']) {
+    try { return require(p); } catch (e) { tried.push(p); }
+  }
+  console.error('Could not load playwright. Tried:\n  ' + tried.join('\n  ') +
+                '\nInstall it with:  npm i -D playwright');
+  process.exit(2);
+})();
 const devices = pw.devices;
 const ENGINE = process.env.QA_ENGINE || 'chromium';
 const engine = pw[ENGINE];
-const URL = 'file:///home/user/ruh-nonstop/index.html';
+if (!engine) { console.error(`Unknown QA_ENGINE "${ENGINE}" (chromium | firefox | webkit)`); process.exit(2); }
+const URL = 'file://' + require('path').join(__dirname, 'index.html');
 const fails = [], warns = [], notes = [];
 const ok = (c, m) => { if (!c) fails.push('<' + ENGINE + '> ' + m); };
 const warn = (c, m) => { if (!c) warns.push('<' + ENGINE + '> ' + m); };
@@ -24,7 +37,10 @@ async function newPage(b, opts) {
 }
 
 (async () => {
-  const b = await engine.launch(ENGINE === 'chromium' ? { executablePath: '/opt/pw-browsers/chromium' } : {});
+  // Use the bundled browser unless this sandbox's prebuilt Chromium is present.
+  const localChromium = '/opt/pw-browsers/chromium';
+  const useLocal = ENGINE === 'chromium' && require('fs').existsSync(localChromium);
+  const b = await engine.launch(useLocal ? { executablePath: localChromium } : {});
 
   /* ============================= LAYER 2: DATA ============================= */
   {
@@ -391,7 +407,7 @@ async function newPage(b, opts) {
     ok(!!ship.themeColor, 'L3 no theme-color');
     // Asserted against the source, not the CSSOM: a browser that supports dvh
     // discards the preceding vh fallback, so it is invisible from inside the page.
-    const src = require('fs').readFileSync('/home/user/ruh-nonstop/index.html', 'utf8');
+    const src = require('fs').readFileSync(require('path').join(__dirname, 'index.html'), 'utf8');
     const dvhUses = (src.match(/[\d.]+dvh/g) || []).length;
     const dvhFallbacks = (src.match(/(\d+)vh;\s*(?:max-)?height:\s*\1dvh/g) || []).length;
     ok(dvhUses > 0 && dvhFallbacks === dvhUses,

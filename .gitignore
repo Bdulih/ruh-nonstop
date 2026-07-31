@@ -3,3 +3,6 @@ m-*.png
 live-*.png
 __pycache__/
 .netlify/
+node_modules/
+package-lock.json
+package.json
