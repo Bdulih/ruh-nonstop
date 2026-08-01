@@ -116,6 +116,37 @@ const VIEWS = [
       });
       W(contrast.length === 0, P(`text under WCAG AA: ${contrast}`));
 
+      /* ---- 5b. the map has to be legible at real pixel sizes -------------- */
+      const mapPx = await pg.evaluate(() => {
+        const dot = document.querySelector('#g-dots circle.dot');
+        const lbl = [...document.querySelectorAll('.lbl')].find(e => e.style.display !== 'none');
+        const rs = RENDER_SCALE || 1;
+        return { dotDia: dot.getBoundingClientRect().width,
+                 // style font-size is in user units; convert to CSS px
+                 lblPx: lbl ? parseFloat(lbl.style.fontSize) * view.k * rs : null };
+      });
+      F(mapPx.dotDia >= 6, P(`map dots render at ${mapPx.dotDia.toFixed(1)}px across, under 6px`));
+      F(mapPx.lblPx === null || mapPx.lblPx >= 10,
+        P(`map labels render at ${(mapPx.lblPx||0).toFixed(1)}px, under 10px`));
+
+      /* ---- 5c. the sheet opens on results, not on a wall of filters ------- */
+      if (opts.viewport.width <= 880) {
+        const sheet = await pg.evaluate(() => {
+          const l = document.querySelector('.list').getBoundingClientRect();
+          return { filtersOpen: getComputedStyle(document.querySelector('.filters')).display !== 'none',
+                   toggle: !!document.querySelector('#f-toggle'),
+                   rowsVisible: [...document.querySelectorAll('.row')].filter(r => {
+                     const b = r.getBoundingClientRect();
+                     return b.top >= l.top - 1 && b.bottom <= l.bottom + 1; }).length,
+                   tallyClipped: (() => { const d = document.querySelector('.tally > div');
+                     return d.scrollWidth > d.clientWidth + 1; })() };
+        });
+        F(!sheet.filtersOpen, P('filters are expanded by default and eat the sheet'));
+        F(sheet.toggle, P('no Filters control on mobile'));
+        F(sheet.rowsVisible >= 3, P(`only ${sheet.rowsVisible} result rows visible in the sheet`));
+        F(!sheet.tallyClipped, P('summary bar text is truncated'));
+      }
+
       /* ---- 6. the detail panel, which is where the density is ------------- */
       await pg.evaluate(() => openDetail(DESTINATIONS.find(d => d.fpw) ? DESTINATIONS.find(d => d.fpw).iata : DESTINATIONS[0].iata));
       await pg.waitForTimeout(350);

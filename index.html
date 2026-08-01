@@ -224,8 +224,17 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
 }
 .tally b{color:var(--ink);font-weight:500}
 .tally .more{display:none}
-.tally button{font-size:13px;color:var(--blue);font-weight:500;padding:6px 8px;border-radius:6px;margin:-6px -8px}
+.tally .ctry{display:inline}
+.tactions{display:flex;align-items:center;gap:4px;flex:none}
+.tally button{font-size:13px;color:var(--blue);font-weight:500;padding:6px 10px;border-radius:8px}
 .tally button:hover{background:var(--hover)}
+#f-toggle{display:none;align-items:center;gap:6px;border:1px solid var(--line)}
+#f-toggle .badge{
+  min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--blue);
+  color:var(--card);font-size:11px;font-weight:600;display:none;place-items:center
+}
+#f-toggle.active .badge{display:grid}
+#f-toggle.active{border-color:var(--blue);background:var(--blue-bg)}
 
 .list{flex:1;overflow-y:auto;overscroll-behavior:contain;min-height:0}
 .grp{border-bottom:1px solid var(--line-2)}
@@ -329,6 +338,10 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
   .grab{order:0} .tally{order:1} .filters{order:2} .list{order:3}
   .tally{border-top:0}
   .filters{border-bottom:0;border-top:1px solid var(--line)}
+  /* the list is the content; filters open on demand rather than eating the sheet */
+  #f-toggle{display:inline-flex}
+  .filters{display:none}
+  .app.filters-open .filters{display:flex}
   .mapui.bl{bottom:auto;top:16px;left:auto;right:16px}
   .zoomer button{width:44px;height:44px;font-size:19px}
   .chip{height:36px;padding:0 14px;font-size:13.5px}
@@ -346,13 +359,18 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
   .brand .sub{display:none}
   .brand h1{font-size:16px}
   .stats{display:none}
-  .tally .more{display:inline}
-  .tally{white-space:nowrap;gap:10px}
+  /* .more stays hidden everywhere; the counts alone fill the bar */
+  .tally{white-space:nowrap;gap:8px}
   .tally>div{overflow:hidden;text-overflow:ellipsis}
   .legend{max-width:none;padding:8px 10px}
   .legend .orig,.legend .lt{display:none}
   .ramp{margin-bottom:2px}
   .ramp i{width:22px;flex:none}
+}
+@media (max-width:380px){
+  /* two buttons plus both counts do not fit at 320px */
+  .tally .ctry{display:none}
+  .tally button{padding:6px 8px}
 }
 @media (hover:none){
   .tip{display:none}
@@ -427,7 +445,7 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
 
     <aside id="sheet">
       <div class="grab" id="grab" role="button" tabindex="0" aria-label="Expand or collapse the destination list"><i></i></div>
-      <div class="filters">
+      <div class="filters" id="filters">
         <div class="frow">
           <div class="flabel"><span>Region</span><b id="reg-n"></b></div>
           <div class="chips" id="chips"></div>
@@ -447,8 +465,11 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
       </div>
 
       <div class="tally">
-        <div><b id="t-n">0</b> destinations · <span id="t-c">0</span> countries<span class="more"> · median <span id="t-m">—</span></span></div>
-        <button id="t-reset">Reset filters</button>
+        <div><b id="t-n">0</b> destinations<span class="ctry"> · <span id="t-c">0</span> countries</span><span class="more"> · median <span id="t-m">—</span></span></div>
+        <div class="tactions">
+          <button id="f-toggle" aria-expanded="false" aria-controls="filters">Filters</button>
+          <button id="t-reset">Reset</button>
+        </div>
       </div>
 
       <div class="list" id="list"></div>
@@ -884,7 +905,7 @@ const arcEls=new Map(), dotEls=new Map(), lblEls=new Map();
   $('#g-arcs').appendChild(fa); $('#g-dots').appendChild(fd); $('#g-labels').appendChild(fl);
 
   const ox=projX(ORIGIN.lon), oy=projY(ORIGIN.lat);
-  for(const r of [16,10]){
+  for(const r of [18,11]){
     const ring=document.createElementNS(NS,'circle');
     ring.setAttribute('cx',ox); ring.setAttribute('cy',oy);
     ring.setAttribute('class','origin-ring'); ring.dataset.r=r;
@@ -944,7 +965,7 @@ function clampView(){
   view.x=Math.max(xa,Math.min(xb,view.x));
   view.y=Math.max(ya,Math.min(yb,view.y));
 }
-let lastK=null, applyPending=false;
+let lastK=null, rsLast=null, applyPending=false;
 function scheduleApply(){
   if(applyPending) return;
   applyPending=true;
@@ -955,21 +976,22 @@ function applyView(){
   scene.setAttribute('transform',`translate(${view.x.toFixed(3)},${view.y.toFixed(3)}) scale(${view.k.toFixed(4)})`);
   invalidateLabelBoxes();             // a pan moves the labels too
   const k=view.k;
-  if(k===lastK) return;               // a pure pan needs no counter-scaling
-  lastK=k;
-  const rs=RENDER_SCALE||1;
-  for(const [ia,c] of dotEls) c.setAttribute('r',(3.1/k).toFixed(3));
-  for(const el of $$('.origin-ring')) el.setAttribute('r',(+el.dataset.r/k).toFixed(3));
-  $('.origin-dot').setAttribute('r',(4.2/k).toFixed(3));
-  const fs=(LABEL_PX/k).toFixed(3), sw=(3/k).toFixed(3);
+  if(k===lastK && rsLast===RENDER_SCALE) return;   // a pure pan needs no resizing
+  lastK=k; rsLast=RENDER_SCALE;
+  // one user-unit is (k * RENDER_SCALE) CSS pixels, so invert both
+  const u = 1/(k*(RENDER_SCALE||1));
+  for(const [ia,c] of dotEls) c.setAttribute('r',(DOT_PX*u).toFixed(3));
+  for(const el of $$('.origin-ring')) el.setAttribute('r',(+el.dataset.r*u).toFixed(3));
+  $('.origin-dot').setAttribute('r',(5*u).toFixed(3));
+  const fs=(LABEL_PX*u).toFixed(3), sw=(3*u).toFixed(3);
   for(const [ia,t] of lblEls){
     t.style.fontSize=fs+'px'; t.style.strokeWidth=sw+'px';
     const d=DEST_BY[ia];
-    t.setAttribute('x',(d.x+5/k).toFixed(2)); t.setAttribute('y',(d.y+3/k).toFixed(2));
+    t.setAttribute('x',(d.x+6*u).toFixed(2)); t.setAttribute('y',(d.y+3.5*u).toFixed(2));
   }
   const ol=$('.lbl.origin');
-  ol.style.fontSize=(11/k)+'px'; ol.style.strokeWidth=sw+'px';
-  ol.setAttribute('x',projX(ORIGIN.lon)+9/k); ol.setAttribute('y',projY(ORIGIN.lat)-8/k);
+  ol.style.fontSize=(LABEL_PX*1.05*u)+'px'; ol.style.strokeWidth=sw+'px';
+  ol.setAttribute('x',projX(ORIGIN.lon)+10*u); ol.setAttribute('y',projY(ORIGIN.lat)-9*u);
   updateLabelVisibility();
   invalidateLabelBoxes();
 }
@@ -1106,7 +1128,8 @@ function updateLabelVisibility(){
    winner, so you click one city and open another. Nearest is what people mean. */
 const COARSE = matchMedia('(pointer:coarse)').matches;
 const PICK_PX  = COARSE ? 20 : 14;   // fingers need a bigger target than a cursor
-const LABEL_PX = COARSE ? 12 : 10;   // and 10px city names are unreadable on a phone
+const LABEL_PX = COARSE ? 12.5 : 11; // city names, in real pixels
+const DOT_PX   = COARSE ? 4.2 : 3.4; // dot radius, in real pixels
 /* Label hit boxes in client space. Labels are counter-scaled, so their screen
    size is constant and the boxes only need rebuilding when the view or the
    filtered set changes — and picking never runs mid-drag, so this stays warm. */
@@ -1214,6 +1237,7 @@ function render(){
   $('#t-n').textContent=shown.length;
   $('#t-c').textContent=ctry.size;
   $('#t-m').textContent=hs.length?fmtH(med):'—';
+  if(window.syncFilterBadge) syncFilterBadge();
 
   // list, grouped by country, nearest country first
   const groups=new Map();
@@ -1472,6 +1496,28 @@ $('#presets').addEventListener('click',ev=>{
 });
 
 $('#q').addEventListener('input',ev=>{ state.q=ev.target.value.trim().toLowerCase(); render(); });
+/* Filters live behind a button on mobile so the sheet opens on the results.
+   The badge carries how many are active, so nothing is hidden silently. */
+{
+  const btn=$('#f-toggle'), app=$('.app');
+  btn.innerHTML='Filters <span class="badge" id="f-count"></span>';
+  window.syncFilterBadge=()=>{
+    let n=0;
+    if(state.regions.size!==REGIONS.length) n++;
+    if(state.min>0 || state.max<MAX_H) n++;
+    if(state.q) n++;
+    btn.classList.toggle('active',n>0);
+    $('#f-count').textContent=n||'';
+    btn.setAttribute('aria-label', n?`Filters, ${n} active`:'Filters');
+  };
+  btn.onclick=()=>{
+    const open=app.classList.toggle('filters-open');
+    btn.setAttribute('aria-expanded',String(open));
+    if(open) requestAnimationFrame(()=>{ if(isSheet() && snap==='peek') setSnap('half'); });
+    else resetView();
+  };
+}
+
 $('#t-reset').onclick=()=>{
   state.regions=new Set(REGIONS); state.q=''; $('#q').value='';
   dmin.value=0; dmax.value=MAX_H; state.closed.clear();

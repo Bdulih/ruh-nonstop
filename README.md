@@ -162,8 +162,14 @@ engines. It asserts what a screenshot would show but a behavioural test never ca
 actually resolved rather than falling back, that no two map labels overlap and none is clipped by the
 map edge, that nothing overflows its container, that every touch target clears 32px, and that all text
 meets WCAG AA contrast against its own computed background. It found the Helvetica fallback on iOS,
-the `RIYADH` label printing over Dammam at every viewport, and six secondary-text colours sitting at
-3.5:1.
+the `RIYADH` label printing over Dammam at every viewport, six secondary-text colours sitting at
+3.5:1, and the map drawing at 39% size on a phone.
+
+That last one is worth spelling out. Marks were counter-scaled by the zoom level so they held their
+size as you zoomed, but not by the viewBox-to-CSS render scale, which is ~0.39 on a 390px phone
+against ~1.03 on a desktop. Dots came out **2.4px across on a phone** and city names at 8px. Sizes are
+computed in real CSS pixels now — `1/(k x RENDER_SCALE)` — so the map looks the same on every screen,
+and CI fails if a dot renders under 6px or a label under 10px.
 
 **Browsers.** The QA suite runs on **Chromium, Firefox and WebKit** — WebKit being the engine behind
 iOS Safari, which for a Riyadh audience is most of the traffic — across desktop, laptop, tablet and
@@ -216,6 +222,10 @@ refuses to guess a coordinate, country or region it does not have.
 `qa.js` drives the real page across four viewports (desktop, laptop, tablet, phone) in whichever
 engine `QA_ENGINE` names — touch contexts are driven with touch, since Firefox emits no pointer events
 from synthetic mouse input once `hasTouch` is set:
+
+On phones the sheet opens on the destination list, with the filters behind a **Filters** button that
+carries a badge when any are active — a wall of region chips is not what you want to see first, and CI
+asserts at least three result rows are visible in the default state.
 
 - **Layer 1 — functional.** Every control on desktop, laptop, tablet and phone: map-dot selection,
   list selection, the hour filter, region chips, search, collapsible groups, empty state, zoom
