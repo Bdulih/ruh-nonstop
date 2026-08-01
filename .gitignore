@@ -1,8 +1,15 @@
+# Throwaway verification screenshots produced by qa.js / uiux.js / ad-hoc checks.
+# og.png is a real asset used by the Open Graph tags and stays tracked.
+proof.png
 shot-*.png
+ui-*.png
 m-*.png
 live-*.png
+qa-*.png
+
+# Local tooling
+node_modules/
+package.json
+package-lock.json
 __pycache__/
 .netlify/
-node_modules/
-package-lock.json
-package.json
