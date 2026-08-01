@@ -21,13 +21,13 @@
 :root{
   color-scheme:light;
   --bg:#f8f9fa; --card:#fff; --card-2:#f1f3f4;
-  --ink:#202124; --ink-2:#5f6368; --ink-3:#80868b;
+  --ink:#202124; --ink-2:#5f6368; --ink-3:#6a6e73;
   --line:#dadce0; --line-2:#e8eaed;
   --blue:#1a73e8; --blue-ink:#1a73e8; --blue-bg:#e8f0fe; --blue-hover:#f6faff;
   --origin:#e8710a;
   --land:#e4e7ea; --land-quiet:#f4f6f7; --land-lit:#ccd3da; --land-line:#bfc6cd; --sea:#d7e7f5;
   --d1:#8ab4f8; --d2:#4a8cf7; --d3:#1a73e8; --d4:#15529e; --d5:#0c3766;
-  --good:#188038; --warn:#e37400; --crit:#d93025;
+  --good:#188038; --warn:#e37400; --warn-ink:#8f4600; --crit:#d93025;
   --hover:rgba(60,64,67,.08);
   --el1:0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15);
   --el2:0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15);
@@ -36,13 +36,13 @@
   :root:where(:not([data-theme="light"])){
     color-scheme:dark;
     --bg:#202124; --card:#303134; --card-2:#3c4043;
-    --ink:#e8eaed; --ink-2:#9aa0a6; --ink-3:#80868b;
+    --ink:#e8eaed; --ink-2:#9aa0a6; --ink-3:#a2a9b0;
     --line:#3c4043; --line-2:#3c4043;
     --blue:#8ab4f8; --blue-ink:#8ab4f8; --blue-bg:#1f3760; --blue-hover:#28324a;
     --origin:#d97428;
     --land:#3f4347; --land-quiet:#2b2c2f; --land-lit:#5f6368; --land-line:#54585c; --sea:#15202b;
     --d1:#15529e; --d2:#1a73e8; --d3:#4a8cf7; --d4:#8ab4f8; --d5:#c3dafc;
-    --good:#81c995; --warn:#fdd663; --crit:#f28b82;
+    --good:#81c995; --warn:#fdd663; --warn-ink:#fdd663; --crit:#f28b82;
     --hover:rgba(232,234,237,.08);
     --el1:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 1px rgba(0,0,0,.15);
     --el2:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15);
@@ -51,13 +51,13 @@
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#202124; --card:#303134; --card-2:#3c4043;
-  --ink:#e8eaed; --ink-2:#9aa0a6; --ink-3:#80868b;
+  --ink:#e8eaed; --ink-2:#9aa0a6; --ink-3:#a2a9b0;
   --line:#3c4043; --line-2:#3c4043;
   --blue:#8ab4f8; --blue-ink:#8ab4f8; --blue-bg:#1f3760; --blue-hover:#28324a;
   --origin:#d97428;
   --land:#3f4347; --land-quiet:#2b2c2f; --land-lit:#5f6368; --land-line:#54585c; --sea:#15202b;
   --d1:#15529e; --d2:#1a73e8; --d3:#4a8cf7; --d4:#8ab4f8; --d5:#c3dafc;
-  --good:#81c995; --warn:#fdd663; --crit:#f28b82;
+  --good:#81c995; --warn:#fdd663; --warn-ink:#fdd663; --crit:#f28b82;
   --hover:rgba(232,234,237,.08);
   --el1:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 1px rgba(0,0,0,.15);
   --el2:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15);
@@ -66,7 +66,9 @@
 html,body{height:100%}
 body{
   margin:0;background:var(--bg);color:var(--ink);
-  font:400 14px/1.5 "Google Sans Text","Google Sans",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font:400 15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",
+       system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   -webkit-text-size-adjust:100%;
 }
 h1,h2,h3{margin:0;font-weight:500;letter-spacing:0}
@@ -74,7 +76,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a{color:var(--blue);text-decoration:none}
 a:hover{text-decoration:underline}
 :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
-.mono{font-family:"Roboto Mono",ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* ---------- shell ---------- */
@@ -244,12 +246,12 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
 }
 .row:hover,.row.lit{background:var(--hover);border-left-color:var(--blue)}
 .row .band{width:8px;height:8px;border-radius:50%;flex:none}
-.row .code{font-size:12px;color:var(--ink-3);width:32px;flex:none;font-family:"Roboto Mono",ui-monospace,Menlo,monospace}
+.row .code{font-size:12px;color:var(--ink-3);width:32px;flex:none;font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace}
 .row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
 .row .km{font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums;flex:none;font-weight:500}
 .row .tags{display:flex;gap:4px;flex:none}
-.tag{font-size:10px;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--ink-3);line-height:1.6}
-.tag.seasonal{border-color:var(--warn);color:var(--warn)}
+.tag{font-size:11px;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--ink-3);line-height:1.6}
+.tag.seasonal{border-color:var(--warn);color:var(--warn-ink)}
 .tag.future{border-color:var(--blue);color:var(--blue)}
 .empty{padding:32px 16px;text-align:center;color:var(--ink-3);font-size:13px}
 
@@ -733,7 +735,7 @@ const arcEls=new Map(), dotEls=new Map(), lblEls=new Map();
 
     const t=document.createElementNS(NS,'text');
     t.setAttribute('x',(d.x+5).toFixed(2)); t.setAttribute('y',(d.y+3).toFixed(2));
-    t.setAttribute('class','lbl'); t.dataset.iata=d.iata; t.textContent=d.city;
+    t.setAttribute('class','lbl'); t.dataset.iata=d.iata; t.textContent=d.mlabel||d.city;
     fl.appendChild(t); lblEls.set(d.iata,t);
   }
   $('#g-arcs').appendChild(fa); $('#g-dots').appendChild(fd); $('#g-labels').appendChild(fl);
@@ -816,7 +818,7 @@ function applyView(){
   for(const [ia,c] of dotEls) c.setAttribute('r',(3.1/k).toFixed(3));
   for(const el of $$('.origin-ring')) el.setAttribute('r',(+el.dataset.r/k).toFixed(3));
   $('.origin-dot').setAttribute('r',(4.2/k).toFixed(3));
-  const fs=(10/k).toFixed(3), sw=(3/k).toFixed(3);
+  const fs=(LABEL_PX/k).toFixed(3), sw=(3/k).toFixed(3);
   for(const [ia,t] of lblEls){
     t.style.fontSize=fs+'px'; t.style.strokeWidth=sw+'px';
     const d=DEST_BY[ia];
@@ -897,7 +899,10 @@ svg.addEventListener('pointercancel',endPtr);
 // If capture is lost mid-gesture the pointerup may never reach us; treat it as a cancel.
 svg.addEventListener('lostpointercapture',ev=>{ if(ptrs.has(ev.pointerId)) endPtr(ev); });
 
-const visCx=()=>(VIS.l+VIS.r)/2, visCy=()=>(VIS.t+VIS.b)/2;
+const anchorX=()=>projX(ORIGIN.lon)*view.k+view.x;
+const anchorY=()=>projY(ORIGIN.lat)*view.k+view.y;
+const visCx=()=>{ const a=anchorX(); return a>VIS.l&&a<VIS.r ? a : (VIS.l+VIS.r)/2; };
+const visCy=()=>{ const a=anchorY(); return a>VIS.t&&a<VIS.b ? a : (VIS.t+VIS.b)/2; };
 $('#z-in').onclick =()=>zoomAt(visCx(),visCy(),1.5);
 $('#z-out').onclick=()=>zoomAt(visCx(),visCy(),1/1.5);
 $('#z-rst').onclick=resetView;
@@ -918,20 +923,47 @@ addEventListener('keydown',ev=>{
 const DEST_BY = Object.fromEntries(DESTINATIONS.map(d=>[d.iata,d]));
 let visible = new Set();
 
+/* Labels are placed greedily and anything that would collide is dropped, so two
+   names never stack on each other -- Milan-Bergamo and Milan-Malpensa are 40 km
+   apart and were printing as "MilanMilan". Priority goes to whatever you are
+   pointing at, then to the busiest routes. */
 function updateLabelVisibility(){
   const showAll = view.k >= FIT.k*1.9 || visible.size<=18;
+  const cands=[];
   for(const d of DESTINATIONS){
     const t=lblEls.get(d.iata);
     const on = visible.has(d.iata) && (showAll || state.hover===d.iata || state.sel===d.iata);
     t.style.display = on ? '' : 'none';
+    if(on) cands.push(d);
   }
+  if(cands.length>1){
+    const rank=d=> d.iata===state.sel?-2 : d.iata===state.hover?-1 : -(d.fpw||0)/100 + d.hrs/1000;
+    cands.sort((a,b)=>rank(a)-rank(b));
+    // RIYADH is always drawn and always wins, so it seeds the occupied set
+    const m=$('#mapwrap').getBoundingClientRect();
+    const kept=[];
+    const oel=$('.lbl.origin');
+    if(oel){ const o=oel.getBoundingClientRect();
+             if(o.width) kept.push({l:o.left-1,rt:o.right+1,t:o.top-1,b:o.bottom+1}); }
+    for(const d of cands){
+      const el=lblEls.get(d.iata), r=el.getBoundingClientRect();
+      const clipped = r.left<m.left || r.right>m.right || r.top<m.top || r.bottom>m.bottom;
+      const box={l:r.left-1,rt:r.right+1,t:r.top-1,b:r.bottom+1};
+      const clash=kept.some(k=>!(box.rt<k.l||box.l>k.rt||box.b<k.t||box.t>k.b));
+      if((clash||clipped) && d.iata!==state.sel && d.iata!==state.hover) el.style.display='none';
+      else kept.push(box);
+    }
+  }
+  invalidateLabelBoxes();
 }
 
 /* Which destination is the pointer over? Resolved by nearest-neighbour in scene
    space rather than by SVG hit-testing: enlarging the targets enough to be
    tappable makes them overlap in dense clusters, and DOM order then decides the
    winner, so you click one city and open another. Nearest is what people mean. */
-const PICK_PX = 14;
+const COARSE = matchMedia('(pointer:coarse)').matches;
+const PICK_PX  = COARSE ? 20 : 14;   // fingers need a bigger target than a cursor
+const LABEL_PX = COARSE ? 12 : 10;   // and 10px city names are unreadable on a phone
 /* Label hit boxes in client space. Labels are counter-scaled, so their screen
    size is constant and the boxes only need rebuilding when the view or the
    filtered set changes — and picking never runs mid-drag, so this stays warm. */
@@ -1237,7 +1269,9 @@ function openDetail(iata){
   $('#detail').classList.add('on');
   if(isSheet() && snap==='peek') setSnap('half');
   detailReturn = document.activeElement;
-  $('#d-back').focus({preventScroll:true});
+  // Only pull focus for keyboard users. Doing it on a tap paints a focus ring
+  // round the back button, which reads as a rendering artefact on iOS.
+  if(lastInputWasKeyboard) $('#d-back').focus({preventScroll:true});
   setHover(iata);
 }
 const ordinal=n=>{const s=['th','st','nd','rd'],v=n%100;return s[(v-20)%10]||s[v]||s[0];};
@@ -1304,6 +1338,9 @@ $('#t-reset').onclick=()=>{
 /* ------------------------------------------------------------------- about */
 let aboutReturn=null;
 const FOCUSABLE='a[href],button:not([disabled]),input,[tabindex]:not([tabindex="-1"])';
+let lastInputWasKeyboard=false;
+addEventListener('keydown',e=>{ if(e.key==='Tab') lastInputWasKeyboard=true; },true);
+addEventListener('pointerdown',()=>{ lastInputWasKeyboard=false; },true);
 function openAbout(){
   aboutReturn=document.activeElement;
   $('#about').classList.add('on');

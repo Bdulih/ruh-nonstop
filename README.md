@@ -157,6 +157,14 @@ RUH–LHR  4941 km
 
 Built to be handed to a lot of people and then left alone.
 
+**Presentation** is tested too, by `uiux.js`, across five viewports x two colour schemes x three
+engines. It asserts what a screenshot would show but a behavioural test never catches: that the font
+actually resolved rather than falling back, that no two map labels overlap and none is clipped by the
+map edge, that nothing overflows its container, that every touch target clears 32px, and that all text
+meets WCAG AA contrast against its own computed background. It found the Helvetica fallback on iOS,
+the `RIYADH` label printing over Dammam at every viewport, and six secondary-text colours sitting at
+3.5:1.
+
 **Browsers.** The QA suite runs on **Chromium, Firefox and WebKit** — WebKit being the engine behind
 iOS Safari, which for a Riyadh audience is most of the traffic — across desktop, laptop, tablet and
 phone viewports. Cross-engine testing caught three real defects that Chromium alone did not:
@@ -198,7 +206,8 @@ drift from its inputs — then runs all three engines, the weight budget, and th
 
 ```sh
 python3 build.py                 # reads data/, writes index.html
-QA_ENGINE=chromium node qa.js    # also: firefox, webkit
+QA_ENGINE=chromium node qa.js    # behaviour   — also: firefox, webkit
+QA_ENGINE=chromium node uiux.js  # presentation — also: firefox, webkit
 ```
 
 `build.py` fails the build rather than emitting bad data: it asserts the four reference distances, and

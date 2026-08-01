@@ -342,7 +342,7 @@ async function newPage(b, opts) {
       const k = +/scale\(([\d.]+)\)/.exec(tr)[1];
       const dot = document.querySelector('#g-dots circle');
       return { k0, k, ratio: k / k0, dotR: +dot.getAttribute('r'), wantR: 3.1 / k,
-               lbl: parseFloat(document.querySelector('.lbl').style.fontSize), wantLbl: 10 / k };
+               lbl: parseFloat(document.querySelector('.lbl').style.fontSize), wantLbl: LABEL_PX / k };
     });
     ok(Math.abs(zoom.ratio - 2.25) < 0.01, P(`L1 two zoom-ins gave ${zoom.ratio.toFixed(3)}x, expected 2.25x`));
     ok(Math.abs(zoom.dotR - zoom.wantR) < 0.01, P(`L1 dot not counter-scaled: ${zoom.dotR} vs ${zoom.wantR}`));

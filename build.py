@@ -290,7 +290,25 @@ for d in DESTS:
         lcc=bool(set(airlines) & LOW_COST),
         status=d.get('status'), why=d.get('why')))
 
+# Wikipedia article titles capitalise these, but the airlines do not.
+AIRLINE_CASE = {'Flyadeal': 'flyadeal', 'Flynas': 'flynas', 'Flydubai': 'flydubai',
+                'Flyone': 'FlyOne', 'azimuth': 'Azimuth', 'AJet': 'AJet'}
+for r in records:
+    r['airlines'] = [AIRLINE_CASE.get(a, a) for a in r['airlines']]
+
+# Two airports can serve the same city (Milan has Bergamo and Malpensa, Beijing
+# has Capital and Daxing). Undisambiguated they print on top of each other on
+# the map, so a duplicated city name gets its IATA code appended.
+_seen = {}
+for r in records:
+    _seen[r['city']] = _seen.get(r['city'], 0) + 1
+for r in records:
+    r['mlabel'] = f"{r['city']} {r['iata']}" if _seen[r['city']] > 1 else r['city']
+
 records.sort(key=lambda r: haversine(RUH, (r['lat'], r['lon'])))
+dupes = sorted({r['city'] for r in records if _seen[r['city']] > 1})
+if dupes:
+    print('disambiguated duplicate city names:', ', '.join(dupes))
 
 # ------------------------------------------------------------------ sanity check
 CHECKS = {'JED': 852, 'DXB': 873, 'CAI': 1612, 'LHR': 4941}

@@ -50,6 +50,13 @@ jobs:
       - name: QA — WebKit
         run: QA_ENGINE=webkit node qa.js
 
+      - name: UI/UX — Chromium
+        run: QA_ENGINE=chromium node uiux.js
+      - name: UI/UX — Firefox
+        run: QA_ENGINE=firefox node uiux.js
+      - name: UI/UX — WebKit
+        run: QA_ENGINE=webkit node uiux.js
+
       - name: Page weight budget
         # A single file served to a lot of people on mobile data. Fail if the
         # gzipped payload grows past a size that is defensible over 4G.
