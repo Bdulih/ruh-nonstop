@@ -485,6 +485,13 @@ input[type=search]:focus{outline:none;border-color:transparent;box-shadow:var(--
     RUH–JED 1h35 (typically 1h45), RUH–CAI 2h34 (2h35), RUH–LHR 6h50 (6h45) — but it is an estimate of a
     typical nonstop, not a timetable. It knows nothing about winds, routings or the specific aircraft.</p>
 
+    <h3>How often the flights go</h3>
+    <p id="freq-note"></p>
+    <p>It is a <b>weekly count, not a timetable</b>. It will not tell you that your Tuesday flight
+    exists — only that the route runs, say, three times in a normal week. <b id="freq-n"></b> of the
+    destinations here have one; the rest had no figure that could be pinned to the Riyadh route
+    specifically, so they show nothing rather than a guess.</p>
+
     <h3>Where the fares come from</h3>
     <p>Fares were sampled from live queries on <b id="fare-date"></b>, one anchor route per band, and the
     band is applied to every route in that band. <b>They are ranges for a distance band, not quotes for a
@@ -647,6 +654,16 @@ const FARES = __FARES__;
 const bandOf = hrs => { for(let i=0;i<BANDS.length;i++) if(hrs<BANDS[i].max) return i; return BANDS.length-1; };
 /* 2.57 -> "2h34" */
 const fmtH = h => `${Math.floor(h)}h${String(Math.round((h-Math.floor(h))*60)).padStart(2,'0')}`;
+/* weekly frequency in words. Deliberately vague at the top end: "75 a week" is
+   a real number but nobody plans around it, "several daily" is what it means. */
+function fmtFreq(n){
+  if(!n) return null;
+  if(n===1) return 'about weekly';
+  if(n<7)   return `${n}\u00d7 a week`;
+  if(n===7) return 'daily';
+  if(n<14)  return `daily, some days twice`;
+  return `several daily (~${n} a week)`;
+}
 
 const TODAY = new Date();
 const iso = d => d.toISOString().slice(0,10);
@@ -659,6 +676,7 @@ for(const d of DESTINATIONS){
   d.future = !!(d.starts && new Date(d.starts) > TODAY);
   d.hay  = (d.city+' '+d.airport+' '+d.country+' '+d.iata+' '+d.region+' '+d.airlines.join(' ')).toLowerCase();
   d.fare = FARES.bands[d.fb];
+  if(d.fpw) d.hay += ' ' + fmtFreq(d.fpw).toLowerCase();
 }
 DESTINATIONS.sort((a,b)=>a.hrs-b.hrs);
 
@@ -1055,17 +1073,42 @@ $('#list').addEventListener('pointerover',ev=>{
 $('#list').addEventListener('pointerleave',()=>{ setHover(null); });
 
 /* ------------------------------------------------------------ detail panel */
-function nextDates(){
-  const out=[], now=new Date();
-  const add=(days,label)=>{ const d=new Date(now); d.setDate(d.getDate()+days); out.push({d:iso(d),label}); };
-  let f=new Date(now); f.setDate(f.getDate() + ((5 - f.getDay() + 7) % 7 || 7));
-  out.push({d:iso(f),label:'Next Friday'});
-  add(14,'In two weeks'); add(30,'In a month'); add(90,'In three months');
-  return out;
+/* The Saudi weekend is Friday-Saturday, so the trip people actually take is
+   out Thursday evening and back Saturday night. That only works for short
+   hops, so the length of the trip scales with the flight time. */
+const DOW=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function nextDow(from,dow,minDays){
+  const d=new Date(from);
+  d.setDate(d.getDate()+(minDays||1));
+  while(d.getDay()!==dow) d.setDate(d.getDate()+1);
+  return d;
 }
-function gflights(iata,date){
-  return 'https://www.google.com/travel/flights?q='+
-    encodeURIComponent(`Flights from RUH to ${iata} on ${date} one way`);
+const shift=(d,n)=>{ const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+const pretty=d=>`${DOW[d.getDay()].slice(0,3)} ${d.getDate()} ${MON[d.getMonth()]}`;
+
+function tripOptions(d){
+  const now=new Date();
+  // nights away: a weekend for short hops, a long weekend mid-haul, a week for long-haul
+  const nights = d.hrs<=3.5 ? 2 : d.hrs<=7 ? 3 : 7;
+  const thu1=nextDow(now,4,1);            // next Thursday
+  const thu2=shift(thu1,7);
+  const thu4=nextDow(shift(now,25),4,1);  // roughly a month out
+  const trip=(out,label,hint)=>({out,back:shift(out,nights),label,hint});
+  return [
+    trip(thu1, nights<=2?'This weekend':'Leaving next Thursday', nights<=2?'Fri\u2013Sat weekend':''),
+    trip(thu2, nights<=2?'Next weekend':'The Thursday after',    ''),
+    trip(thu4, 'In about a month', ''),
+    {out:thu1, back:null, label:'One way, no return', hint:''},
+  ];
+}
+/* "nonstop" in the query makes Google Flights apply its nonstop filter, so the
+   link lands on the flights this map is actually about. */
+function gflights(iata,out,back){
+  const q = back
+    ? `Flights from RUH to ${iata} nonstop on ${out} through ${back}`
+    : `Flights from RUH to ${iata} nonstop on ${out} one way`;
+  return 'https://www.google.com/travel/flights?q='+encodeURIComponent(q);
 }
 function openDetail(iata){
   const d=DEST_BY[iata]; if(!d) return;
@@ -1084,6 +1127,7 @@ function openDetail(iata){
     <div class="big"><b>${fmtH(d.hrs)}</b><span>estimated nonstop flight time</span></div>
     <dl class="kv">
       <dt>Distance</dt><dd>${fmt(d.km)} km great-circle</dd>
+      ${d.fpw?`<dt>How often</dt><dd>${esc(fmtFreq(d.fpw))}${d.fconf&&d.fconf!=='high'?` <span style="color:var(--ink-3)">(${d.fconf} confidence)</span>`:''}${d.fnote?`<br><span style="color:var(--ink-3);font-size:12px">${esc(d.fnote)}</span>`:''}</dd>`:''}
       <dt>Typical fare</dt><dd>SAR ${fmt(d.fare.lo)}–${fmt(d.fare.hi)} return economy${d.lcc?' · low-cost carrier on this route':''}</dd>
       <dt>Region</dt><dd>${esc(d.region)}</dd>
       <dt>Bearing</dt><dd class="mono">${bearing}</dd>
@@ -1100,12 +1144,16 @@ function openDetail(iata){
       ${d.status==='suspended'?`<p class="note"><b>Currently suspended.</b> ${esc(d.why||'')}</p>`:''}
     </div>
     <div class="dsec">
-      <h3>Check live schedules</h3>
-      <div class="gf">${nextDates().map(x=>
-        `<a href="${gflights(d.iata,x.d)}" target="_blank" rel="noopener"><b>${x.label}</b><span>${x.d} →</span></a>`).join('')}</div>
-      <p class="note">The time above is estimated from distance, and the fare is a band sampled on
-      ${esc(FARES.sampled)} — neither is a schedule or a quote. These links run a live, date-pinned
-      query for the real numbers.</p>
+      <h3>Check live fares &amp; times &mdash; nonstop only</h3>
+      <div class="gf">${tripOptions(d).map(x=>
+        `<a href="${gflights(d.iata,iso(x.out),x.back?iso(x.back):null)}" target="_blank" rel="noopener"><b>${esc(x.label)}${x.hint?` <span style="font-weight:400;color:var(--ink-3)">· ${esc(x.hint)}</span>`:''}</b><span>${pretty(x.out)}${x.back?` – ${pretty(x.back)}`:''} →</span></a>`).join('')}</div>
+      <p class="note">Every link is filtered to <b>nonstop only</b>. Dates are built around the Saudi
+      <b>Friday–Saturday weekend</b> — out Thursday, back ${
+        d.hrs<=3.5?'Saturday, because this one is short enough for a weekend'
+        : d.hrs<=7?'Sunday, because this one needs a long weekend'
+        : `a week later — at ${fmtH(d.hrs)} each way, a weekend is not really it`}.</p>
+      <p class="note">The time, fare band and frequency above are estimates. None of them is a
+      timetable, a quote, or the days <em>your</em> flight goes — these links are.</p>
     </div>
     <div class="dsec">
       <h3>Provenance &amp; confidence</h3>
@@ -1217,6 +1265,8 @@ $('#about').addEventListener('keydown',ev=>{
   $('#nopoly').textContent=[...new Set(DESTINATIONS.filter(d=>!d.ne).map(d=>d.country))].join(', ')||'none';
   $('#built').textContent=META.note;
   $('#fare-date').textContent=FARES.sampled;
+  $('#freq-note').textContent=FARES.freqNote;
+  $('#freq-n').textContent=DESTINATIONS.filter(d=>d.fpw).length;
   $('#fare-sample').innerHTML='<ul>'+FARES.bands.map(b=>
     `<li><b>${b.label||''}up to ${b.max>1e8?'the longest route':fmtH(b.max)}</b> → SAR ${fmt(b.lo)}–${fmt(b.hi)} return.
      Anchor <span class="mono">${esc(b.anchor)}</span>: ${esc(b.note)}</li>`).join('')+'</ul>';

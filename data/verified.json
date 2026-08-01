@@ -1,46 +1,118 @@
 {
  "_comment": "Output of the route-verification pass, 2026-07-31. Each entry was checked against a source independent of the Wikipedia KKIA table (the other endpoint's airport article, an airline's own booking engine or network release, AeroRoutes, or a schedule aggregator). 'add' = restore to the map; 'drop' = remove from the map; 'note' = keep but qualify.",
  "sampled": "2026-07-31",
-
  "add": {
-  "ADE": {"airlines": ["Yemenia"], "seasonal": false, "conf": "high",
-          "why": "Aden airport's own Wikipedia destination table lists Yemenia to Riyadh; Anadolu Agency (4 Jan 2026) quotes Yemenia's deputy GM naming Riyadh among four Aden destinations; FlightConnections Yemenia route map updated 2 Jul 2026."},
-  "CMB": {"airlines": ["SriLankan Airlines"], "seasonal": false, "conf": "high",
-          "why": "Bandaranaike (CMB) destination table lists SriLankan to Riyadh with no qualifier; FlightConnections (31 Jul 2026) names SriLankan the only nonstop operator; UL265/UL266 A330-300."},
-  "CNN": {"airlines": ["Air India Express"], "seasonal": false, "conf": "high",
-          "why": "Air India Express's own booking site lists Kannur from Riyadh; Kannur airport article lists it; Kerala press reports international services resumed 1 Jul 2026 with 3 weekly to Riyadh."},
-  "EJH": {"airlines": ["Saudia"], "seasonal": false, "conf": "high",
-          "why": "Al-Wajh Domestic Airport article (edited 7 Jul 2026) lists 'Saudia | Jeddah, Riyadh'; FlightConnections shows RUH 13 flights/month on SV."},
-  "MUX": {"airlines": ["Pakistan International Airlines"], "seasonal": false, "conf": "high",
-          "why": "FlightConnections lists PIA as nonstop operator RUH-MUX."},
-  "TBS": {"airlines": ["flynas"], "seasonal": false, "conf": "high",
-          "why": "FlightConnections lists flynas nonstop RUH-TBS; flynas Summer 2026 network release includes Tbilisi."},
-  "BUS": {"airlines": ["flynas"], "seasonal": true, "conf": "high",
-          "why": "Batumi Airport's own route map lists 'Flynas | Riyadh'; FlightConnections (31 Jul 2026) names flynas the only operator, 6 weekly."},
-  "SZG": {"airlines": ["flynas"], "seasonal": true, "conf": "high",
-          "why": "FlightConnections RUH-SZG; flynas Summer 2026 network release includes Salzburg."},
-  "TIA": {"airlines": ["flynas"], "seasonal": true, "conf": "high",
-          "why": "FlightConnections RUH-TIA; flynas Summer 2026 network release includes Tirana."},
-  "BUD": {"airlines": ["flynas"], "seasonal": true, "conf": "high",
-          "why": "flynas own media-centre Summer 2026 network release lists Budapest among new Riyadh routes."},
-  "TGD": {"airlines": ["flynas"], "seasonal": true, "conf": "medium",
-          "why": "flynas Summer 2026 network release (via TradeArabia) lists Podgorica; single source, not yet corroborated by the airport's own listing."}
+  "ADE": {
+   "airlines": [
+    "Yemenia"
+   ],
+   "seasonal": false,
+   "conf": "high",
+   "why": "Aden airport's own Wikipedia destination table lists Yemenia to Riyadh; Anadolu Agency (4 Jan 2026) quotes Yemenia's deputy GM naming Riyadh among four Aden destinations; FlightConnections Yemenia route map updated 2 Jul 2026."
+  },
+  "CMB": {
+   "airlines": [
+    "SriLankan Airlines"
+   ],
+   "seasonal": false,
+   "conf": "high",
+   "why": "Bandaranaike (CMB) destination table lists SriLankan to Riyadh with no qualifier; FlightConnections (31 Jul 2026) names SriLankan the only nonstop operator; UL265/UL266 A330-300."
+  },
+  "CNN": {
+   "airlines": [
+    "Air India Express"
+   ],
+   "seasonal": false,
+   "conf": "high",
+   "why": "Air India Express's own booking site lists Kannur from Riyadh; Kannur airport article lists it; Kerala press reports international services resumed 1 Jul 2026 with 3 weekly to Riyadh."
+  },
+  "EJH": {
+   "airlines": [
+    "Saudia"
+   ],
+   "seasonal": false,
+   "conf": "high",
+   "why": "Al-Wajh Domestic Airport article (edited 7 Jul 2026) lists 'Saudia | Jeddah, Riyadh'; FlightConnections shows RUH 13 flights/month on SV."
+  },
+  "MUX": {
+   "airlines": [
+    "Pakistan International Airlines"
+   ],
+   "seasonal": false,
+   "conf": "high",
+   "why": "FlightConnections lists PIA as nonstop operator RUH-MUX."
+  },
+  "TBS": {
+   "airlines": [
+    "flynas"
+   ],
+   "seasonal": false,
+   "conf": "high",
+   "why": "FlightConnections lists flynas nonstop RUH-TBS; flynas Summer 2026 network release includes Tbilisi."
+  },
+  "BUS": {
+   "airlines": [
+    "flynas"
+   ],
+   "seasonal": true,
+   "conf": "high",
+   "why": "Batumi Airport's own route map lists 'Flynas | Riyadh'; FlightConnections (31 Jul 2026) names flynas the only operator, 6 weekly."
+  },
+  "SZG": {
+   "airlines": [
+    "flynas"
+   ],
+   "seasonal": true,
+   "conf": "high",
+   "why": "FlightConnections RUH-SZG; flynas Summer 2026 network release includes Salzburg."
+  },
+  "TIA": {
+   "airlines": [
+    "flynas"
+   ],
+   "seasonal": true,
+   "conf": "high",
+   "why": "FlightConnections RUH-TIA; flynas Summer 2026 network release includes Tirana."
+  },
+  "BUD": {
+   "airlines": [
+    "flynas"
+   ],
+   "seasonal": true,
+   "conf": "high",
+   "why": "flynas own media-centre Summer 2026 network release lists Budapest among new Riyadh routes."
+  },
+  "TGD": {
+   "airlines": [
+    "flynas"
+   ],
+   "seasonal": true,
+   "conf": "medium",
+   "why": "flynas Summer 2026 network release (via TradeArabia) lists Podgorica; single source, not yet corroborated by the airport's own listing."
+  }
  },
-
  "drop": {
-  "DMK": {"conf": "high",
-          "why": "Bangkok-Don Mueang was served only by Thai AirAsia X, which extended its suspension, removed schedule filings for 01OCT26-24OCT26 and filed no resumption date (AeroRoutes, 30 Jul 2026). Bangkok is still on the map via Suvarnabhumi (BKK/Saudia)."},
-  "LCA": {"conf": "medium",
-          "why": "FlightConnections: no direct Riyadh-Larnaca flights; Larnaca airport's own destination table does not list Riyadh; flyadeal's published Summer 2026 seasonal network (Milan, Prague, Trabzon, Sarajevo, Sharm El Sheikh) omits it. Checked at peak season, when a live seasonal route would be visible."}
+  "DMK": {
+   "conf": "high",
+   "why": "Bangkok-Don Mueang was served only by Thai AirAsia X, which extended its suspension, removed schedule filings for 01OCT26-24OCT26 and filed no resumption date (AeroRoutes, 30 Jul 2026). Bangkok is still on the map via Suvarnabhumi (BKK/Saudia)."
+  },
+  "LCA": {
+   "conf": "medium",
+   "why": "FlightConnections: no direct Riyadh-Larnaca flights; Larnaca airport's own destination table does not list Riyadh; flyadeal's published Summer 2026 seasonal network (Milan, Prague, Trabzon, Sarajevo, Sharm El Sheikh) omits it. Checked at peak season, when a live seasonal route would be visible."
+  }
  },
-
  "note": {
-  "AMS": {"status": "suspended", "conf": "high",
-          "why": "KLM is the only Riyadh-Amsterdam operator and has suspended the route until 6 September 2026 amid regional airspace disruption (The National, 26 Jul 2026). Kept on the map and flagged, because it is a suspension with a stated return date, not a cancellation."},
-  "CGK": {"status": "seasonal", "conf": "low",
-          "why": "Garuda's Riyadh service is marked terminated; the remaining Jakarta service is Saudia's seasonal Hajj/Umrah operation. Kept as seasonal at low confidence."}
+  "AMS": {
+   "status": "suspended",
+   "conf": "high",
+   "why": "KLM is the only Riyadh-Amsterdam operator and has suspended the route until 6 September 2026 amid regional airspace disruption (The National, 26 Jul 2026). Kept on the map and flagged, because it is a suspension with a stated return date, not a cancellation."
+  },
+  "CGK": {
+   "status": "seasonal",
+   "conf": "low",
+   "why": "Garuda's Riyadh service is marked terminated; the remaining Jakarta service is Saudia's seasonal Hajj/Umrah operation. Kept as seasonal at low confidence."
+  }
  },
-
  "_excluded": {
   "_comment": "Checked and deliberately left off the map. Recorded so the omissions are visible rather than silent.",
   "ADB": "Izmir - Saudia last flew 2018, flyadeal 2023; no Saudi point in Izmir's 94 nonstop destinations (FlightConnections, Jul 2026). Wikipedia's Izmir and Saudia pages still show it and appear stale.",
@@ -53,5 +125,243 @@
   "MRU": "Mauritius - no current source found.",
   "UPG": "Makassar - no current source found.",
   "ALP": "Aleppo - flynas announced for Aug 2026 (AeroRoutes 27 Jul 2026); not yet flying, and not yet in the Wikipedia table, so held until it starts."
+ },
+ "frequency_note": "Typical weekly frequency, read off the same sources used to verify the route and hand-checked one by one. Sampled 2026-07-31. This is how often the route runs in a normal week, NOT a timetable and NOT which days your flight goes -- use the live link for that. Routes without a figure here had none that could be pinned to the Riyadh route specifically.",
+ "frequency": {
+  "CNN": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "3 weekly to Riyadh (the 69 weekly in the source is Kannur's whole international programme, not this route)"
+  },
+  "HKG": {
+   "per_week": 7,
+   "conf": "high",
+   "note": "increased from 4 weekly to daily from 26 Oct 2025"
+  },
+  "ATH": {
+   "per_week": 4,
+   "conf": "medium",
+   "note": "3 weekly A320 plus 1 weekly A321XLR from 5 Aug 2026"
+  },
+  "JED": {
+   "per_week": 7,
+   "conf": "high",
+   "note": "multiple daily; Riyadh Air plus Saudia and flynas"
+  },
+  "DXB": {
+   "per_week": 7,
+   "conf": "high",
+   "note": "multiple daily across Emirates, flydubai, Riyadh Air and Saudia"
+  },
+  "CAI": {
+   "per_week": 7,
+   "conf": "high",
+   "note": "daily or better across several carriers"
+  },
+  "LHR": {
+   "per_week": 7,
+   "conf": "high",
+   "note": "Riyadh Air RX401/402 daily, plus Saudia"
+  },
+  "IST": {
+   "per_week": 7,
+   "conf": "high",
+   "note": "Turkish TK142 daily"
+  },
+  "HYD": {
+   "per_week": 7,
+   "conf": "high",
+   "note": "flyadeal daily from 1 Jul 2026"
+  },
+  "SAW": {
+   "per_week": 7,
+   "conf": "low",
+   "note": "flyadeal daily, but the schedule filing is over a year old"
+  },
+  "TUU": {
+   "per_week": 75,
+   "conf": "high",
+   "note": "domestic trunk route, several carriers"
+  },
+  "GIZ": {
+   "per_week": 66,
+   "conf": "high",
+   "note": "domestic trunk route, several carriers"
+  },
+  "TIF": {
+   "per_week": 42,
+   "conf": "high",
+   "note": "domestic trunk route, several carriers"
+  },
+  "MNL": {
+   "per_week": 15,
+   "conf": "medium",
+   "note": "Cebu Pacific, Philippine Airlines and Saudia combined"
+  },
+  "HAS": {
+   "per_week": 14,
+   "conf": "high"
+  },
+  "DAC": {
+   "per_week": 11,
+   "conf": "high",
+   "note": "Biman, Saudia and US-Bangla combined"
+  },
+  "ELQ": {
+   "per_week": 10,
+   "conf": "high"
+  },
+  "BUS": {
+   "per_week": 6,
+   "conf": "high",
+   "note": "flynas, seasonal"
+  },
+  "TBS": {
+   "per_week": 6,
+   "conf": "high",
+   "note": "flynas, ~3h45m, departures around 07:00"
+  },
+  "DWD": {
+   "per_week": 6,
+   "conf": "high"
+  },
+  "PVG": {
+   "per_week": 6,
+   "conf": "medium"
+  },
+  "SVO": {
+   "per_week": 5,
+   "conf": "high",
+   "note": "A321XLR, 2 Jul - 15 Sep 2026"
+  },
+  "PEK": {
+   "per_week": 5,
+   "conf": "medium"
+  },
+  "MAD": {
+   "per_week": 4,
+   "conf": "high",
+   "note": "Riyadh Air 787-9"
+  },
+  "GVA": {
+   "per_week": 4,
+   "conf": "medium",
+   "note": "from 2 Sep 2026"
+  },
+  "LHE": {
+   "per_week": 4,
+   "conf": "medium",
+   "note": "AirSial PF766/767"
+  },
+  "RZV": {
+   "per_week": 4,
+   "conf": "medium",
+   "note": "flynas, summer season"
+  },
+  "VKO": {
+   "per_week": 4,
+   "conf": "high"
+  },
+  "AGP": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "787-9 RX543/544, 14 Jul - 8 Sep 2026"
+  },
+  "KUL": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "Riyadh Air 787-9, Tue/Thu/Sat"
+  },
+  "JFK": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "Saudia SV22/SV23, B777-300"
+  },
+  "SIN": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "Singapore Airlines SQ499, A350-900, dep 22:50"
+  },
+  "NRT": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "Saudia, from 17 Nov 2026"
+  },
+  "MAN": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "Riyadh Air"
+  },
+  "BUD": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "flynas, from 24 Jun 2026"
+  },
+  "MUC": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "flynas, from 24 Jun 2026"
+  },
+  "MLE": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "flynas A320neo, 20 Jun - 24 Oct 2026"
+  },
+  "BGY": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "flyadeal"
+  },
+  "SZG": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "flynas A320neo, ~5h50m"
+  },
+  "MXP": {
+   "per_week": 3,
+   "conf": "medium",
+   "note": "flynas"
+  },
+  "HKT": {
+   "per_week": 3,
+   "conf": "medium",
+   "note": "Saudia"
+  },
+  "NBO": {
+   "per_week": 3,
+   "conf": "medium",
+   "note": "flynas A320neo, dep 22:20"
+  },
+  "SZX": {
+   "per_week": 3,
+   "conf": "medium",
+   "note": "China Southern"
+  },
+  "EJH": {
+   "per_week": 3,
+   "conf": "high",
+   "note": "13 flights a month, Saudia"
+  },
+  "CMB": {
+   "per_week": 2,
+   "conf": "medium",
+   "note": "SriLankan UL265/UL266, A330-300"
+  },
+  "ADE": {
+   "per_week": 2,
+   "conf": "high",
+   "note": "Yemenia IY532, 9 flights a month"
+  },
+  "CAN": {
+   "per_week": 1,
+   "conf": "medium",
+   "note": "China Southern"
+  }
+ },
+ "_frequency_excluded": {
+  "IAD": "Source contradicts itself -- '2 direct flights every week' alongside '3x weekly westbound'. Left out rather than pick one.",
+  "AHB": "The 127 flights/week figure is Abha's whole network, not the Riyadh route.",
+  "MED": "The 74 flights/week figure could not be pinned to the Riyadh route specifically.",
+  "AER": "Only a low-confidence airport-level figure."
  }
 }

@@ -283,6 +283,9 @@ for d in DESTS:
         starts=d['e']['starts'], src=d['src'], conf=d['conf'], cs=d['cs'],
         wiki=d['e']['wiki'],
         hrs=flight_hours(km),
+        fpw=(VERIFIED['frequency'].get(d['iata']) or {}).get('per_week'),
+        fnote=(VERIFIED['frequency'].get(d['iata']) or {}).get('note'),
+        fconf=(VERIFIED['frequency'].get(d['iata']) or {}).get('conf'),
         fb=fare_band(flight_hours(km)),
         lcc=bool(set(airlines) & LOW_COST),
         status=d.get('status'), why=d.get('why')))
@@ -332,7 +335,8 @@ html = (tpl.replace('__TOPO__', topo)
            .replace('__META__', dumps(META))
            .replace('__BANDS__', dumps(BANDS))
            .replace('__FARES__', dumps(dict(sampled=FARE_SAMPLED, bands=FARE_BANDS,
-                                            ground=GROUND_H, kmh=BLOCK_KMH))))
+                                            ground=GROUND_H, kmh=BLOCK_KMH,
+                                            freqNote=VERIFIED['frequency_note']))))
 
 out = os.path.join(HERE, 'index.html')
 open(out, 'w', encoding='utf-8').write(html)
