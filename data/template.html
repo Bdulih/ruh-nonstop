@@ -1112,7 +1112,15 @@ function nextDow(from,dow,minDays){
 const shift=(d,n)=>{ const x=new Date(d); x.setDate(x.getDate()+n); return x; };
 const pretty=d=>`${DOW[d.getDay()].slice(0,3)} ${d.getDate()} ${MON[d.getMonth()]}`;
 
+/* Only pin dates on routes that fly every day. Anything less and a fixed
+   Thursday is a coin flip -- Guangzhou runs Mon/Wed/Fri, so a pinned Thursday
+   lands on a day with no nonstop at all. There is no reliable public source for
+   day-of-week here, and it could not be measured, so rather than guess the
+   non-daily routes hand the choice to Google's own calendar. */
+const fliesDaily = d => d.fpw >= 7;
+
 function tripOptions(d){
+  if(!fliesDaily(d)) return null;
   const now=new Date();
   // nights away: a weekend for short hops, a long weekend mid-haul, a week for long-haul
   const nights = d.hrs<=3.5 ? 2 : d.hrs<=7 ? 3 : 7;
@@ -1156,9 +1164,12 @@ const b64url=bytes=>btoa(String.fromCharCode.apply(null,bytes))
   .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 
 function gflights(iata,out,back){
+  // out === null builds a dateless search: Google opens the route on its own
+  // calendar showing which days actually have a nonstop, instead of us pinning
+  // a day the route may not fly.
   const leg=(date,from,to)=>pbMsg(3,
     pbInt(5,0)                                   // nonstop only
-      .concat(pbStr(2,date), pbMsg(13,pbStr(2,from)), pbMsg(14,pbStr(2,to))));
+      .concat(date?pbStr(2,date):[], pbMsg(13,pbStr(2,from)), pbMsg(14,pbStr(2,to))));
   let body=leg(out,'RUH',iata);
   if(back) body=body.concat(leg(back,iata,'RUH'));
   body=body.concat(pbInt(8,1), pbInt(9,1), pbInt(19, back?1:2));  // 1 adult, economy
@@ -1199,13 +1210,18 @@ function openDetail(iata){
     </div>
     <div class="dsec">
       <h3>Check live fares &amp; times &mdash; nonstop only</h3>
-      <div class="gf">${tripOptions(d).map(x=>
-        `<a href="${gflights(d.iata,iso(x.out),x.back?iso(x.back):null)}" target="_blank" rel="noopener"><b>${esc(x.label)}${x.hint?` <span style="font-weight:400;color:var(--ink-3)">· ${esc(x.hint)}</span>`:''}</b><span>${pretty(x.out)}${x.back?` – ${pretty(x.back)}`:''} →</span></a>`).join('')}</div>
-      <p class="note">Every link is filtered to <b>nonstop only</b>. Dates are built around the Saudi
-      <b>Friday–Saturday weekend</b> — out Thursday, back ${
-        d.hrs<=3.5?'Saturday, because this one is short enough for a weekend'
-        : d.hrs<=7?'Sunday, because this one needs a long weekend'
-        : `a week later — at ${fmtH(d.hrs)} each way, a weekend is not really it`}.</p>
+      <div class="gf">${(tripOptions(d)||[]).map(x=>
+        `<a href="${gflights(d.iata,iso(x.out),x.back?iso(x.back):null)}" target="_blank" rel="noopener"><b>${esc(x.label)}${x.hint?` <span style="font-weight:400;color:var(--ink-3)">· ${esc(x.hint)}</span>`:''}</b><span>${pretty(x.out)}${x.back?` – ${pretty(x.back)}`:''} →</span></a>`).join('')
+        || `<a href="${gflights(d.iata,null,null)}" target="_blank" rel="noopener"><b>Show me the days it flies</b><span>nonstop, any date →</span></a>`}</div>
+      <p class="note">${fliesDaily(d)
+        ? `Filtered to <b>nonstop only</b>. This route runs every day, so the dates are pinned to the
+           Saudi <b>Friday–Saturday weekend</b> — out Thursday, back ${
+             d.hrs<=3.5?'Saturday, short enough for a weekend'
+             : d.hrs<=7?'Sunday, this one needs a long weekend'
+             : `a week later — at ${fmtH(d.hrs)} each way, a weekend is not really it`}.`
+        : `Filtered to <b>nonstop only</b>, with <b>no date pinned</b>${d.fpw?` — this route only flies
+           about ${d.fpw}\u00d7 a week`:''}, so picking a day for you would be a guess that often lands on
+           one it does not fly. Google's calendar opens on the days that do.`}</p>
       <p class="note">The time, fare band and frequency above are estimates. None of them is a
       timetable, a quote, or the days <em>your</em> flight goes — these links are.</p>
     </div>

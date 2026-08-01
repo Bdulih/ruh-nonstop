@@ -184,7 +184,15 @@ async function newPage(b, opts) {
     ok(det.inAside, P('L1 detail panel escapes the sidebar'));
     ok(det.hasTime, P('L1 detail headline is not a flight time'));
     ok(det.hasFare, P('L1 detail has no fare band'));
-    ok(det.links === 4, P(`L1 expected 4 dated links, got ${det.links}`));
+    // daily routes get 4 pinned-date links; anything less than daily gets a
+    // single dateless link, because pinning a day it may not fly is a guess
+    const mode = await pg.evaluate(() => {
+      const d = DEST_BY[document.querySelector('#d-city').textContent.split('·').pop().trim()];
+      return { fpw: d ? d.fpw : null, n: document.querySelectorAll('.gf a').length };
+    });
+    const daily = mode.fpw >= 7;
+    ok(daily ? mode.n === 4 : mode.n === 1,
+       P(`L1 ${daily ? 'daily' : 'non-daily'} route (fpw=${mode.fpw}) has ${mode.n} links`));
     // links must carry the tfs protobuf, not a q= text search: Google Flights
     // parses the route from q= but ignores the word "nonstop" and shows 1-stops.
     const hrefs = await pg.evaluate(() => [...document.querySelectorAll('.gf a')].map(a => a.href));
@@ -200,6 +208,18 @@ async function newPage(b, opts) {
                nonstop: raw.includes(String.fromCharCode(0x28, 0x00)) };
     }, clicked.iata);
     ok(decoded.hasOrigin && decoded.hasDest, P('L1 tfs payload missing the airport pair'));
+    // whatever the mode, no link may pin a date on a route that is not daily
+    const anyDated = await pg.evaluate(() => {
+      const decode = (href) => {
+        let b = new URL(href).searchParams.get('tfs').replace(/-/g, '+').replace(/_/g, '/');
+        while (b.length % 4) b += '=';
+        return atob(b);
+      };
+      return [...document.querySelectorAll('.gf a')]
+        .some(a => /\d{4}-\d{2}-\d{2}/.test(decode(a.href)));
+    });
+    ok(daily === anyDated,
+       P(daily ? 'L1 daily route pins no date' : 'L1 non-daily route pins a date it may not fly'));
     ok(decoded.nonstop, P('L1 tfs payload does not set max_stops=0 (nonstop)'));
     ok(det.prov, P('L1 detail has no provenance block'));
     await pg.evaluate(() => document.querySelector('#d-back').click()); await pg.waitForTimeout(250);

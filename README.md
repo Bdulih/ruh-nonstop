@@ -69,9 +69,25 @@ Google rather than assumed — on RUH–LAX, which has no nonstop service, the u
 70 "1 stop" results and the filtered one returns zero; RUH–DXB returns 222 nonstop and zero one-stop.
 A malformed `tfs` falls back to the Google Flights homepage, which is how the encoder is checked.
 
-Dates are built around the Saudi **Friday–Saturday weekend** — out Thursday, back Saturday for a short
-hop, Sunday for a long weekend, a week later for anything over 7 hours, because a weekend in Atlanta
-at 15h30 each way is not a real suggestion.
+### Dates are only pinned when the route flies daily
+
+Pinning a Thursday is a coin flip on a route that runs three times a week — Guangzhou flies
+Mon/Wed/Fri, so a pinned Thursday lands on a day with no nonstop at all, which reads as a broken link.
+
+There is no reliable public source for day-of-week here, and it could not be measured either: `curl`
+only receives the JavaScript shell, and the counts in that HTML are template noise, not flight data.
+Tested against Kuala Lumpur, whose Tue/Thu/Sat schedule is sourced, the naive detector returned the
+exact inverse — so it was thrown away rather than shipped.
+
+So the rule is: **daily routes get pinned dates, everything else does not.**
+
+- **Daily** (7+/week): dates pinned to the Saudi **Friday–Saturday weekend** — out Thursday, back
+  Saturday for a short hop, Sunday for a long weekend, a week later for anything over 7 hours, because
+  a weekend in Atlanta at 15h30 each way is not a real suggestion.
+- **Anything less, or unknown**: a **dateless** nonstop search, so Google's own calendar shows which
+  days actually have a nonstop and you pick from those.
+
+CI asserts both halves — a daily route must carry a date, and a non-daily route must not.
 
 ## Provenance
 
