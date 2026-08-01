@@ -188,6 +188,52 @@ async function newPage(b, opts) {
     ok(det.prov, P('L1 detail has no provenance block'));
     await pg.evaluate(() => document.querySelector('#d-back').click()); await pg.waitForTimeout(250);
 
+    // the city NAME on the map must behave like the dot: pointer cursor, hover
+    // highlight, and click-through. It used to be pointer-events:none.
+    await pg.evaluate(() => { document.querySelector('#z-rst').click();
+      for (let i = 0; i < 3; i++) document.querySelector('#z-in').click(); });
+    await pg.waitForTimeout(350);
+    const lbl = await pg.evaluate(() => {
+      // only labels in the band the sheet is not covering are reachable
+      const m = document.querySelector('#mapwrap').getBoundingClientRect();
+      const a = document.querySelector('aside');
+      const sh = a.getBoundingClientRect();
+      const bottom = getComputedStyle(a).position === 'absolute'
+        ? Math.min(m.bottom, sh.top) : m.bottom;
+      const vis = [...document.querySelectorAll('.lbl')]
+        .filter(e => e.style.display !== 'none' && e.dataset.iata)
+        .map(e => ({ e, r: e.getBoundingClientRect() }))
+        .filter(({ r }) => r.width > 12 && r.left > m.left + 4 && r.right < m.right - 4
+                        && r.top > m.top + 4 && r.bottom < bottom - 4);
+      if (!vis.length) return null;
+      const { e, r } = vis[0];
+      // aim at the far end of the word, well clear of the dot itself
+      return { iata: e.dataset.iata, cx: r.left + r.width * 0.75, cy: r.top + r.height / 2,
+               w: Math.round(r.width) };
+    });
+    if (lbl) {
+      await tapAt(lbl.cx, lbl.cy);
+      await pg.waitForTimeout(250);
+      const hit = await pg.evaluate(() => ({
+        open: document.querySelector('#detail').classList.contains('on'),
+        city: document.querySelector('#d-city').textContent }));
+      ok(hit.open && hit.city.includes(lbl.iata),
+         P(`L1 clicking the city name did not open it (${lbl.iata} -> "${hit.city}")`));
+      await pg.evaluate(() => document.querySelector('#d-back').click());
+      await pg.waitForTimeout(200);
+      if (!isTouch) {
+        await pg.mouse.move(lbl.cx, lbl.cy); await pg.waitForTimeout(200);
+        const hov = await pg.evaluate(() => ({ hover: state.hover,
+          pick: document.querySelector('#map').classList.contains('pick') }));
+        ok(hov.hover === lbl.iata, P(`L1 hovering the city name did not highlight it`));
+        ok(hov.pick, P('L1 city name does not show a pointer cursor'));
+      }
+    } else {
+      warn(false, P('L1 no map labels visible to test'));
+    }
+    await pg.evaluate(() => document.querySelector('#z-rst').click());
+    await pg.waitForTimeout(200);
+
     // clicking a LIST row also opens it
     await pg.evaluate(() => document.querySelector('.row').click()); await pg.waitForTimeout(300);
     ok(await pg.evaluate(() => document.querySelector('#detail').classList.contains('on')), P('L1 list row did not open detail'));

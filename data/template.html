@@ -129,6 +129,7 @@ svg#map.pick{cursor:pointer}
   font-size:10px;font-weight:500;fill:var(--ink);paint-order:stroke;
   stroke:var(--sea);stroke-width:3px;stroke-linejoin:round;pointer-events:none;
 }
+.lbl.lit{fill:var(--blue)}
 .lbl.origin{fill:var(--origin);font-weight:700}
 
 .mapui{position:absolute;display:flex;gap:8px}
@@ -732,7 +733,7 @@ const arcEls=new Map(), dotEls=new Map(), lblEls=new Map();
 
     const t=document.createElementNS(NS,'text');
     t.setAttribute('x',(d.x+5).toFixed(2)); t.setAttribute('y',(d.y+3).toFixed(2));
-    t.setAttribute('class','lbl'); t.textContent=d.city;
+    t.setAttribute('class','lbl'); t.dataset.iata=d.iata; t.textContent=d.city;
     fl.appendChild(t); lblEls.set(d.iata,t);
   }
   $('#g-arcs').appendChild(fa); $('#g-dots').appendChild(fd); $('#g-labels').appendChild(fl);
@@ -807,6 +808,7 @@ function scheduleApply(){
 function applyView(){
   clampView();
   scene.setAttribute('transform',`translate(${view.x.toFixed(3)},${view.y.toFixed(3)}) scale(${view.k.toFixed(4)})`);
+  invalidateLabelBoxes();             // a pan moves the labels too
   const k=view.k;
   if(k===lastK) return;               // a pure pan needs no counter-scaling
   lastK=k;
@@ -824,6 +826,7 @@ function applyView(){
   ol.style.fontSize=(11/k)+'px'; ol.style.strokeWidth=sw+'px';
   ol.setAttribute('x',projX(ORIGIN.lon)+9/k); ol.setAttribute('y',projY(ORIGIN.lat)-8/k);
   updateLabelVisibility();
+  invalidateLabelBoxes();
 }
 function zoomAt(px,py,factor){
   const k0=view.k;
@@ -929,7 +932,27 @@ function updateLabelVisibility(){
    tappable makes them overlap in dense clusters, and DOM order then decides the
    winner, so you click one city and open another. Nearest is what people mean. */
 const PICK_PX = 14;
+/* Label hit boxes in client space. Labels are counter-scaled, so their screen
+   size is constant and the boxes only need rebuilding when the view or the
+   filtered set changes — and picking never runs mid-drag, so this stays warm. */
+let labelBoxes=null;
+const invalidateLabelBoxes=()=>{ labelBoxes=null; };
+function getLabelBoxes(){
+  if(labelBoxes) return labelBoxes;
+  labelBoxes=[];
+  for(const [ia,t] of lblEls){
+    if(t.style.display==='none' || !visible.has(ia)) continue;
+    const r=t.getBoundingClientRect();
+    if(r.width) labelBoxes.push({ia, l:r.left-3, r:r.right+3, t:r.top-3, b:r.bottom+3});
+  }
+  return labelBoxes;
+}
+
 function pickAt(ev){
+  // the city name is part of the destination's target, not just the dot
+  for(const b of getLabelBoxes()){
+    if(ev.clientX>=b.l && ev.clientX<=b.r && ev.clientY>=b.t && ev.clientY<=b.b) return b.ia;
+  }
   const p=svgPoint(ev);
   const sx=(p.x-view.x)/view.k, sy=(p.y-view.y)/view.k;
   const maxD=PICK_PX/((RENDER_SCALE||1)*view.k);
@@ -961,6 +984,7 @@ function setHover(iata,ev){
     arcEls.get(d.iata).classList.toggle('lit',on);
     arcEls.get(d.iata).classList.toggle('dim',!!iata&&!on);
     dotEls.get(d.iata).classList.toggle('lit',on);
+    lblEls.get(d.iata).classList.toggle('lit',on);
   }
   for(const el of $$('.row')) el.classList.toggle('lit', el.dataset.iata===iata);
   if(iata){
@@ -1046,6 +1070,7 @@ function render(){
   }).join('');
   list.innerHTML=html;
   updateLabelVisibility();
+  invalidateLabelBoxes();
 }
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
