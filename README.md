@@ -50,7 +50,28 @@ route**, and they will drift — fares move faster than schedules.
 
 Routes with a low-cost carrier are flagged separately, because that moves the real fare more than
 distance does at the short end. Every destination links out to a **live, date-pinned Google Flights
-query** for the actual number.
+search** for the actual number.
+
+### The links really are nonstop-only
+
+Putting the word "nonstop" in a Google Flights `q=` text search does not work. Google parses the route
+from it and then shows one-stop itineraries anyway. The stops filter only applies through the `tfs`
+parameter, which is a base64url-encoded protobuf, so the page builds that by hand:
+
+```
+Info { repeated FlightData data = 3; passengers = 8; seat = 9; trip = 19 }
+FlightData { max_stops = 5; date = 2; Airport from = 13; Airport to = 14 }
+Airport { code = 2 }
+```
+
+`max_stops = 0` is the nonstop filter; `trip` is 1 for a return and 2 for one way. Verified against
+Google rather than assumed — on RUH–LAX, which has no nonstop service, the unfiltered search returns
+70 "1 stop" results and the filtered one returns zero; RUH–DXB returns 222 nonstop and zero one-stop.
+A malformed `tfs` falls back to the Google Flights homepage, which is how the encoder is checked.
+
+Dates are built around the Saudi **Friday–Saturday weekend** — out Thursday, back Saturday for a short
+hop, Sunday for a long weekend, a week later for anything over 7 hours, because a weekend in Atlanta
+at 15h30 each way is not a real suggestion.
 
 ## Provenance
 

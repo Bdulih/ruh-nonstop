@@ -185,6 +185,22 @@ async function newPage(b, opts) {
     ok(det.hasTime, P('L1 detail headline is not a flight time'));
     ok(det.hasFare, P('L1 detail has no fare band'));
     ok(det.links === 4, P(`L1 expected 4 dated links, got ${det.links}`));
+    // links must carry the tfs protobuf, not a q= text search: Google Flights
+    // parses the route from q= but ignores the word "nonstop" and shows 1-stops.
+    const hrefs = await pg.evaluate(() => [...document.querySelectorAll('.gf a')].map(a => a.href));
+    ok(hrefs.every(h => h.includes('tfs=')), P('L1 flight links are not using the tfs filter'));
+    ok(hrefs.every(h => !h.includes('?q=') && !h.includes('&q=')), P('L1 flight links still use a q= text search'));
+    const decoded = await pg.evaluate(iata => {
+      const u = new URL(document.querySelector('.gf a').href);
+      let b = u.searchParams.get('tfs').replace(/-/g, '+').replace(/_/g, '/');
+      while (b.length % 4) b += '=';
+      const raw = atob(b);
+      return { hasOrigin: raw.includes('RUH'), hasDest: raw.includes(iata),
+               // field 5 (max_stops) varint 0 encodes as 0x28 0x00
+               nonstop: raw.includes(String.fromCharCode(0x28, 0x00)) };
+    }, clicked.iata);
+    ok(decoded.hasOrigin && decoded.hasDest, P('L1 tfs payload missing the airport pair'));
+    ok(decoded.nonstop, P('L1 tfs payload does not set max_stops=0 (nonstop)'));
     ok(det.prov, P('L1 detail has no provenance block'));
     await pg.evaluate(() => document.querySelector('#d-back').click()); await pg.waitForTimeout(250);
 

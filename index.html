@@ -1270,13 +1270,42 @@ function tripOptions(d){
     {out:thu1, back:null, label:'One way, no return', hint:''},
   ];
 }
-/* "nonstop" in the query makes Google Flights apply its nonstop filter, so the
-   link lands on the flights this map is actually about. */
+/* Google Flights ignores the word "nonstop" in a q= text search -- it parses the
+   route and then happily shows you one-stops. The stops filter only actually
+   applies through the tfs parameter, which is a base64url protobuf. Verified
+   against Google: RUH-LAX (no nonstop exists) returns 70 "1 stop" results
+   unfiltered and zero with max_stops=0, and RUH-DXB returns 222 nonstop / zero
+   one-stop. So this builds the protobuf by hand.
+
+   Message shape:  Info { repeated FlightData data = 3; passengers = 8;
+                          seat = 9; trip = 19 }
+                   FlightData { max_stops = 5; date = 2;
+                                Airport from = 13; Airport to = 14 }
+                   Airport { code = 2 }
+   trip: 1 = round trip, 2 = one way.  max_stops 0 = nonstop only. */
+function pbVarint(n){
+  const o=[];
+  do { let b=n&0x7f; n>>>=7; o.push(n ? (b|0x80) : b); } while(n);
+  return o;
+}
+const pbTag=(f,wt)=>pbVarint((f<<3)|wt);
+const pbInt=(f,v)=>pbTag(f,0).concat(pbVarint(v));
+function pbStr(f,s){
+  const b=Array.from(new TextEncoder().encode(s));
+  return pbTag(f,2).concat(pbVarint(b.length), b);
+}
+const pbMsg=(f,m)=>pbTag(f,2).concat(pbVarint(m.length), m);
+const b64url=bytes=>btoa(String.fromCharCode.apply(null,bytes))
+  .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+
 function gflights(iata,out,back){
-  const q = back
-    ? `Flights from RUH to ${iata} nonstop on ${out} through ${back}`
-    : `Flights from RUH to ${iata} nonstop on ${out} one way`;
-  return 'https://www.google.com/travel/flights?q='+encodeURIComponent(q);
+  const leg=(date,from,to)=>pbMsg(3,
+    pbInt(5,0)                                   // nonstop only
+      .concat(pbStr(2,date), pbMsg(13,pbStr(2,from)), pbMsg(14,pbStr(2,to))));
+  let body=leg(out,'RUH',iata);
+  if(back) body=body.concat(leg(back,iata,'RUH'));
+  body=body.concat(pbInt(8,1), pbInt(9,1), pbInt(19, back?1:2));  // 1 adult, economy
+  return 'https://www.google.com/travel/flights?tfs='+b64url(body)+'&hl=en&gl=SA&curr=SAR';
 }
 function openDetail(iata){
   const d=DEST_BY[iata]; if(!d) return;
